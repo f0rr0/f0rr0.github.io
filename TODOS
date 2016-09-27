@@ -1,0 +1,18 @@
+v 1.0
+- [x] Secondary fonts before monospace.
+- [ ] Icon attributions.
+- [x] Optimize svgs with svgo.
+- [ ] https://github.com/twitter/twemoji#attribution-requirements
+- [x] Automate new post creation
+- [ ] analytics
+- [x] draft support
+- [x] add animations for suckers.
+- [x] Medium cross-posting B)
+
+v 2.0
+- [ ] Refactor css to inline in js.
+- [ ] Hard code share button markup. (React share fckng has babel-runtime dep)
+- [ ] Convert lodash to vanilla.
+- [ ] generate rss feed
+- [ ] more aggressive mobile optimization
+- [ ] replace backend with youtuber.

@@ -1,0 +1,48 @@
+import { config } from 'config'; // eslint-disable-line
+import React, { PropTypes } from 'react';
+import { Link } from 'react-router';
+import moment from 'moment';
+import DocumentTitle from 'react-document-title';
+import QuantfiedSelf from '../src/components/QuantifiedSelf';
+import { getBlogPosts } from '../src/utils/blog-helpers';
+import '../src/css/lists.css';
+
+const Anchor = props =>
+  <a target='_blank' rel='noopener noreferrer' href={props.href}>
+    {props.title}
+  </a>;
+
+Anchor.propTypes = {
+  href: PropTypes.string,
+  title: PropTypes.string
+};
+
+export default function BlogIndex(props) {
+  const latestBlogPost = getBlogPosts(props.route).pop();
+  const { data: { title, date }, path } = latestBlogPost;
+  const fromNow = moment(date, 'MM/DD/YYYY').fromNow();
+
+  return (
+    <DocumentTitle title={`${config.blogTitle} by ${config.authorName}`}>
+      <section className='content'>
+        <p>Hello, my name is <Link to='/about/'>Siddharth Jain</Link>.</p>
+        <p>
+          I am a web developer-designer living in <del>Los Angeles</del>
+          &nbsp;New Delhi.
+        </p>
+        <p>
+          I use <Link to='/about/#about-yuppies'>this space</Link> primarily for <Link to='/blog/'>writing</Link> and <Link to='/hire/'>reaching out</Link> to clients. The last piece I wrote was&nbsp;
+          <i><Link to={path}>&lsquo;{title}&rsquo;</Link></i> {fromNow}.
+        </p>
+        <p>
+          I am a huge proponent of <Anchor href='//en.wikipedia.org/wiki/Lifelog' title='lifelogging' /> and have been collecting actionable data on myself since early 2014. Here are the latest metrics from <Anchor href='//rescuetime.com' title='Rescuetime' /> and <Anchor href='//last.fm/user/sidjain26' title='Last.fm' />:
+        </p>
+        <QuantfiedSelf />
+      </section>
+    </DocumentTitle>
+  );
+}
+
+BlogIndex.propTypes = {
+  route: PropTypes.object
+};

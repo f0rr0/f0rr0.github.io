@@ -12,7 +12,7 @@ import sortBy from 'lodash.sortby';
 
 const scanSpinner = ora({
   color: 'green',
-  text: chalk.green('Scanning posts')
+  text: chalk.green('Parsing posts')
 });
 scanSpinner.start();
 
@@ -46,6 +46,7 @@ recursiveReaddir(postsDir, [ignoreFunc], (err, files) => {
     // md-yaml-json sets path for us. Use it to get relative path from /pages
     const relativePath = path.split('pages/').pop().split('index.md').shift();
 
+    // Replace relative image links to absolute
     const $ = cheerio.load(html, {
       recognizeSelfClosing: true
     });

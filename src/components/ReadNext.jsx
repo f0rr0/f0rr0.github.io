@@ -4,12 +4,12 @@ import { prefixLink } from 'gatsby-helpers'; // eslint-disable-line
 
 function generateNextPostsList(posts) {
   if (posts) {
-    return posts.map(({ data: { title, excerpt, readTime }, path }) =>
+    return posts.map(({ data: { title, description, readTime }, path }) =>
       <li key={title}>
         <Link to={prefixLink(path)}>
           {title}
         </Link> &middot; <small>{readTime}</small>
-        <p><small>{excerpt}</small></p>
+        <p><small>{description}</small></p>
       </li>
     );
   }

@@ -58,16 +58,18 @@ export default function (content) {
   const meta = frontMatter(content);
   const body = md.render(meta.body);
   const { text: readTime, words } = readingTime(striptags(body));
-  const excerpt = excerptHtml(body, {
-    pruneLength: 250
-  });
+
+  if (!meta.attributes.description) {
+    meta.attributes.description = excerptHtml(body, {
+      pruneLength: 250
+    });
+  }
 
   if (typeof meta.attributes.readNext === 'string') {
     meta.attributes.readNext = [meta.attributes.readNext];
   }
 
   const result = Object.assign({}, meta.attributes, {
-    excerpt,
     readTime,
     words,
     body

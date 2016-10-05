@@ -1,18 +1,17 @@
 import { config } from 'config'; // eslint-disable-line
 import React, { PropTypes } from 'react';
-import DocumentTitle from 'react-document-title';
+import Helmet from 'react-helmet';
 import Archive from '../src/components/Archive';
 
 export default function BlogIndex({ route }) {
   return (
-    <DocumentTitle title='Blog'>
-      <section className='content'>
-        <header>
-          <h2>Archive</h2>
-        </header>
-        <Archive route={route} />
-      </section>
-    </DocumentTitle>
+    <section className='content'>
+      <Helmet title='Blog' />
+      <header>
+        <h2>Archive</h2>
+      </header>
+      <Archive route={route} />
+    </section>
   );
 }
 

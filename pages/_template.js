@@ -3,8 +3,7 @@ import Masthead from '../src/components/Masthead';
 import Footer from '../src/components/Footer';
 import '../src/css/yuppies.css';
 
-export default function Template(props) {
-  const { children } = props;
+export default function Template({ children }) {
   return (
     <main>
       <Masthead />

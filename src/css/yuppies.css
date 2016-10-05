@@ -76,6 +76,7 @@ html {
   font-family: 'Inconsolata', 'Andale Mono', 'PT Mono', 'Courier New', monospace;
   font-size: 18px;
   line-height: 1.5;
+  overflow-y: scroll;
 
   @media screen and (max-width: 600px) {
     font-size: 16px;

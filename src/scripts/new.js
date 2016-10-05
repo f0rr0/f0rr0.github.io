@@ -12,14 +12,20 @@ const questions = [
   {
     type: 'input',
     name: 'title',
-    message: 'Enter a title : ',
+    message: 'Enter a title      : ',
     default: `My Next ${capitalize(superb())} Post`
   },
   {
     type: 'input',
     name: 'path',
-    message: 'Set a path    : ',
+    message: 'Set a path         : ',
     default: answers => slugify(answers.title)
+  },
+  {
+    type: 'input',
+    name: 'description',
+    message: 'Describe this post : ',
+    default: answers => `A ${superb()} description for ${answers.title}`
   }
 ];
 
@@ -29,6 +35,7 @@ prompt(questions).then((answers) => {
   const fm = {
     title: answers.title,
     date: moment().format('MM/DD/YYYY'),
+    description: answers.description,
     draft: true
   };
   const fileString = `---\n${dumpYaml(fm)}---\n`;

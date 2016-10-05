@@ -1,5 +1,6 @@
 import { MediumClient as Medium } from 'medium-sdk';
 import { processFile as parseToJSON } from 'md-yaml-json';
+import cheerio from 'cheerio';
 import { extname } from 'path';
 import recursiveReaddir from 'recursive-readdir';
 import { prompt } from 'inquirer';
@@ -38,20 +39,31 @@ recursiveReaddir(postsDir, [ignoreFunc], (err, files) => {
     scanSpinner.fail();
     process.exit();
   }
-  scanSpinner.succeed();
+
   const posts = files.map((file) => {
     const { meta: { title, draft, path, mtime }, html } = parseToJSON(file);
 
     // md-yaml-json sets path for us. Use it to get relative path from /pages
     const relativePath = path.split('pages/').pop().split('index.md').shift();
+
+    const $ = cheerio.load(html, {
+      recognizeSelfClosing: true
+    });
+    $('img').each((index, elem) => {
+      const src = $(elem).attr('src').split('./').pop();
+      $(elem).attr('src', `${DOMAIN}/${relativePath}${src}`);
+    });
+
     return {
       title,
       draft,
-      html,
+      html: $.html(),
       path: relativePath,
       mtime: moment(mtime).valueOf()
     };
   });
+
+  scanSpinner.succeed();
 
   // Prepare prompt choices from parsed files, disable drafts, sort by mtime
   const choices = sortBy(posts, ({ mtime }) => mtime)

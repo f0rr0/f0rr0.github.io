@@ -1,6 +1,6 @@
 import { MediumClient as Medium } from 'medium-sdk';
 import { processFile as parseToJSON } from 'md-yaml-json';
-import cheerio from 'cheerio';
+import { load as parseHtml } from 'cheerio';
 import { extname } from 'path';
 import recursiveReaddir from 'recursive-readdir';
 import { prompt } from 'inquirer';
@@ -47,7 +47,7 @@ recursiveReaddir(postsDir, [ignoreFunc], (err, files) => {
     const relativePath = path.split('pages/').pop().split('index.md').shift();
 
     // Replace relative image links to absolute
-    const $ = cheerio.load(html, {
+    const $ = parseHtml(html, {
       recognizeSelfClosing: true
     });
     $('img').each((index, elem) => {

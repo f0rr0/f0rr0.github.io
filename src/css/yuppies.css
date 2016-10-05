@@ -4,50 +4,6 @@
 
 /* -------------------------------------------------------------------------- */
 
-/* Inspired by https://github.com/sindresorhus/pure and https://zpao.com/
- * #21232d - darkGunMetal
- * #d8d8d6 - timberwolf
- * #f3f99d - pastelYellow
- * #57c7ff - mayaBlue
- * #5af78e - veryLightMalachiteGreen
- * #f92672 - razzmatazz
- * #9aedfe - winterWizard
- * #ff6ac1 - hotPink
- * #1d1f21 - darkJungleGreen
- * #c5c8c6 - lavenderGray
- * #3E4256 - arsenic
- * #353849 - onyx
- * #2a2c3c - gunMetal
- * #0d2839
- * #0a1f2d
- * #99acb8
- * #6d6d6d
- */
-
-/* -------------------------------------------------------------------------- */
-
-/* Modular scale
- * Base: 18px, Scale: major second (8:9)
- * 51.957px 2.887em 3.247em @ 16
- * 46.184px 2.566em 2.887em @ 16
- * 41.053px 2.281em 2.566em @ 16
- * 36.491px 2.027em 2.281em @ 16
- * 32.437px 1.802em 2.027em @ 16
- * 28.833px 1.602em 1.802em @ 16
- * 25.629px 1.424em 1.602em @ 16
- * 22.781px 1.266em 1.424em @ 16
- * 20.25px 1.125em 1.266em @ 16
- * 18px 1em 1.125em @ 16
- * 16px 0.889em 1em @ 16
- * 14.222px 0.79em 0.889em @ 16
- * 12.642px 0.702em 0.79em @ 16
- * 11.237px 0.624em 0.702em @ 16
- * 9.989px 0.555em 0.624em @ 16
- * 8.879px 0.493em 0.555em @ 16
- */
-
-/* -------------------------------------------------------------------------- */
-
 /* SITEWIDE GENERAL */
 
 * {
@@ -637,3 +593,45 @@ footer {
     }
   }
 }
+
+/* -------------------------------------------------------------------------- */
+
+/* COLORS
+ * #21232d - darkGunMetal
+ * #d8d8d6 - timberwolf
+ * #f3f99d - pastelYellow
+ * #57c7ff - mayaBlue
+ * #5af78e - veryLightMalachiteGreen
+ * #f92672 - razzmatazz
+ * #9aedfe - winterWizard
+ * #ff6ac1 - hotPink
+ * #1d1f21 - darkJungleGreen
+ * #c5c8c6 - lavenderGray
+ * #3E4256 - arsenic
+ * #353849 - onyx
+ * #2a2c3c - gunMetal
+ */
+
+/* -------------------------------------------------------------------------- */
+
+/* SCALE
+ * Base: 18px, Scale: major second (8:9)
+ * 51.957px 2.887em 3.247em @ 16
+ * 46.184px 2.566em 2.887em @ 16
+ * 41.053px 2.281em 2.566em @ 16
+ * 36.491px 2.027em 2.281em @ 16
+ * 32.437px 1.802em 2.027em @ 16
+ * 28.833px 1.602em 1.802em @ 16
+ * 25.629px 1.424em 1.602em @ 16
+ * 22.781px 1.266em 1.424em @ 16
+ * 20.25px 1.125em 1.266em @ 16
+ * 18px 1em 1.125em @ 16
+ * 16px 0.889em 1em @ 16
+ * 14.222px 0.79em 0.889em @ 16
+ * 12.642px 0.702em 0.79em @ 16
+ * 11.237px 0.624em 0.702em @ 16
+ * 9.989px 0.555em 0.624em @ 16
+ * 8.879px 0.493em 0.555em @ 16
+ */
+
+/* -------------------------------------------------------------------------- */

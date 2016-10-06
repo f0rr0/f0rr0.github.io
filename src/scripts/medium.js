@@ -1,7 +1,9 @@
 import { MediumClient as Medium } from 'medium-sdk';
-import { processFile as parseToJSON } from 'md-yaml-json';
+import { processFile as parseMd } from 'md-yaml-json';
+import { parse as parseToml } from 'toml';
 import { load as parseHtml } from 'cheerio';
-import { extname } from 'path';
+import { resolve, extname } from 'path';
+import { readFileSync } from 'fs';
 import recursiveReaddir from 'recursive-readdir';
 import { prompt } from 'inquirer';
 import chalk from 'chalk';
@@ -16,11 +18,14 @@ const scanSpinner = ora({
 });
 scanSpinner.start();
 
+// parse config.toml
+const config = parseToml(readFileSync(`${resolve(__dirname, '../../config.toml')}`).toString());
+
 // Get token from .env file and instantiate client
 dotenv.config({ path: `${__dirname}/.env` });
-const { TOKEN, DOMAIN, TITLE } = process.env;
-if (!TOKEN || !DOMAIN || !TITLE) {
-  scanSpinner.message = chalk.red('Error: Auth token, domain name and title must be set in .env file!');
+const { TOKEN } = process.env;
+if (!TOKEN) {
+  scanSpinner.message = chalk.red('Error: Auth token must be set in .env file!');
   scanSpinner.fail();
   process.exit();
 }
@@ -41,7 +46,7 @@ recursiveReaddir(postsDir, [ignoreFunc], (err, files) => {
   }
 
   const posts = files.map((file) => {
-    const { meta: { title, draft, path, mtime }, html } = parseToJSON(file);
+    const { meta: { title, draft, path, mtime }, html } = parseMd(file);
 
     // md-yaml-json sets path for us. Use it to get relative path from /pages
     const relativePath = path.split('pages/').pop().split('index.md').shift();
@@ -52,7 +57,7 @@ recursiveReaddir(postsDir, [ignoreFunc], (err, files) => {
     });
     $('img').each((index, elem) => {
       const src = $(elem).attr('src').split('./').pop();
-      $(elem).attr('src', `${DOMAIN}/${relativePath}${src}`);
+      $(elem).attr('src', `${config.domain}/${relativePath}${src}`);
     });
 
     return {
@@ -109,7 +114,7 @@ recursiveReaddir(postsDir, [ignoreFunc], (err, files) => {
         const { title, html, path } = post;
 
         // Add title and cross-post ref. Medium requires title be set in body
-        const content = `<h1>${title}</h1>${html}<strong><em>Cross-posted from <a href='${DOMAIN}/${path}'>${TITLE}</a></em></strong>`;
+        const content = `<h1>${title}</h1>${html}<strong><em>Cross-posted from <a href='${config.domain}/${path}'>${config.blogTitle}</a></em></strong>`;
 
         const uploadSpinner = ora({
           color: 'green',

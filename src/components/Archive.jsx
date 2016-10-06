@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import { prefixLink } from 'gatsby-helpers'; // eslint-disable-line
 import moment from 'moment';
-import { getBlogPosts } from '../utils/blog-helpers.js';
+import { getBlogPosts } from '../utils/blog-helpers';
 
 const generatePostsTable = ({ route }) => {
   const rows = [];

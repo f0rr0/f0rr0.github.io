@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-exports.onRouteUpdate = (location) => {
+export function onRouteUpdate(location) {
   if (location.hash) {
     setTimeout(() => {
       document.querySelector(`${location.hash}`).scrollIntoView();

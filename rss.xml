@@ -3,13 +3,13 @@
     <channel>
         <title>Yuppies</title>
         <description>By Siddharth Jain — an open source developer interested in minimal design, advanced JavaScript and everything λ. He is currently available for contract development on a project basis.</description>
-        <link>https://yuppi.es/</link>
-        <lastBuildDate>Thu, 06 Oct 2016 16:00:05 GMT</lastBuildDate>
+        <link>https://yuppi.es</link>
+        <lastBuildDate>Thu, 06 Oct 2016 16:02:56 GMT</lastBuildDate>
         <docs>http://blogs.law.harvard.edu/tech/rss</docs>
         <image>
             <title>Yuppies</title>
             <url>https://yuppi.es/avatar.jpg</url>
-            <link>https://yuppi.es/</link>
+            <link>https://yuppi.es</link>
         </image>
         <copyright>All rights reserved  2016, Siddharth Jain</copyright>
         <generator>Feed for Node.js</generator>

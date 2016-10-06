@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://yuppi.es</id>
+    <title>Yuppies</title>
+    <updated>2016-10-06T16:00:05Z</updated>
+    <author>
+        <name>Siddharth Jain</name>
+        <email>sid26@ucla.edu</email>
+        <uri>https://yuppi.es/about</uri>
+    </author>
+    <link rel="alternate" href="https://yuppi.es/"/>
+    <subtitle>By Siddharth Jain — an open source developer interested in minimal design, advanced JavaScript and everything λ. He is currently available for contract development on a project basis.</subtitle>
+    <logo>https://yuppi.es/avatar.jpg</logo>
+    <rights>All rights reserved  2016, Siddharth Jain</rights>
+    <generator>Feed for Node.js</generator>
+    <entry>
+        <title type="html"><![CDATA[Kickback With Koa & Webpack]]></title>
+        <id>https://yuppi.es/blog/kickback-with-koa-webpack/</id>
+        <link href="https://yuppi.es/blog/kickback-with-koa-webpack/">
+        </link>
+        <updated>2016-06-27T18:30:00Z</updated>
+        <summary type="html"><![CDATA[Build a KoaJS server with ES7 async/await. Hot patch it without restarting via Webpack Hot Module Replacement. Achieve DX nirvana.]]></summary>
+        <content type="html"><![CDATA[<figure class="full-width"><img src="https://yuppi.es/blog/kickback-with-koa-webpack/banner.png" alt="Written at Kerckhoff Coffee House ~ LA Westside"><figcaption>Written at Kerckhoff Coffee House ~ LA Westside</figcaption></figure>
+<h4>Yet Another JavaScript Framework?</h4>
+<p><a href="https://nodejs.org/en/about/">Node.js</a> itself offers a
+<a href="https://nodejs.org/docs/latest/doc/api/http.html#http_http">http</a> module which
+exposes methods that facilitate creating HTTP clients and servers. However, in
+order to support the full spectrum of possible HTTP applications, Node.js&#x2019; HTTP
+API is very low-level. This is where frameworks like
+<a href="http://expressjs.com/">Express</a>, <a href="http://hapijs.com/">Hapi</a>,
+<a href="http://restify.com/">Restify</a>, and <a href="http://koajs.com/">Koa</a> come in.</p>
+<h4>Quick Word on Express</h4>
+<p>Express is undoubtedly the most popular Node.js application framework in use
+today. A quick check reveals that 10434 packages on
+<a href="https://www.npmjs.com/">npm</a> list Express as a dependency. This number probably
+increases by the day. The initial commit for Express was made in 2009 by <a href="https://medium.com/u/bbb3c7ccb0a0">TJ
+Holowaychuk</a> and 660 commits later, version
+0.0.1 was released. Express ownership was transferred to StrongLoop, in 2014,
+which eventually got acquired by IBM. The current lead maintainer of the project
+<a href="https://github.com/expressjs/express/issues/2844#issuecomment-173758490">did not have many nice things to
+say</a>
+about StrongLoop/IBM.</p>
+<h4>Aloha Koa</h4>
+<p>The initial commit for Koa was 3 years ago, by none other than the man himself &#x2014;
+<a href="https://medium.com/u/bbb3c7ccb0a0">TJ Holowaychuk</a>. He described it back then
+as:</p>
+<blockquote>
+<p>&#x201C;Expressive middleware for node.js using generators via
+<a href="https://github.com/tj/co">co</a> to make writing web applications and REST APIs
+more enjoyable to write&#x201D;.</p>
+</blockquote>
+<p>Basically, Koa allows you to do away with the callback pattern and makes
+error-handling more efficient. Everything in Koa is middleware which makes
+writing code more intuitive and easy (at least for me). Koa accomplished this
+with <a href="https://davidwalsh.name/es6-generators">generators</a> which were
+introduced in <a href="http://www.ecma-international.org/ecma-262/6.0/">ES2015 (ES6)</a>.
+This can be run natively in Node.js version 0.11+ (with the <code>--harmony</code> flag).
+As of <a href="https://github.com/koajs/koa/blob/v2.x/History.md#200-alpha1--2015-10-22">version
+2.0.0-alpha.1</a>,
+however, the codebase was refactored to <a href="https://tc39.github.io/ecmascript-asyncawait/">async
+functions</a> (<a href="https://tc39.github.io/ecma262/2016/">ES2016 or
+ES7</a>) in favor of generators.
+Unfortunately, these are <a href="https://bugs.chromium.org/p/v8/issues/detail?id=4483">not
+supported</a> natively in
+<a href="https://developers.google.com/v8/">V8</a> (underlying engine behind the Node.js
+runtime) yet.</p>
+<h4>Tools of the Trade</h4>
+<p>Since Node.js (V8) does not support <code>async</code> functions natively, we will use
+<a href="https://babeljs.io/">Babel</a> to transpile them. JavaScript, as a language, is
+constantly evolving with new specs and proposals coming out all the time. Babel
+allows us to use these features years before they are available everywhere.</p>
+<blockquote>
+<p>Babel does this by compiling down JavaScript code written with the latest
+standards into a version that will work in today&#x2019;s environments. This process is
+known as source-to-source compiling aka transpiling.</p>
+</blockquote>
+<p>To build our application, we will use the <a href="https://webpack.github.io/">Webpack</a>
+module bundler which provides an infrastructure for building and transforming
+modules. It is discussed in detail in the subsequent sections.</p>
+<h4>Talk is Cheap. Show Me the Code.</h4>
+<p>The final GitHub repository is linked <a href="https://github.com/f0rr0/koa-webpack-boilerplate">here</a>. Before you begin hacking, make sure you have the latest version of Node.js
+<a href="https://nodejs.org/en/">installed</a>. I prefer to use
+<a href="https://github.com/tj/n">n</a> to interactively manage Node.js versions. (While
+writing this, I discovered that the author of &#x2019;n&#x2019; is <a href="https://medium.com/u/bbb3c7ccb0a0">TJ
+Holowaychuk</a> yet again.)</p>
+<pre><code class="language-sh">sudo npm cache clean -f
+sudo npm install -g n
+sudo n latest
+</code></pre>
+<p>To use some npm commands without <code>sudo</code> you might have to <a href="https://docs.npmjs.com/getting-started/fixing-npm-permissions">fix
+permissions</a>.</p>
+<h4>Boilerplate for Boilerplate</h4>
+<p>We need to set up a minimal NPM package with a <code>package.json</code> file, a directory
+for source, and certain essential files for our development tools.</p>
+<figure><img src="https://yuppi.es/blog/kickback-with-koa-webpack/dirstructure.png" alt=""></figure>
+<p>Go ahead and clone the final repository to your machine to build the minimal
+server from source.</p>
+<pre><code class="language-sh">git clone https://github.com/f0rr0/koa-webpack-boilerplate
+cd koa-webpack-boilerplate
+npm install
+npm run build:prod
+npm start
+</code></pre>
+<p>If you want to be articulate and follow from scratch, the following GIF will help:</p>
+<figure><img src="https://yuppi.es/blog/kickback-with-koa-webpack/bootstrap.gif" alt=""></figure>
+<h4>Unbundling Webpack</h4>
+<p>Webpack was authored by JavaScript superhero <a href="https://github.com/sokra">Tobias
+Koppers</a>. It is used in the
+<a href="http://stackshare.io/webpack/in-stacks#/">wild</a> at Pinterest, Hipmunk,
+Soundcloud and Typeform among others. It is different from other build tools
+(<a href="http://gruntjs.com/">Grunt</a>, <a href="http://gulpjs.com/">Gulp</a>,
+<a href="http://brunch.io/">Brunch</a> etc.), that you might be familiar with, since it
+does <strong>more</strong> than watching a path and running tasks on files.</p>
+<blockquote>
+<p>Webpack roams over your application source code, looking for import/require
+statements, building a dependency graph, and emitting one (or more) <em>bundles</em>
+for the web (<a href="https://webpack.github.io/docs/configuration.html#target">or other
+targets</a>).</p>
+</blockquote>
+<figure><img src="https://yuppi.es/blog/kickback-with-koa-webpack/webpack.png" alt=""></figure>
+<p>It may seem like you can use webpack with only JavaScript modules but that is
+not true. With appropriate webpack
+<a href="https://webpack.github.io/docs/loaders.html">loaders</a>, you can bundle any
+file-type and pre-process it. Basically, what this means is, you can do the
+following in your front-end application with the
+<a href="https://github.com/webpack/css-loader">css-loader</a>:</p>
+<pre><code class="language-js">require(&apos;css!./styles/main.css&apos;);
+</code></pre>
+<p>If this does not make you run naked in the streets, then I don&#x2019;t know what will.
+You can even chain loaders to process files on the fly, like so:</p>
+<pre><code class="language-js">require(&apos;style!css!sass!./styles/main.sass&apos;);
+</code></pre>
+<p>This one-liner appropriately parses the SASS file to CSS and injects it into the DOM in a style tag. To learn more about webpack, read <a href="https://medium.com/u/3b799f227b58">Pete Hunt</a>&#x2019;s <a href="https://github.com/petehunt/webpack-howto">webpack-howto</a>.</p>
+<p>When used from the CLI, webpack looks for a configuration file named <code>webpack.config.js</code> in the directory from where webpack was invoked. You can also supply your config file using the <code>--config</code> option from the CLI. So let&#x2019;s install webpack and set up the config file for our repository.</p>
+<p>Note &#x2014; You can view and install specific <code>dist-tags</code> for a package on <code>npm</code> like so:</p>
+<pre><code class="language-sh">npm view &lt;package-name&gt; dist-tags
+npm install &lt;package-name&gt;@&lt;dist-tag&gt;
+</code></pre>
+<p>In the root directory of your repository:</p>
+<pre><code class="language-sh">npm install -D webpack@beta
+</code></pre>
+<p>This installs webpack as a <strong>development dependency</strong> to your package. Beginning from version 2+, the webpack config file can export a function which returns the configuration. The function is called by the CLI and the value passed via <code>--env</code> from the CLI is passed to the configuration function. Our minimal <code>webpack.config.js</code> will look like so:</p>
+<pre><code class="language-js">const { resolve } = require(&apos;path&apos;);
+const { dependencies } = require(&apos;./package.json&apos;);
+const BabiliPlugin = require(&quot;babili-webpack-plugin&quot;);
+
+const nodeModules = {};
+
+Object
+    .keys(dependencies)
+    .forEach((mod) =&gt; {
+     nodeModules[mod] = `commonjs ${mod}`;
+    });
+
+module.exports = (env = { dev: true }) =&gt; ({
+    context: resolve(__dirname, &apos;./src&apos;),
+    entry: {
+     server: env.prod ? &apos;./index.js&apos; : [&apos;webpack/hot/poll?1000&apos;, &apos;./index.js&apos;]
+    },
+    target: &apos;node&apos;,
+    output: {
+     filename: &apos;[name].js&apos;,
+     path: resolve(__dirname, &apos;./build&apos;),
+     pathInfo: !env.prod
+    },
+    devtool: env.prod ? &apos;source-map&apos; : &apos;eval&apos;,
+    module: {
+     loaders: [
+       {
+         test: /\.js$/,
+         exclude: /node_modules/,
+         loaders: [
+           &apos;babel-loader&apos;
+         ]
+       }
+     ]
+    },
+    plugins: env.prod ? [
+      new BabiliPlugin()
+    ] : [],
+    externals: nodeModules
+});
+</code></pre>
+<p>The various configuration options are well documented
+<a href="http://webpack.github.io/docs/configuration.html#configuration-object-content">here</a>.
+I&#x2019;ll explain a couple of quirks related to a non-browser environment below:</p>
+<ul>
+<li><strong>externals:</strong> When writing a server and bundling it with webpack, we don&#x2019;t want our dependencies to be resolved by webpack. Instead, they will become the dependencies of the bundle we generate. To accomplish this, we pull our dependencies from the <code>package.json</code> file and prefix them with <code>commonjs</code>. The Webpack generated import code for a prefixed fictional dependency named <code>xyz</code> will then look like so:</li>
+</ul>
+<pre><code class="language-js">module.exports = require(&quot;xyz&quot;);
+</code></pre>
+<p>To ensure that this behaviour is consistent, install dependencies with the <code>-S</code>
+or <code>--save</code> option.</p>
+<ul>
+<li><strong>target:</strong> Setting the target for our bundle to <em>node</em> compiles our modules to be run in a Node.js like environment. What this does is essentially the same as above. It prepends all native modules available in the current Node.js environment with <code>commonjs</code>. Internally, the names of all such modules available to the current process are obtained by:</li>
+</ul>
+<pre><code class="language-sh">process.binding(&quot;natives&quot;);
+</code></pre>
+<p>This returns an object with all the native modules like <code>dns</code>, <code>domain</code>, <code>events</code>, <code>fs</code>, <code>http</code> etc.</p>
+<h4>Dabble in Babel</h4>
+<p>Babel is used in the <a href="https://babeljs.io/users/">wild</a> by the likes of Facebook, Netflix, Airbnb and Yahoo. As mentioned earlier, we will use Babel to transpile our ES6/7 code. This is accomplished from within webpack via the <code>babel-loader</code>. Our config looks for files ending in <code>.js</code> in the <code>./src</code> directory and loads them with <code>babel-loader</code>. Before you can use it though, you need to install it:</p>
+<pre><code class="language-sh">npm install -D babel-loader babel-core
+</code></pre>
+<p>This installs <code>babel-loader</code>, again, as a <strong>development dependency</strong>. <code>babel-loader</code> in turn lists <code>babel-core</code> as its peer dependency which needs to be installed. This is the babel compiler core which exposes the Node.js API. At a high level, Babel runs in three stages: parsing, transforming, and generation. Out of the box, Babel does not transform anything. It just parses code and spits it out exactly the same. To make Babel transform code, we need to (you guessed it!) install plugins.</p>
+<p>If you updated your Node.js installation to the latest version, as mentioned earlier, you&#x2019;d have probably ended up with 6.2.2+ which supports <a href="http://node.green/">96%</a> of the ES2015(ES6) features. V8 hasn&#x2019;t landed <a href="https://bugs.chromium.org/p/v8/issues/detail?id=1569">support</a> for ES6 native modules yet but Webpack 2+ takes care of that for us. It understands native ES6 modules which are statically analyzable. This helps in getting rid of extraneous exports from our build aka dead code elimination. Webpack accomplishes this with <a href="http://www.2ality.com/2015/12/webpack-tree-shaking.html">tree-shaking</a>. Sweet! So we just need to worry about those <em>async</em> functions that Node.js 6.2.2 doesn&#x2019;t understand.</p>
+<p>The plugin we need is <a href="http://babeljs.io/docs/plugins/transform-async-to-generator/">babel-plugin-transform-async-to-generator</a>. The name is more than self-explanatory. Babel can be configured to use these plugins via the <code>.babelrc</code> file which lives in the root of our repository. Our tiny <code>.babelrc</code> file looks like so:</p>
+<pre><code class="language-json5">{
+  &quot;plugins&quot;: [&quot;transform-async-to-generator&quot;]
+}
+</code></pre>
+<p>Obviously, it needs to be installed as a <strong>development dependency</strong> before you
+can use it:</p>
+<pre><code class="language-sh">npm install -D babel-plugin-transform-async-to-generator
+</code></pre>
+<h4>Catch &#x2019;em All With Koa</h4>
+<p>With our build tools in place, we can start writing the server finally. As mentioned earlier, Koa is a very minimal framework and does not offer much out of the box. Everything in Koa is middleware and there are quite a few of them. We will be using Koa 2 which can be installed with the <code>next</code> dist-tag. Go ahead and install Koa and a couple of middleware like so:</p>
+<pre><code class="language-sh">npm install -S koa@next koa-route@next koa-logger@next
+</code></pre>
+<p>For the purpose of this article, we will be mocking a database with the <a href="https://pokeapi.co/">Pokeapi</a>. Since Koa expects <code>xyz</code> to return a Promise in all <code>await xyz</code> expressions, we will make use of <a href="https://github.com/PokeAPI/pokedex-promise-v2">pokedex-promise-v2</a> which is simply a Promise based wrapper for the Pokeapi. Install it like so:</p>
+<pre><code class="language-sh">npm install -S pokedex-promise-v2
+</code></pre>
+<p>We will abstract our database logic into separate modules. Go ahead and create
+two new files in the <code>./src</code> directory.</p>
+<pre><code class="language-sh">cd src
+touch pokemondb.js stats.js
+</code></pre>
+<ul>
+<li><strong>pokemondb.js</strong> just exports a function that takes a string as an argument
+and returns a Promise.</li>
+</ul>
+<pre><code class="language-js">import Pokedex from &apos;pokedex-promise-v2&apos;;
+
+const P = new Pokedex();
+
+export default function get (pokemon) {
+   return P.getPokemonByName(pokemon);
+};
+</code></pre>
+<ul>
+<li><strong>stats.js</strong> also exports a function that takes an object as an argument and
+return a string.</li>
+</ul>
+<pre><code class="language-js">export default function stats (data) {
+   return (
+      `
+      NAME   : ${data.name}
+      HEIGHT : ${data.height}
+      WEIGHT : ${data.weight}
+      BASE XP: ${data.base_experience}
+      `
+   );
+}
+</code></pre>
+<p>With our mock database and helper method in place, we can go ahead and consume
+it in our server. The <code>index.js</code> looks like so:</p>
+<pre><code class="language-js">import get from &apos;./pokemondb&apos;;
+import stats from &apos;./stats&apos;;
+import Koa from &apos;koa&apos;;
+import route from &apos;koa-route&apos;;
+import logger from &apos;koa-logger&apos;;
+
+const getPokemonFromAPI = async (ctx, name) =&gt; {
+  try {
+   const data = await get(name);
+   ctx.body = stats(data);
+  } catch (err) {
+    ctx.throw(404, err.error.detail);
+  }
+};
+
+const app = new Koa();
+app.use(logger())
+   .use(route.get(&apos;/:name&apos;, getPokemonFromAPI))
+   .listen(8000);
+console.log(&apos;Listening on Port 8000&apos;);
+</code></pre>
+<p>The main point of interest here is the asynchronous <code>getPokemonFromAPI</code>
+function. If you have done asynchronous programming in JavaScript before, you
+must be aware of the <a href="http://callbackhell.com/">callback pattern and the problems it
+brings</a>. If that is indeed the case, this function
+should make you shed tears of joy. Note how this idiom lets us handle errors
+gracefully in a try-catch block.</p>
+<p>We will be using some neat npm run scripts to build and start our server.</p>
+<pre><code class="language-sh">&apos;scripts&apos;: {
+  &apos;clean&apos;: &apos;rm -rf ./build&apos;,
+  &apos;build:prod&apos;: &apos;npm run clean &amp;&amp; `npm bin`/webpack --env.prod&apos;,
+  &apos;watch&apos;: &apos;npm run clean &amp;&amp; `npm bin`/webpack --watch --verbose&apos;,
+  &apos;start&apos;: &apos;node ./build/server.js&apos;
+}
+</code></pre>
+<p>Besides <code>start</code> and <code>clean</code>, which are trivial, we will use <code>build:prod</code> to make
+a production build by passing <code>prod</code> via <code>--env</code> as mentioned earlier.</p>
+<p>Go ahead and run the following in the root of your repository and open
+<code>localhost:8000</code> in your browser.</p>
+<pre><code class="language-sh">npm run build:prod
+npm start
+</code></pre>
+<p>Well, there isn&#x2019;t much to see because our server returned a 404.</p>
+<figure><img src="https://yuppi.es/blog/kickback-with-koa-webpack/404.png" alt="Oh no!"><figcaption>Oh no!</figcaption></figure>
+<p>This is understandable since we don&#x2019;t have a route handler attached to our base
+URL: <code>&#x2018;/&#x2019;</code>. This prompts Koa to return it&#x2019;s default 404 message. Go ahead and
+fix this by adding that route-handler to our <code>index.js</code> file.</p>
+<figure><img src="https://yuppi.es/blog/kickback-with-koa-webpack/routehandler.png" alt=""></figure>
+<p>Before you can see these changes reflected, you need to build the bundle again.
+This is a bummer. We want our bundle to be regenerated every time we make
+changes to our source files. Our <code>watch</code> script takes care of that by running
+Webpack in development mode with the <code>--watch</code> option. Webpack will now watch
+our files and generate a new bundle when we save changes. Run the <code>watch</code> script
+like so:</p>
+<pre><code class="language-sh">npm run watch
+</code></pre>
+<p>Webpack won&#x2019;t exit since it keeps watching the files. Open a new shell in the
+root of your repository to start the server.</p>
+<pre><code class="language-sh">npm start # in new shell tab
+</code></pre>
+<p>If you see an error like:</p>
+<pre><code class="language-sh">Error: listen EADDRINUSE :::8000
+</code></pre>
+<p>Make sure you exit all currently running servers (Ctrl+C) before starting a
+new one. Refresh your browser and you should see:</p>
+<figure><img src="https://yuppi.es/blog/kickback-with-koa-webpack/catchemall.png" alt=""></figure>
+<p>We can get stats for any Pokemon by pointing our browser to the respective name
+like so:</p>
+<figure><img src="https://yuppi.es/blog/kickback-with-koa-webpack/stats.png" alt=""></figure>
+<h4>Do You Even HMR?</h4>
+<p>If you play around with what we have so far, you&#x2019;ll tend to notice that our workflow is still a little complicated. We need to manually restart our server whenever we make changes since a new bundle is generated. To get past that we may use a process manager (<a href="http://pm2.keymetrics.io/">pm2</a>, <a href="http://nodemon.io/">nodemon</a>, <a href="http://strong-pm.io/">StrongLoopPM</a>) to watch our files and trigger a webpack build before restarting our server. This definitely removes the hassle of doing it manually. However, it works well if we are not doing anything stateful or don&#x2019;t care about losing state in our server code. Go ahead and take a look at <a href="https://medium.com/u/a3a8af6addc1">Dan Abramov</a>&#x2019;s <a href="https://gaearon.github.io/react-hot-loader/">react-hot-loader</a> if this doesn&#x2019;t make sense. Let us leverage Webpack&#x2019;s <a href="https://webpack.github.io/docs/hot-module-replacement.html">Hot Module Replacement</a> API to hot patch our server side code. For now, we will restrict ourselves to the development environment.</p>
+<p>Note that we are currently using <a href="https://github.com/webpack/webpack/blob/master/hot/poll.js">webpack/hot/poll</a> which polls the Node.js filestream (<code>fs</code>) every 1000 ms. In production we might want to use the more efficient <a href="https://github.com/webpack/webpack/blob/master/hot/signal.js">webpack/hot/signal</a> which listens on process events to check for updates. Creating a separate directory for the records Webpack will generate should also be a good idea.</p>
+<p>The watch script needs to be modified to enable HMR. This can also be done by
+using the <code>HotModuleReplacementPlugin</code> but don&#x2019;t use both.</p>
+<pre><code class="language-sh">&apos;watch&apos;: &apos;npm run clean &amp;&amp; `npm bin`/webpack --env.dev --watch -- verbose --hot&apos;
+</code></pre>
+<p>We don&#x2019;t need to do much to handle the updated dependencies in our main
+<code>index.js</code> file since we are using ES6 modules which are static in nature. The
+following would suffice:</p>
+<figure><img src="https://yuppi.es/blog/kickback-with-koa-webpack/hmr.png" alt=""></figure>
+<p>Go ahead and run the <code>watch</code> script followed by the <code>start</code> script in another
+tab as before. Make changes to the <code>stats.js</code> module and refresh your browser to
+see them live <strong>without restarting the server</strong>. The GIF below illustrates this
+in the terminal:</p>
+<figure><img src="https://yuppi.es/blog/kickback-with-koa-webpack/final.gif" alt=""></figure>
+<h4>Fin?</h4>
+<p>HMR is theoretically possible in production but has not been tested enough. It
+is better to stick to a process manager when in production. On the development
+end too however, we can take it one step further by handling the case where a
+hot update fails or aborts. The server should appropriately restart in that
+instance. Koa apps can be tested fluently with
+<a href="https://github.com/visionmedia/supertest">supertest</a> which this repository will
+implement soon.</p>
+<p>Originally &#x1F4DD; on <a href="https://medium.com/@f0rr0/kickback-with-koa-webpack-a51d7e5d7911">Medium</a>.</p>
+]]></content>
+        <author>
+            <name>Siddharth Jain</name>
+            <email>sid26@ucla.edu</email>
+            <uri>https://yuppi.es/about</uri>
+        </author>
+    </entry>
+</feed>

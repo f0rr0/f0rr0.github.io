@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yuppi.es/</id>
     <title>Yuppies</title>
-    <updated>2016-10-06T16:02:56Z</updated>
+    <updated>2016-10-06T16:15:06Z</updated>
     <author>
         <name>Siddharth Jain</name>
         <email>sid26@ucla.edu</email>
@@ -10,7 +10,6 @@
     </author>
     <link rel="alternate" href="https://yuppi.es"/>
     <subtitle>By Siddharth Jain — an open source developer interested in minimal design, advanced JavaScript and everything λ. He is currently available for contract development on a project basis.</subtitle>
-    <logo>https://yuppi.es/avatar.jpg</logo>
     <rights>All rights reserved  2016, Siddharth Jain</rights>
     <generator>Feed for Node.js</generator>
     <entry>

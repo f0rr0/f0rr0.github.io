@@ -60,5 +60,6 @@ The layout is based on a [modular scale](//alistapart.com/article/more-meaningfu
 * "Crane Operator" by __BirVa Mehta__
 * "Video Camera" by __Yorlmar Campos__
 * "Voice Message" by __Gregor Črešnar__
+* "Business Analysis" by __Delwar Hossain__
 
 The :moneybag::kiss::sunglasses::beer::smoking::cat: used on this site are rendered via ["Twemoji" by __Twitter__](//github.com/twitter/twemoji).

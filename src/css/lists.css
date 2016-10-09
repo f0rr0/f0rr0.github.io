@@ -1,3 +1,7 @@
+@charset "utf-8";
+
+@custom-selector :--pseudo ::after, ::before;
+
 .lists {
   display: flex;
   position: relative;
@@ -151,8 +155,8 @@
     display: inherit;
     color: inherit;
 
-    &::after {
-      content: none;
+    &:--pseudo {
+      display: none;
     }
   }
 }

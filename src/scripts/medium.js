@@ -114,7 +114,7 @@ recursiveReaddir(postsDir, [ignoreFunc], (err, files) => {
         const { title, html, path } = post;
 
         // Add title and cross-post ref. Medium requires title be set in body
-        const content = `<h1>${title}</h1>${html}<strong><em>Cross-posted from <a href='${config.domain}/${path}'>${config.blogTitle}</a></em></strong>`;
+        const content = `<h1>${title}</h1><strong><em>Cross-posted from <a href='${config.domain}/${path}'>${config.blogTitle}</a></em></strong>${html}`;
 
         const uploadSpinner = ora({
           color: 'green',

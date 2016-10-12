@@ -39,14 +39,14 @@ export default function BlogIndex(props) {
       <p>Hello, my name is <Link to='/about/'>Siddharth Jain</Link>.</p>
       <p>
         I am a web developer-designer living in <del>Los Angeles</del>
-        &nbsp;New Delhi.
+        &nbsp;New Delhi, currently contracting independently for <Anchor href='//bridg.com' title='Bridg' />.
       </p>
       <p>
         I use <Link to='/about/#about-yuppies'>this space</Link> primarily for <Link to='/blog/'>writing</Link> and <Link to='/hire/'>reaching out</Link> to clients. The last piece I wrote was&nbsp;
         <i><Link to={path}>&lsquo;{title}&rsquo;</Link></i> {fromNow}.
       </p>
       <p>
-        I am a huge proponent of <Anchor href='//en.wikipedia.org/wiki/Lifelog' title='lifelogging' /> and have been collecting actionable data on myself since early 2014. Here are the latest metrics from <Anchor href='//rescuetime.com' title='Rescuetime' /> and <Anchor href='//last.fm/user/sidjain26' title='Last.fm' />:
+        I am a huge proponent of <Anchor href='//en.wikipedia.org/wiki/Lifelog' title='lifelogging' /> and have been collecting actionable data on myself since early 2014. Here are the latest metrics from <Anchor href='//rescuetime.com' title='Rescuetime' /> and <Anchor href='http://last.fm/user/sidjain26' title='Last.fm' />:
       </p>
       <QuantfiedSelf />
     </section>

@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Ago from 'react-timeago';
+import Thumbnail from './Thumbnail';
 
 const Equalizer = () =>
   <div className='equaliser-container'>
@@ -43,13 +44,11 @@ export default class Track extends Component {
 
   render() {
     const { title, artist, timestamp, link, thumbs } = this.props;
-    const thumb = {
-      backgroundImage: `url(${thumbs.alt ? thumbs.alt : thumbs.yt})`
-    };
+    const thumb = thumbs.alt ? thumbs.alt : thumbs.yt;
     return (
       <a rel='noopener noreferrer' target='__blank' href={link}>
         <li style={{ opacity: 0 }} className='track' key={`${title}${artist}`}>
-          <div className='thumb' style={thumb} />
+          <Thumbnail src={thumb} />
           <div className='info'>
             <div title={title} className='title ellipsis'>{title}</div>
             <div title={artist} className='artist ellipsis'>{artist}</div>

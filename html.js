@@ -48,7 +48,6 @@ export default function HTML(props) {
       <body className='container'>
         <div id='react-mount' dangerouslySetInnerHTML={{ __html: body }} />
         <script async src={prefixLink(`/bundle.js?t=${BUILD_TIME}`)} />
-        <script async src='//platform.twitter.com/widgets.js' charSet='utf-8' />
         <script
           async
           dangerouslySetInnerHTML={{

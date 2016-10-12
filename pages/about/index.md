@@ -24,7 +24,11 @@ __tl;dr__ I do stuff on my :computer:.
 
 ## About Yuppies {style=padding-bottom:0.37em;}
 
-This site is primarily an experiment in using modern front-end tooling for blogging. Its [predecessor](//isiddharth.com) has been on the internet since 2013 and is still on a 'free-to-host' provider. I was using Blogger for sometime before switching to Tumblr. For yuppi.es however, I am using a completely custom solution built with React, Webpack, Gatsby, PostCSS, Firebase and Google Apps Script. The complete source code is [available](//github.com/f0rr0/f0rr0.github.io) from GitHub.
+This site is primarily an experiment in using modern front-end tooling for blogging. Its [predecessor](//isiddharth.com) has been on the internet since 2013 and is still on a 'free-to-host' provider. I was using Blogger for sometime before switching to Tumblr. For Yuppies however, I am using a completely custom solution built with React, Webpack, Gatsby, PostCSS, Firebase and Google Apps Script. The complete source code is [available](//github.com/f0rr0/f0rr0.github.io) from GitHub. People from the community had nice things to say about Yuppies:
+
+<blockquote class="twitter-tweet" data-cards="hidden" data-lang="en">New personal/blog site launched by <a href="https://twitter.com/f0rr0">@f0rr0</a>! Looking nice!<a href="https://t.co/mVgFCuvWOT">https://t.co/mVgFCuvWOT</a> <a href="https://t.co/FbPjYQjU2Z">pic.twitter.com/FbPjYQjU2Z</a><cite>Gatsby (@gatsbyjs) <a href="https://twitter.com/gatsbyjs/status/782982572825452545">October 3, 2016</a></blockquote>
+
+<blockquote class="twitter-tweet" data-conversation="none" data-cards="hidden" data-lang="en"><p lang="en" dir="ltr">This is top notch! <a href="https://t.co/jpV4029mg6">https://t.co/jpV4029mg6</a> <a href="https://twitter.com/f0rr0">@f0rr0</a> <a href="https://twitter.com/gatsbyjs">@gatsbyjs</a> <a href="https://t.co/XPylUpqxAn">pic.twitter.com/XPylUpqxAn</a></p>&mdash; Marc Cornellà (@MarcCornella) <a href="https://twitter.com/MarcCornella/status/785580702393774081">October 10, 2016</a></blockquote>
 
 The [color scheme](//coolors.co/21232d-d8d8d6-f3f99d-57c7ff-f92672) is specifically tuned for an enhanced [contrast ratio](//www.w3.org/TR/WCAG/#contrast-ratiodef) of 11 that conforms to Level AAA of the [WCAG 2.0](//www.w3.org/TR/UNDERSTANDING-WCAG20/visual-audio-contrast7.html).
 

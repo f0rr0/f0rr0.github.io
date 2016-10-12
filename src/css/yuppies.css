@@ -350,6 +350,15 @@ img::selection {
   }
 }
 
+.twitter-tweet {
+  margin: 0 auto;
+  padding: 0.5em 0;
+
+  & ~ p {
+    padding-top: 1.125em;
+  }
+}
+
 .share-icons {
   display: inline-block;
   padding: 0 0.5em;

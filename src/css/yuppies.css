@@ -342,8 +342,8 @@ img::selection {
     }
   }
 
-  & figure a ~ figcaption,
-  & img ~ figcaption {
+  & figure a + figcaption,
+  & img + figcaption {
     margin: 10px 0 -10px;
     font-size: 0.889em;
     font-style: italic;
@@ -354,7 +354,7 @@ img::selection {
   margin: 0 auto;
   padding: 0.5em 0;
 
-  & ~ p {
+  & + p {
     padding-top: 1.125em;
   }
 }

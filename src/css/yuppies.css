@@ -351,11 +351,8 @@ img::selection {
 }
 
 .twitter-tweet {
-  margin: 0 auto;
-  padding: 0.5em 0;
-
   & + p {
-    padding-top: 1.125em;
+    padding-top: 0.889em;
   }
 }
 

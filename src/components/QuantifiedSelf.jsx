@@ -61,7 +61,9 @@ export default class QuantfiedSelf extends Component {
   fadeIn(selector, staggerDelay = 0) {
     [...document.querySelectorAll(selector)].forEach((child, i) => { // eslint-disable-line
       setTimeout(() => {
-        child.style.opacity = 1; // eslint-disable-line
+        window.requestAnimationFrame(() => { // eslint-disable-line
+          child.style.opacity = 1; // eslint-disable-line
+        });
       }, staggerDelay + (staggerDelay * i));
     });
   }

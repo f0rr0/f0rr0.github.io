@@ -95,7 +95,7 @@
     "clean": "rm -rf ./public",
     "prebuild": " npm run clean && $(npm bin)/svgo -f ./icons -q",
     "build": "gatsby build --prefix-links",
-    "deploy": "npm run prebuild && gatsby build --prefix-links && gh-pages -d public -b master",
+    "deploy": "npm run prebuild && gatsby build --prefix-links && $(npm bin)/gh-pages -d public -b master",
     "new": "$(npm bin)/babel-node ./src/scripts/new.js",
     "medium": "$(npm bin)/babel-node ./src/scripts/medium.js ./pages/blog"
   }

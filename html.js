@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import Helmet from 'react-helmet';
 import { prefixLink } from 'gatsby-helpers'; // eslint-disable-line
-import avatar from './avatar.jpg';
+import avatar from './images/avatar.jpg';
 
 const BUILD_TIME = new Date().getTime();
 

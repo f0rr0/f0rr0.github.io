@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import ProgressiveImage from 'react-progressive-image';
+import placeholder from '../../images/albumart.png';
 
 export default function Thumbnail(props) {
   return (
@@ -14,8 +15,6 @@ export default function Thumbnail(props) {
     </ProgressiveImage>
   );
 }
-
-const placeholder = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSI+CjxyZWN0IHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgZmlsbD0iIzIxMjMyZCI+CiAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbCIgdmFsdWVzPSIjMjEyMzJkOyMzZTQyNTY7IzIxMjMyZCIgZHVyPSIxcyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiPjwvYW5pbWF0ZT4KPC9yZWN0Pgo8L3N2Zz4=';
 
 Thumbnail.propTypes = {
   src: PropTypes.string,

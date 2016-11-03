@@ -18,7 +18,7 @@ Anchor.propTypes = {
 };
 
 export default function BlogIndex(props) {
-  const latestBlogPost = getBlogPosts(props.route).pop();
+  const latestBlogPost = getBlogPosts(props.route).shift();
   const { data: { title, date }, path } = latestBlogPost;
   const fromNow = moment(date, 'MM/DD/YYYY').fromNow();
   const docTitle = `${config.blogTitle} by ${config.authorName}`;

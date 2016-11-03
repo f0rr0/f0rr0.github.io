@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yuppi.es/</id>
     <title>Yuppies</title>
-    <updated>2016-11-03T02:28:11Z</updated>
+    <updated>2016-11-03T02:40:02Z</updated>
     <author>
         <name>Siddharth Jain</name>
         <email>sid26@ucla.edu</email>
@@ -12,6 +12,48 @@
     <subtitle>By Siddharth Jain — an open source developer interested in minimal design, advanced JavaScript and everything λ. He is currently available for contract development on a project basis.</subtitle>
     <rights>All rights reserved  2016, Siddharth Jain</rights>
     <generator>Feed for Node.js</generator>
+    <entry>
+        <title type="html"><![CDATA[2016 Music in Review]]></title>
+        <id>https://yuppi.es/blog/2016-music-in-review/</id>
+        <link href="https://yuppi.es/blog/2016-music-in-review/">
+        </link>
+        <updated>2016-11-02T18:30:00Z</updated>
+        <summary type="html"><![CDATA[A round up of the seven best artists, both old and new, that I discovered in 2016.]]></summary>
+        <content type="html"><![CDATA[<p>2016 saw me clocking 10,972 listens of 2,238 different tracks from 1,344 unique artists. If anything, these numbers indicate that I spend a lot of time with my <a href="https://www.marshallheadphones.com/mh_us_en/woburn-black">Marshall</a> and <a href="http://v-moda.com/crossfade-m-100/">V-Moda</a>. But as a wise statistician once said,</p>
+<blockquote>
+<p>Statistics are like bikinis. What they reveal is suggestive, but what they conceal is vital.</p>
+</blockquote>
+<p>these numbers fail to register the great artists, both new and old, and their awesome music, that I discovered in 2016. For the sake of fellow enthusiasts, the 7 best new discoveries:</p>
+<h4>Sickick</h4>
+<p><a href="https://open.spotify.com/artist/3NR7hAacOhmcztWvD7vJfS">Spotify</a> &#xB7; <a href="https://soundcloud.com/sickickofficial">SoundCloud</a><br>
+Toronto based with R&amp;B, hip hop and melodic roots, he is the alter ego of Lomaticc from <a href="https://www.youtube.com/watch?v=n-lHXXnM4qA">Culture Shock</a>. Sickick recently opened for Drake with a live mix of the <a href="https://www.facebook.com/sickickmusic/videos/959405430847210/">feedback from a mic</a> among other offerings.</p>
+<h4>Swell</h4>
+<p><a href="https://open.spotify.com/artist/78xSB1R1x8T6o0QuRaodez">Spotify</a> &#xB7; <a href="https://soundcloud.com/swll">SoundCloud</a><br>
+Melbourne based, 16 year old Swell is part of the <a href="https://soundcloud.com/baewave">Baewave</a> collective. His style borrows from producers like Haywyre, What So Not, Kaytranada and Baauer among others. Expect a fusion of R&amp;B, deep bass and jazz instrumentals.</p>
+<h4>LRKR</h4>
+<p><a href="https://open.spotify.com/artist/0yTK74zLEsMyrdVPjw3Zqi">Spotify</a> &#xB7; <a href="https://soundcloud.com/iamlrkr">SoundCloud</a><br>
+The majority of music I listen to is lyric-less and it&#x2019;s great in the sense that it allows you to get lost in its rythms and beats. The music speaks for itself. Brooklyn based producer, LRKR, gets it absolutely right with an amalgam of hip hop and electronica with traditional woodwind interludes.</p>
+<h4>Darius</h4>
+<p><a href="https://open.spotify.com/artist/5vfEaoOBcK0Lzr07WN8KaK">Spotify</a> &#xB7; <a href="https://soundcloud.com/dariusofficial">SoundCloud</a><br>
+French producer heavily inspired from the likes of Daft Punk, Mr. Oizo and S&#xE9;bastien Tellier. His music is layered with heavy percussive beats and a gentle, calm melody.</p>
+<h4>The Deli</h4>
+<p><a href="https://open.spotify.com/artist/1EJzWKVDeysgbyuZGfEFde">Spotify</a> &#xB7; <a href="https://soundcloud.com/the-deli">SoundCloud</a><br>
+All I know about this guy is that his real name is David Pryor and he is based out of Austin. He mixes sharp percussive beats with slow, jazzy melodies and a serious amount of awesomeness.</p>
+<h4>Skott</h4>
+<p><a href="https://open.spotify.com/artist/6J3RPKUwZlKMzh3vWa9wPc">Spotify</a> &#xB7; <a href="https://soundcloud.com/skottpeace">SoundCloud</a><br>
+Scandinavian artists usually know what they&#x2019;re doing. With her R&amp;B vocals and approvals by the likes of <a href="https://twitter.com/lorde/status/743892035443122176">Lorde</a>, <a href="https://twitter.com/katyperry/status/783951588868055040">Katy Perry</a> and <a href="https://twitter.com/bastilledan/status/781578685434499072">Bastille</a>, she is all set to become the next queen of pop. If I might add, she looks as gorgeous as she sounds.</p>
+<h4>Stephen</h4>
+<p><a href="https://open.spotify.com/artist/64N1HzkQEXvjlJBQinWeu2">Spotify</a> &#xB7; <a href="https://soundcloud.com/ithinkimcrashin">SoundCloud</a><br>
+Los Angeles based producer, singer-songwriter Stephen Swartz, known by his stage name Stephen, combines indie vocals with dark distorted bass lines. His cover of Adele&#x2019;s Hello is second only to the original.</p>
+<p><em>Playlist on <a href="https://open.spotify.com/user/sidjain95/playlist/2DsCwJgb6oJ9MwvVKpqzkt">Spotify</a></em><br>
+<em>Playlist on <a href="https://soundcloud.com/sid-jain-6/sets/2016-fresh">SoundCloud</a></em></p>
+]]></content>
+        <author>
+            <name>Siddharth Jain</name>
+            <email>sid26@ucla.edu</email>
+            <uri>https://yuppi.es/about</uri>
+        </author>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Kickback With Koa & Webpack]]></title>
         <id>https://yuppi.es/blog/kickback-with-koa-webpack/</id>
@@ -346,48 +388,6 @@ instance. Koa apps can be tested fluently with
 <a href="https://github.com/visionmedia/supertest">supertest</a> which this repository will
 implement soon.</p>
 <p>Originally &#x1F4DD; on <a href="https://medium.com/@f0rr0/kickback-with-koa-webpack-a51d7e5d7911">Medium</a>.</p>
-]]></content>
-        <author>
-            <name>Siddharth Jain</name>
-            <email>sid26@ucla.edu</email>
-            <uri>https://yuppi.es/about</uri>
-        </author>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[2016 Music in Review]]></title>
-        <id>https://yuppi.es/blog/my-next-posh-post/</id>
-        <link href="https://yuppi.es/blog/my-next-posh-post/">
-        </link>
-        <updated>2016-11-02T18:30:00Z</updated>
-        <summary type="html"><![CDATA[A round up of the seven best artists, both old and new, that I discovered in 2016.]]></summary>
-        <content type="html"><![CDATA[<p>2016 saw me clocking 10,972 listens of 2,238 different tracks from 1,344 unique artists. If anything, these numbers indicate that I spend a lot of time with my <a href="https://www.marshallheadphones.com/mh_us_en/woburn-black">Marshall</a> and <a href="http://v-moda.com/crossfade-m-100/">V-Moda</a>. But as a wise statistician once said,</p>
-<blockquote>
-<p>Statistics are like bikinis. What they reveal is suggestive, but what they conceal is vital.</p>
-</blockquote>
-<p>these numbers fail to register the great artists, both new and old, and their awesome music, that I discovered in 2016. For the sake of fellow enthusiasts, the 7 best new discoveries:</p>
-<h4>Sickick</h4>
-<p><a href="https://open.spotify.com/artist/3NR7hAacOhmcztWvD7vJfS">Spotify</a> &#xB7; <a href="https://soundcloud.com/sickickofficial">SoundCloud</a><br>
-Toronto based with R&amp;B, hip hop and melodic roots, he is the alter ego of Lomaticc from <a href="https://www.youtube.com/watch?v=n-lHXXnM4qA">Culture Shock</a>. Sickick recently opened for Drake with a live mix of the <a href="https://www.facebook.com/sickickmusic/videos/959405430847210/">feedback from a mic</a> among other offerings.</p>
-<h4>Swell</h4>
-<p><a href="https://open.spotify.com/artist/78xSB1R1x8T6o0QuRaodez">Spotify</a> &#xB7; <a href="https://soundcloud.com/swll">SoundCloud</a><br>
-Melbourne based, 16 year old Swell is part of the <a href="https://soundcloud.com/baewave">Baewave</a> collective. His style borrows from producers like Haywyre, What So Not, Kaytranada and Baauer among others. Expect a fusion of R&amp;B, deep bass and jazz instrumentals.</p>
-<h4>LRKR</h4>
-<p><a href="https://open.spotify.com/artist/0yTK74zLEsMyrdVPjw3Zqi">Spotify</a> &#xB7; <a href="https://soundcloud.com/iamlrkr">SoundCloud</a><br>
-The majority of music I listen to is lyric-less and it&#x2019;s great in the sense that it allows you to get lost in its rythms and beats. The music speaks for itself. Brooklyn based producer, LRKR, gets it absolutely right with an amalgam of hip hop and electronica with traditional woodwind interludes.</p>
-<h4>Darius</h4>
-<p><a href="https://open.spotify.com/artist/5vfEaoOBcK0Lzr07WN8KaK">Spotify</a> &#xB7; <a href="https://soundcloud.com/dariusofficial">SoundCloud</a><br>
-French producer heavily inspired from the likes of Daft Punk, Mr. Oizo and S&#xE9;bastien Tellier. His music is layered with heavy percussive beats and a gentle, calm melody.</p>
-<h4>The Deli</h4>
-<p><a href="https://open.spotify.com/artist/1EJzWKVDeysgbyuZGfEFde">Spotify</a> &#xB7; <a href="https://soundcloud.com/the-deli">SoundCloud</a><br>
-All I know about this guy is that his real name is David Pryor and he is based out of Austin. He mixes sharp percussive beats with slow, jazzy melodies and a serious amount of awesomeness.</p>
-<h4>Skott</h4>
-<p><a href="https://open.spotify.com/artist/6J3RPKUwZlKMzh3vWa9wPc">Spotify</a> &#xB7; <a href="https://soundcloud.com/skottpeace">SoundCloud</a><br>
-Scandinavian artists usually know what they&#x2019;re doing. With her R&amp;B vocals and approvals by the likes of <a href="https://twitter.com/lorde/status/743892035443122176">Lorde</a>, <a href="https://twitter.com/katyperry/status/783951588868055040">Katy Perry</a> and <a href="https://twitter.com/bastilledan/status/781578685434499072">Bastille</a>, she is all set to become the next queen of pop. If I might add, she looks as gorgeous as she sounds.</p>
-<h4>Stephen</h4>
-<p><a href="https://open.spotify.com/artist/64N1HzkQEXvjlJBQinWeu2">Spotify</a> &#xB7; <a href="https://soundcloud.com/ithinkimcrashin">SoundCloud</a><br>
-Los Angeles based producer, singer-songwriter Stephen Swartz, known by his stage name Stephen, combines indie vocals with dark distorted bass lines. His cover of Adele&#x2019;s Hello is second only to the original.</p>
-<p><em>Playlist on <a href="https://open.spotify.com/user/sidjain95/playlist/2DsCwJgb6oJ9MwvVKpqzkt">Spotify</a></em><br>
-<em>Playlist on <a href="https://soundcloud.com/sid-jain-6/sets/2016-fresh">SoundCloud</a></em></p>
 ]]></content>
         <author>
             <name>Siddharth Jain</name>

@@ -291,6 +291,10 @@ img::selection {
       list-style-position: inside;
     }
 
+    & + p {
+      margin-top: 10px;
+    }
+
     @media screen and (max-device-width: 480px) {
       padding: 1.125em 1em;
 

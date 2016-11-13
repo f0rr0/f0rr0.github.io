@@ -67,5 +67,6 @@ The layout is based on a [modular scale](//alistapart.com/article/more-meaningfu
 * "Business Analysis" by __Delwar Hossain__
 * "Writing" by __Creative Stall__
 * "DNA" by __Anthony Bossard__
+* "Balloons" by __icon 54__
 
 The :moneybag::kiss::sunglasses::beer::smoking::cat: used on this site are rendered via ["Twemoji" by __Twitter__](//github.com/twitter/twemoji).

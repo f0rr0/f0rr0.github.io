@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yuppi.es/</id>
     <title>Yuppies</title>
-    <updated>2016-11-28T08:06:02Z</updated>
+    <updated>2016-11-28T09:21:02Z</updated>
     <author>
         <name>Siddharth Jain</name>
         <email>sid26@ucla.edu</email>
@@ -402,7 +402,7 @@ implement soon.</p>
         </link>
         <updated>2016-11-27T18:30:00Z</updated>
         <summary type="html"><![CDATA[A deep dive into building native apps for Android and iOS with Facebook's React Native and managing state with Redux.]]></summary>
-        <content type="html"><![CDATA[<p>Over the past few weeks, I have been independently working on a project commissioned by <a href="1mg.com">1mg</a> - India&#x2019;s largest health platform. Firstly, here&#x2019;s some background on the state of affairs at 1mg:</p>
+        <content type="html"><![CDATA[<p>Over the past few weeks, I have been independently working on a project commissioned by <a href="https://1mg.com">1mg</a> - India&#x2019;s largest health platform. Firstly, here&#x2019;s some background on the state of affairs at 1mg:</p>
 <ul>
 <li>1mg has 4 different products for which it is building experiences on 3 different platforms, namely: Android, iOS and the web.</li>
 <li>This means duplication of business logic across 3 codebases, which is not the best thing to do if you go by <a href="https://en.wikipedia.org/wiki/Don&apos;t_repeat_yourself">DRY</a>.</li>

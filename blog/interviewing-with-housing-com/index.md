@@ -2,6 +2,7 @@
 title: Interviewing with Housing.com
 date: 12/01/2016
 description: My experience and lessons learnt from interviewing with a leading Indian tech startup.
+thumbnail: housing.jpg
 ---
 
 ![](./housing.jpg) {.full-width}

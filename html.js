@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import Helmet from 'react-helmet';
 import { prefixLink } from 'gatsby-helpers'; // eslint-disable-line
-import avatar from './images/avatar.jpg';
 
 const BUILD_TIME = new Date().getTime();
 
@@ -38,7 +37,6 @@ export default function HTML(props) {
         <meta property='fb:app_id' content='532441146961582' />
         <meta property='og:url' content={`https://yuppi.es${path}`} />
         <meta property='og:site_name' content='Yuppies' />
-        <meta property='og:image' content={`https://yuppi.es${prefixLink(avatar)}`} />
 
         {meta.toComponent()}
 

@@ -6,6 +6,7 @@ import { TweetThis, FacebookShare } from '../components/Social';
 import ReadNext from '../components/ReadNext';
 import Bio from '../components/Bio';
 import { isBlogPost, getBlogPosts, getNextPosts, getPostsFromPaths } from '../utils/blog-helpers';
+import avatar from '../../images/avatar.jpg';
 
 import '../css/tomorrow-night.css';
 
@@ -14,6 +15,7 @@ export default class MarkdownWrapper extends Component {
     const { route } = this.props;
     const { page: { data: post } } = route;
     const path = post.path = route.path;
+    const thumbnail = post.thumbnail ? `https://yuppi.es${path}${post.thumbnail}` : `https://yuppi.es/${avatar}`;
     const posts = getBlogPosts(route);
 
     if (isBlogPost(post)) {
@@ -28,6 +30,7 @@ export default class MarkdownWrapper extends Component {
               { name: 'description', content: post.description },
               { property: 'og:type', content: 'article' },
               { property: 'og:title', content: docTitle },
+              { property: 'og:image', content: thumbnail },
               { property: 'article:author', content: 'https://facebook.com/f0rr0' },
               { property: 'article:published_time', content: `${moment(post.date, 'MM/DD/YYYY').format()}` },
               { name: 'twitter:description', content: post.description },

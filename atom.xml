@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yuppi.es/</id>
     <title>Yuppies</title>
-    <updated>2016-11-28T09:21:02Z</updated>
+    <updated>2016-12-02T11:32:10Z</updated>
     <author>
         <name>Siddharth Jain</name>
         <email>sid26@ucla.edu</email>
@@ -47,6 +47,56 @@ Scandinavian artists usually know what they&#x2019;re doing. With her R&amp;B vo
 Los Angeles based producer, singer-songwriter Stephen Swartz, known by his stage name Stephen, combines indie vocals with dark distorted bass lines. His cover of Adele&#x2019;s Hello is second only to the original.</p>
 <p><em>Playlist on <a href="https://open.spotify.com/user/sidjain95/playlist/2DsCwJgb6oJ9MwvVKpqzkt">Spotify</a></em><br>
 <em>Playlist on <a href="https://soundcloud.com/sid-jain-6/sets/2016-fresh">SoundCloud</a></em></p>
+]]></content>
+        <author>
+            <name>Siddharth Jain</name>
+            <email>sid26@ucla.edu</email>
+            <uri>https://yuppi.es/about</uri>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Interviewing with Housing.com]]></title>
+        <id>https://yuppi.es/blog/interviewing-with-housing-com/</id>
+        <link href="https://yuppi.es/blog/interviewing-with-housing-com/">
+        </link>
+        <updated>2016-11-30T18:30:00Z</updated>
+        <summary type="html"><![CDATA[My experience and lessons learnt from interviewing with a leading Indian tech startup.]]></summary>
+        <content type="html"><![CDATA[<figure class="full-width"><img src="https://yuppi.es/blog/interviewing-with-housing-com/housing.jpg" alt=""></figure>
+<p><em>Disclaimer: The opinions expressed in this article are my own and are, in no conceivable way, connected, correlated or inspired by those of <a href="http://Housing.com">Housing.com</a> or its employees and representatives.</em></p>
+<p>With that verbose legalese out of the way, let&#x2019;s get started.</p>
+<h4>Motivation</h4>
+<p>I am a passionate follower &#x270C;&#xFE0F; of the tech twitterati &#x2728;, particularly the &#x2018;web technologies&#x2019; twitterati &#x2728;. Of late, the twitterverse &#x1F30E; has been flooded with mentions of a new breed of experience for the web, particularly, the mobile web. <a href="https://developers.google.com/web/progressive-web-apps/">Progressive Web Applications</a> (or PWAs) &#x26A1;&#xFE0F; are the next big thing when it comes to providing fast, reliable and engaging experiences, akin to those of native apps, right from the browser.
+Now, among the immediately visible players in India, who have placed their bets on PWAs, <a href="http://tech-blog.flipkart.net/2015/11/progressive-web-app/">Flipkart</a> and <a href="https://www.youtube.com/watch?v=dug_6lgZ7dw">Housing.com</a> are the behemoths. Given my background of fiddling with technologies that go into making said PWAs, I decided to approach the latter with the proposition of pooling our know-how and building cool stuff together.</p>
+<h4>First Contact</h4>
+<p>There are many ways to approach a tech company when it comes to jobs. One could ask for a reference from current employees, reach out to a hiring manager, fill in the forms on the careers webpage, or just send out a cold email precisely stating one&#x2019;s credentials and motivations. I decided to go with that last one. The email was as to-the-point as it gets. I mentioned a bit about my weird educational background &#x1F62C;, some related previous projects and genuine motivation to work at <a href="http://Housing.com">Housing.com</a>.</p>
+<h4>Did It Work Though?</h4>
+<p>Yes, it did &#x1F62E;. That&#x2019;s lesson number one right here.</p>
+<blockquote>
+<p>If your motivations are genuine and your credentials are sound, don&#x2019;t be afraid to reach out to a company you want to work with. This holds even if you think there might not be any vacancies. Make the effort to reach out and show positive interest.</p>
+</blockquote>
+<p>The following day, I received an email from the Head of HR at <a href="http://Housing.com">Housing.com</a>, which was followed by a call shortly thereafter. She informed me that they found my profile interesting and wanted to schedule a technical interview the very same day. I consented and started brushing up on those tricky space and time complexity questions &#x1F628;.</p>
+<h4>Technical Round 1</h4>
+<p>It&#x2019;s not everyday that you get an interview from a cold email, so I guess I must have been really lucky. And that luck ran out quickly indeed. At the predetermined time, I went AWOL &#x1F636;. My interviewer and the Head of HR left me a couple of calls and Skype messages which I did not return. This is a gross violation of the interviewing etiquette. I have rarely been more ashamed of my conduct. In my defense, I got caught up with an emergency at my current engagement but that doesn&#x2019;t cut it out. At this point, I believed I had blown the opportunity but I left a sincere apology with both the interviewer and my HR POC.</p>
+<h4>Technical Round 1 - Encore</h4>
+<p>Luckily, my interviewer was awesome &#x1F60E; and agreed to schedule another Skype call for the next day. That&#x2019;s lesson number two for youngins:</p>
+<blockquote>
+<p>Throughout the interview process, keep your outlook absolutely positive. Face rejection with grace and acceptance with humility. Never let the outcome, be it good or bad, get to your head. This is not the last company in the world and you most certainly are not their last prospective employee.</p>
+</blockquote>
+<p>The interview was really intensive, thought provoking and thorough. We started off discussing my weird educational background &#x1F62C; and followed it up with some live coding in an online collaborative IDE. I was asked a couple of questions each regarding ECMAScript standard functions, basic algorithmic complexity and tricky JS gotchas. To conclude, the panel asked me questions about front end tooling, particularly <a href="https://facebook.github.io/react/">React</a>, <a href="http://redux.js.org/">Redux</a> and <a href="http://webpack.js.org/">Webpack</a>. These questions were mostly practical and involved some code that I had to reason about. To sum it up:</p>
+<blockquote>
+<p><a href="http://Housing.com">Housing.com</a> certainly knows what it&#x2019;s doing. This was the most comprehensive interview I have had with an Indian company.</p>
+</blockquote>
+<p>The panel ended the interview with a neutral outlook, so I wasn&#x2019;t really sure if I made the cut. I did, however, receive a call next day from my HR POC to schedule another technical round for that very day itself. I immediately consented and appreciated the expediency with which everything was being facilitated.</p>
+<h4>Technical Round 2</h4>
+<p>The second round was again via a Skype call. The panel this time consisted of senior management. After introductions, I started off with my weird educational background &#x1F62C;. This round was more theoretical than the previous one. I was asked to write pseudocode for a simple JSX to JS tanspiler. This was followed by questions about the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model">DOM</a> - how it&#x2019;s represented in memory and how CSS selector matching and DOM traversal work. This basically involves the <a href="https://en.wikipedia.org/wiki/Tree_(data_structure)">Tree ADT</a>. Fortunately, I was paying attention in <a href="http://www.bruinwalk.com/professors/carey-nachenberg/com-sci-32/">Carey Nachenberg&#x2019;s</a> CS32 lectures (which is, hands down, the most useful CS class at UCLA). The remaining questions were about how a web browser works. This basically involved the <a href="https://developers.google.com/web/fundamentals/performance/rendering/">rendering pipeline</a> and <a href="https://www.youtube.com/watch?v=RCFQu0hK6bU">optimizing runtime performance</a>. This round ended up on a positive note. The panel seemed really happy with my answers. We went on to discuss the culture at <a href="http://housing.com">housing.com</a> and life in Bombay. I was informed that HR would call me with the offer and formalities.</p>
+<h4>The Offer</h4>
+<p>If you skipped everything before this to see what they offered &#x1F4B0;, I am not sorry to disappoint you. However, I can divulge that the offer was extremely competitive and in line with what giants like Amazon, Adobe, Flipkart etc. would offer. A quick check with my IIT pals confirmed the fact that it was, indeed, extremely good &#x1F631; by IIT standards as well. Besides the monetary compensation, <a href="http://housing.com">housing.com</a> has great perks &#x1F62E; and supposedly, a young management &#x2B06;&#xFE0F;. This factor is usually underestimated, but in my experience, goes a long way in defining your productivity at any tech company. Needless to say it was what I had expected and I did end up accepting the offer.</p>
+<h4>Fin</h4>
+<p>In the five months I have spent navigating the startup scene globally as a drop out, there is one thing I can&#x2019;t be more convinced of:</p>
+<blockquote>
+<p>Your degree does not matter for &#x1F4A9; unless it&#x2019;s backed up with pragmatic, immediately applicable, real world knowledge. Analytical skills, the ability to think rationally and a solid problem solving approach take your credibility much further than a piece of paper.</p>
+</blockquote>
+<p>Take this as a derision of educational institutions, not education itself. In my humble opinion, if going to college makes you more prepared for the kind of roles you want to take on in the future, by all means - go to college. It is still the best way to accumulate a diversity of experiences and increase your connection capital. But if you feel that restricting yourself and &#x2018;your&#x2019; education to the rigidity of a college structure <a href="https://www.ted.com/talks/ken_robinson_says_schools_kill_creativity">kills your creativity</a> or unduly stigmatizes failure and mistakes, just don&#x2019;t do it. Do your own thing.</p>
 ]]></content>
         <author>
             <name>Siddharth Jain</name>
@@ -388,35 +438,6 @@ instance. Koa apps can be tested fluently with
 <a href="https://github.com/visionmedia/supertest">supertest</a> which this repository will
 implement soon.</p>
 <p>Originally &#x1F4DD; on <a href="https://medium.com/@f0rr0/kickback-with-koa-webpack-a51d7e5d7911">Medium</a>.</p>
-]]></content>
-        <author>
-            <name>Siddharth Jain</name>
-            <email>sid26@ucla.edu</email>
-            <uri>https://yuppi.es/about</uri>
-        </author>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Native apps with Redux and React Native (WIP)]]></title>
-        <id>https://yuppi.es/blog/native-apps-with-redux-and-react-native/</id>
-        <link href="https://yuppi.es/blog/native-apps-with-redux-and-react-native/">
-        </link>
-        <updated>2016-11-27T18:30:00Z</updated>
-        <summary type="html"><![CDATA[A deep dive into building native apps for Android and iOS with Facebook's React Native and managing state with Redux.]]></summary>
-        <content type="html"><![CDATA[<p>Over the past few weeks, I have been independently working on a project commissioned by <a href="https://1mg.com">1mg</a> - India&#x2019;s largest health platform. Firstly, here&#x2019;s some background on the state of affairs at 1mg:</p>
-<ul>
-<li>1mg has 4 different products for which it is building experiences on 3 different platforms, namely: Android, iOS and the web.</li>
-<li>This means duplication of business logic across 3 codebases, which is not the best thing to do if you go by <a href="https://en.wikipedia.org/wiki/Don&apos;t_repeat_yourself">DRY</a>.</li>
-<li>It also means introducing new features or modifying existing features requires making the necessary changes across 3 separate codebases. This is not scalable at all and the platforms would soon end up being out of sync.</li>
-<li>Finally, 1mg would have to build and strategically expand 3 separate teams of developers for each of the 3 platforms.</li>
-</ul>
-<p>To overcome these challenges, the management decided to place it&#x2019;s bets on the newly emerging breed of cross-platform native apps built with modern frontend stack in JavaScript. I began implementing the apps with the following main objectives:</p>
-<ul>
-<li>Although the apps would be written in JavaScript, they should not compromise on the experience and responsiveness that users have come to associate with &#x2018;native&#x2019; apps. In simpler words, if you&#x2019;re the user, the app should feel just like any other native app on the App Store or Play Store.</li>
-<li>The app should reuse as much code as possible across Android and iOS. This would be in line with the principle of DRY. It would also imply that maintaining the code is far more easier and adding/modifying/removing features means touching the minimum number of files possible.</li>
-<li>Last but not least, the stack used should be familiar to 1mg&#x2019;s large team of product engineers for the web and the dependence on platform specific native developers should be reduced. This is also in line with reducing the <a href="https://en.wikipedia.org/wiki/Bus_factor">&#x2018;bus factor&#x2019;</a> at 1mg.</li>
-</ul>
-<p>Since I was the only developer working on this project &#x1F62C;, I had the unique opportunity to choose my own stack.</p>
-<p>[Work in Progress]</p>
 ]]></content>
         <author>
             <name>Siddharth Jain</name>

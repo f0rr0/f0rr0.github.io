@@ -16,6 +16,10 @@ npm run dev
 
 You should have the site running on `localhost:8000`.
 
+### Deployment
+
+Gatsby can be deployed on any static server. This one is deployed via GitHub Pages on the master branch.
+
 ### Cross-post to Medium
 
 Make a `.env` file in `./src/scripts` and set your [Medium Integration Token](https://help.medium.com/hc/en-us/articles/215274738-Integration-tokens) like so:

@@ -14,7 +14,7 @@ v 2.0
 - [ ] Refactor css to inline in js.
 - [ ] Hard code share button markup. (react share fckng has babel-runtime dep)
 - [ ] Convert lodash to vanilla.
-- [ ] generate rss feed
+- [x] generate rss feed
 - [ ] more aggressive mobile optimization
 - [ ] replace backend with youtuber.
 - [ ] Convert re-base to vanilla.

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yuppi.es/</id>
     <title>Yuppies</title>
-    <updated>2016-12-14T22:36:09Z</updated>
+    <updated>2017-05-01T21:20:44Z</updated>
     <author>
         <name>Siddharth Jain</name>
         <email>sid26@ucla.edu</email>
@@ -10,7 +10,7 @@
     </author>
     <link rel="alternate" href="https://yuppi.es"/>
     <subtitle>By Siddharth Jain — an open source developer interested in minimal design, advanced JavaScript and everything λ. He is currently available for contract development on a project basis.</subtitle>
-    <rights>All rights reserved  2016, Siddharth Jain</rights>
+    <rights>All rights reserved  2017, Siddharth Jain</rights>
     <generator>Feed for Node.js</generator>
     <entry>
         <title type="html"><![CDATA[2016 Music in Review]]></title>

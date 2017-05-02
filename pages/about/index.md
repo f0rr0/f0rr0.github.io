@@ -4,8 +4,6 @@ title: About Me
 
 __tl;dr__ I do stuff on my :computer:.
 
-* I'm originally from India, growing up in New Delhi and then Gurgaon. I lived in Los Angeles for a couple years for school.
-
 * I study Computer Science at [UCLA](//www.ucla.edu), currently <del>in my junior year</del> on leave.
 
 * I first wrote code in sixth grade in [Logo](//en.wikipedia.org/wiki/Logo_(programming_language)) (dialect of LISP).

@@ -13,8 +13,8 @@ export default function Footer() {
     <footer>
       <section>
         <p>
-          <a href='mailto:sid26@ucla.edu' >
-            <Icon icon='send' /> &#115;&#105;&#100;&#050;&#054;&#064;&#117;&#099;&#108;&#097;&#046;&#101;&#100;&#117;
+          <a href='mailto:sid_26@outlook.com' >
+            <Icon icon='send' /> sid_26@outlook.com
           </a>
         </p>
         <ul>

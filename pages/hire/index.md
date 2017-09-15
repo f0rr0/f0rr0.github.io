@@ -23,4 +23,4 @@ I work with these technologies:
 * Developing technical infrastructure from the ground up.
 * Mob/pair programming and mentoring for developers.
 
-Usually, I work remotely on an independent contract basis in small to medium sized teams with both short-term and long-term projects. For discussions, referrals and work samples, write to me at [&#115;&#105;&#100;&#050;&#054;&#064;&#117;&#099;&#108;&#097;&#046;&#101;&#100;&#117;](mailto:sid26@ucla.edu).
+Usually, I work remotely on an independent contract basis in small to medium sized teams with both short-term and long-term projects. For discussions, referrals and work samples, write to me at [sid_26@outlook.com](mailto:sid_26@outlook.com).

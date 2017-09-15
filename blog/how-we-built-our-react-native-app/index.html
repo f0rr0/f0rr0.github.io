@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+ <html lang="en"><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title data-react-helmet="true">How We Built Our React Native App - Yuppies</title><meta name="robots" content="index, follow"/><meta name="author" content="Siddharth Jain"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:creator" content="@f0rr0"/><meta property="fb:app_id" content="532441146961582"/><meta property="og:url" content="https://yuppi.es/blog/how-we-built-our-react-native-app/"/><meta property="og:site_name" content="Yuppies"/><meta data-react-helmet="true" name="description" content="The design philosophy, tech stack and tooling that went into building a React Native App at Housing.com"/><meta data-react-helmet="true" property="og:type" content="article"/><meta data-react-helmet="true" property="og:title" content="How We Built Our React Native App - Yuppies"/><meta data-react-helmet="true" property="og:image" content="https://yuppi.es//38efebf2bc5832b39113314d2fd9cc07.jpg"/><meta data-react-helmet="true" property="article:author" content="https://facebook.com/f0rr0"/><meta data-react-helmet="true" property="article:published_time" content="2017-09-15T00:00:00+05:30"/><meta data-react-helmet="true" name="twitter:description" content="The design philosophy, tech stack and tooling that went into building a React Native App at Housing.com"/><meta data-react-helmet="true" name="twitter:title" content="How We Built Our React Native App - Yuppies"/><link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700" rel="stylesheet"/><style>*{margin:0;padding:0;border:none;box-sizing:border-box}article,aside,footer,header,hgroup,nav,section,time{display:block}html{height:100%;background:#21232d;color:#d8d8d6;font-family:Inconsolata,Andale Mono,PT Mono,Courier New,monospace;font-size:18px;line-height:1.5;overflow-y:scroll}@media screen and (max-width:600px){html{font-size:16px}}body{height:100%;width:700px;margin:0 auto}@media screen and (max-width:800px){body{width:88%}}#react-mount{height:100%}main{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;min-height:100%}.content{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto}ol,p,pre,table,ul{padding-bottom:1.125em}li ol{padding-left:1.82em}li ol,li ul{padding-bottom:0}li ul{padding-left:1em}h1,h2,h3,h4,h5,h6{padding-bottom:.37em;line-height:1.125}h1{font-size:2.027em}h2{font-size:1.62em}h3{font-size:1.424em}h4{font-size:1.266em}h5{font-size:1em}h6{font-size:.72em}small{font-size:.889em}a{color:#57c7ff;display:inline-block;text-decoration:none;position:relative;cursor:pointer}a:after{content:"";position:absolute;bottom:0;left:0;width:100%;height:2px;background-color:#57c7ff;-webkit-transform:scaleX(0);transform:scaleX(0);-webkit-transform-origin:left;transform-origin:left;transition:-webkit-transform .4s ease-in-out;transition:transform .4s ease-in-out;transition:transform .4s ease-in-out,-webkit-transform .4s ease-in-out;transition-delay:.1s}a:hover:after{-webkit-transform:scaleX(1);transform:scaleX(1);transition-delay:0s}del{text-decoration:line-through;color:#4d5068}hr{display:block;border-top:1px solid #424559;margin:1.125em 0 2em}::-moz-selection{background:#d8d8d6;color:#21232d;background-color:hsla(60,2%,84%,.996)}::selection{color:#21232d;background-color:hsla(60,2%,84%,.996)}img::-moz-selection{background-color:hsla(60,2%,84%,.5)}img::selection{background-color:hsla(60,2%,84%,.5)}.post-list time{width:6.583em}.blog-header{padding-bottom:1.125em}.blog-header h2{padding-bottom:.216em}.blog-header time{display:inline}.blog-header div{font-size:.889em}.blog-body h1,.blog-body h2,.blog-body h3,.blog-body h4,.blog-body h5,.blog-body h6{color:#f92672}.header-anchor{display:none;opacity:0;margin-left:-1em;transition:opacity .5s ease-in-out;color:inherit!important}.header-anchor:after,.header-anchor:before{display:none}.emoji{display:inline-block;box-sizing:content-box;width:18px;width:1rem;height:18px;height:1rem;vertical-align:-.15em}.post-content h1,.post-content h2,.post-content h3,.post-content h4,.post-content h5,.post-content h6{padding-bottom:.216em}.post-content h1 .header-anchor,.post-content h2 .header-anchor,.post-content h3 .header-anchor,.post-content h4 .header-anchor,.post-content h5 .header-anchor,.post-content h6 .header-anchor{display:inline}@media screen and (max-width:600px){.post-content h1 .header-anchor,.post-content h2 .header-anchor,.post-content h3 .header-anchor,.post-content h4 .header-anchor,.post-content h5 .header-anchor,.post-content h6 .header-anchor{display:none}}.post-content h1:hover .header-anchor,.post-content h2:hover .header-anchor,.post-content h3:hover .header-anchor,.post-content h4:hover .header-anchor,.post-content h5:hover .header-anchor,.post-content h6:hover .header-anchor{opacity:.9}.post-content p:last-child{padding-bottom:0}.post-content code{font-size:.889em;background:#1d1f21;color:#c5c8c6;font-family:Menlo,Monaco,Consolas,monospace;display:inline-block;padding:0 .5em;border-radius:5px;box-shadow:inset 0 1px 3px rgba(0,0,0,.3),0 .75px 0 rgba(53,56,73,.4)}@media screen and (max-width:600px){.post-content code{font-size:14px}}.post-content pre code{display:block;padding:1.266em;white-space:pre;overflow:auto;box-shadow:inset 0 1px 10px rgba(0,0,0,.3),0 1px 0 rgba(53,56,73,.4),0 -1px 0 rgba(0,0,0,.3)}.post-content blockquote{padding:1.125em 2.566em;font-style:italic;position:relative;color:#f3f99d}.post-content blockquote:before{content:"\201C";font-size:400%;left:-12px;line-height:.5;position:absolute}.post-content blockquote ol,.post-content blockquote ul{list-style-position:inside}.post-content blockquote+p{margin-top:10px}@media screen and (max-device-width:480px){.post-content blockquote{padding:1.125em 1em}.post-content blockquote:before{font-size:200%;left:-12px}}.post-content cite{display:block;padding-top:1.125em}.post-content cite:before{content:"\2014   "}.post-content figure{text-align:center;padding:1.82em 0 2.927em}.post-content figure a{display:inline;opacity:1;transition:all .4s ease-in-out}.post-content figure a:hover{opacity:.5}.post-content figure a:after,.post-content figure a:before{display:none}.post-content figure img{display:block;max-width:100%;height:auto;margin:0 auto}.post-content figure.full-width img{min-width:100%}.post-content figure a+figcaption,.post-content img+figcaption{margin:10px 0 -10px;font-size:.889em;font-style:italic}.twitter-tweet+p{padding-top:.889em}.share-icons{display:inline-block;padding:0 .5em;cursor:pointer;opacity:1;transition:opacity .4s ease-in-out}.share-icons:first-child{padding-left:0}.share-icons:hover{opacity:.7}.post-footer>ul{padding:3px 0 1.125em;margin:1em 0;line-height:1;display:block}.post-footer>ul li{display:inline-block;list-style-type:none}.post-footer>article header{color:#f92672}.post-footer>article ul li{display:block;padding-bottom:10px}.post-footer>article ul li:last-child,.post-footer>article ul li>p{padding-bottom:0}.masthead{border-bottom:1px solid #424559;padding:1.62em 0;margin-bottom:1.62em;text-align:center}.masthead h1{padding-bottom:18px;padding-bottom:1rem}.masthead h1 a{font-size:51.957px;background-color:#f92672;color:#21232d;padding:5px 15px}.masthead li,.masthead nav,.masthead ul{display:inline-block;line-height:1;padding-bottom:0}.masthead a{color:#d8d8d6}.masthead a:after,.masthead a:before{display:none}.masthead li{margin:0 12px;list-style-type:none}.masthead li:first-child{margin-left:0}.masthead li:last-child{margin-right:0}footer{margin-top:1.125em;text-align:center;border-top:1px solid #424559}footer p,footer ul{padding:29.16px 0;padding:1.62rem 0;display:inline-block}@media screen and (max-width:415px){footer p,footer ul{display:block;width:100%}}footer p{font-size:16px;float:left}footer p .footer-icon{vertical-align:-4.5px;vertical-align:-.25rem}@media screen and (max-width:415px){footer p{padding-bottom:.5rem}}footer ul{float:right}@media screen and (max-width:415px){footer ul{padding-top:.5rem}}footer li{padding:0 4px;list-style-type:none;display:inline-block}@media screen and (max-width:415px){footer li{padding:0 7px}}footer a{color:#d8d8d6;opacity:.7;transition:all .4s ease-in-out}footer a:hover{opacity:1}footer a:after,footer a:before{display:none}.footer-icon{height:16px;width:16.5px;background-size:cover;background-position:0 0;filter:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="filter"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="table" tableValues="1 0" /><feFuncG type="table" tableValues="1 0" /><feFuncB type="table" tableValues="1 0" /></feComponentTransfer><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="linear" slope="0.85" /><feFuncG type="linear" slope="0.85" /><feFuncB type="linear" slope="0.85" /></feComponentTransfer></filter></svg>#filter');-webkit-filter:invert(100%) brightness(85%);filter:invert(100%) brightness(85%);display:inline-block;vertical-align:-.5px}@media screen and (max-width:415px){.footer-icon{height:16.5px;width:16.5px}}.bio{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;padding-bottom:1.125em}.bio .avatar{margin-right:1em;width:100px;border-radius:50%}.bio .intro{-webkit-box-flex:1;-ms-flex:1;flex:1;padding-bottom:0}@media screen and (max-width:600px){ol,ul{list-style-position:inside}}@media only screen and (min-device-width:320px) and (max-device-width:480px){.content a{display:inline}.content a:after,.content a:before{display:none}.bio{display:block;overflow:auto;padding-bottom:1.125em}.bio .avatar{float:left;margin-right:1em;width:80px;border-radius:50%}.bio .intro{-webkit-box-flex:1;-ms-flex:1;flex:1;padding-bottom:0}}.hljs-comment,.hljs-quote{color:#969896}.hljs-deletion,.hljs-name,.hljs-regexp,.hljs-selector-class,.hljs-selector-id,.hljs-tag,.hljs-template-variable,.hljs-variable{color:#c66c66}.hljs-built_in,.hljs-builtin-name,.hljs-link,.hljs-literal,.hljs-meta,.hljs-number,.hljs-params,.hljs-type{color:#de935f}.hljs-attribute{color:#f0c674}.hljs-addition,.hljs-bullet,.hljs-string,.hljs-symbol{color:#b5bd68}.hljs-section,.hljs-title{color:#81a2be}.hljs-keyword,.hljs-selector-tag{color:#b294bb}.hljs{display:block;overflow-x:auto;background:#1d1f21;color:#c5c8c6;padding:.5em}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.lists{display:-webkit-box;display:-ms-flexbox;display:flex;position:relative;font-size:18px}@media screen and (max-width:767px){.lists{display:block}}.list-intro{font-size:.79em;font-family:Menlo,Monaco,Consolas,monospace;padding-bottom:1em;transition:opacity .5s ease-in}@media screen and (max-width:767px){.list-intro{letter-spacing:-.75px}}.ellipsis{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}.activity-list,.track-list{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;margin:0;padding:0}.activity-list ul,.track-list ul{list-style-type:none!important;padding-bottom:1.5em}.track-list a:first-child .track{margin-top:0}.track-list a:last-child .track{margin-bottom:0}.activity-list .activity:first-child{margin-top:0}.activity-list .activity:last-child{margin-bottom:0}.activity-list .activity,.track-list .track{overflow:auto;overflow-x:hidden;position:relative;margin:12px 0;border-radius:3px;padding:5px;background:#2a2c3c;transition:opacity .5s ease-in,background .4s ease-in-out}.activity-list .activity .thumb,.track-list .track .thumb{width:80px;height:80px;border-radius:2px;background-size:cover;background-position:50%;background-color:#3e4256;float:left;margin-right:8px}.activity-list .activity .info,.track-list .track .info{position:absolute;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);padding-left:90px;padding-right:10px;width:97%}.track-list .thumb{box-shadow:inset 0 0 10px #000}.track-list .track:hover{background:#353849}.activity-list~.track-list{padding-left:2.027em}@media screen and (max-width:767px){.activity-list~.track-list{padding-left:0}}.activity-list .activity .icon{background-position:0 0;background-color:rgba(0,255,85,.01);filter:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="filter"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="table" tableValues="1 0" /><feFuncG type="table" tableValues="1 0" /><feFuncB type="table" tableValues="1 0" /></feComponentTransfer><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="linear" slope="0.85" /><feFuncG type="linear" slope="0.85" /><feFuncB type="linear" slope="0.85" /></feComponentTransfer></filter></svg>#filter');-webkit-filter:invert(100%) brightness(85%);filter:invert(100%) brightness(85%);width:60px;height:60px;margin:10px 6px 10px 14px}.activity-list .category,.track-list .title{font-size:.79em}.activity-list time,.track-list .artist{font-size:.79em;padding-bottom:7px}.activity-list .activities,.track-list time{font-size:.72em}.track-list a{display:inherit;color:inherit}.track-list a:after,.track-list a:before{display:none}.activity-list .activities{font-style:italic}.equaliser-container{margin-top:5px;margin-bottom:3px;font-size:10px;height:1em;position:relative}.equaliser-container .equaliser-column{width:2px;float:left;margin:0 1px 0 0;padding:0;height:1em;position:relative;list-style-type:none}.equaliser-container .equaliser-column .colour-bar{position:absolute;left:0;right:0;bottom:0;height:1em;background:#d8d8d6}.equaliser-container .equaliser-column:first-child .colour-bar{-webkit-animation:color-bar 2s 1s ease-out alternate infinite;animation:color-bar 2s 1s ease-out alternate infinite}.equaliser-container .equaliser-column:nth-child(2) .colour-bar{-webkit-animation:color-bar 2s .5s ease-out alternate infinite;animation:color-bar 2s .5s ease-out alternate infinite}.equaliser-container .equaliser-column:nth-child(3) .colour-bar{-webkit-animation:color-bar 2s 1.5s ease-out alternate infinite;animation:color-bar 2s 1.5s ease-out alternate infinite}.equaliser-container .equaliser-column:nth-child(4) .colour-bar{-webkit-animation:color-bar 2s .25s ease-out alternate infinite;animation:color-bar 2s .25s ease-out alternate infinite}.equaliser-container .equaliser-column:nth-child(5) .colour-bar{-webkit-animation:color-bar 2s 2s ease-out alternate infinite;animation:color-bar 2s 2s ease-out alternate infinite}.equaliser-container .equaliser-column:last-child{margin-right:0}@-webkit-keyframes color-bar{0%{height:1em}10%{height:.3em}20%{height:.5em}30%{height:.2em}40%{height:.6em}50%{height:.8em}60%{height:.5em}70%{height:.7em}80%{height:1em}90%{height:.7em}to{height:.25em}}@keyframes color-bar{0%{height:1em}10%{height:.3em}20%{height:.5em}30%{height:.2em}40%{height:.6em}50%{height:.8em}60%{height:.5em}70%{height:.7em}80%{height:1em}90%{height:.7em}to{height:.25em}}.loading{text-align:center;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;width:100%;padding-top:1.125em}.double-bounce,.loading p{display:inline-block}.double-bounce{width:27px;height:27px;margin:0 10px;position:relative}.double-bounce1,.double-bounce2{display:inline-block;width:100%;height:100%;border-radius:50%;background-color:#424559;opacity:.6;position:absolute;top:0;left:0;-webkit-animation:bounce 2s infinite ease-in-out;animation:bounce 2s infinite ease-in-out}.double-bounce2{-webkit-animation-delay:-1s;animation-delay:-1s}@-webkit-keyframes bounce{0%,to{-webkit-transform:scale(0);transform:scale(0)}50%{-webkit-transform:scale(1);transform:scale(1)}}@keyframes bounce{0%,to{-webkit-transform:scale(0);transform:scale(0)}50%{-webkit-transform:scale(1);transform:scale(1)}}.qs-appear{opacity:.01}.qs-appear.qs-appear-active{opacity:1;transition:opacity 1.2s ease-in-out}@media only screen and (min-device-width:320px) and (max-device-width:480px){.lists a{border-bottom:none}}</style></head><body class="container"><div id="react-mount"><main data-reactroot="" data-reactid="1" data-react-checksum="535618404"><header class="masthead" data-reactid="2"><h1 data-reactid="3"><a href="/" data-reactid="4">YUPPI.ES</a></h1><nav data-reactid="5"><ul data-reactid="6"><li data-reactid="7"><a href="/about/" data-reactid="8">About</a></li><!-- react-text: 9 -->·<!-- /react-text --><li data-reactid="10"><a href="/blog/" data-reactid="11">Blog</a></li><!-- react-text: 12 -->·<!-- /react-text --><li data-reactid="13"><a href="/hire/" data-reactid="14">Hire Me</a></li></ul></nav></header><section class="content" data-reactid="15"><!-- react-empty: 16 --><article class="blog-body" data-reactid="17"><header class="blog-header" data-reactid="18"><h2 data-reactid="19">How We Built Our React Native App</h2><div data-reactid="20"><time data-reactid="21">September 15, 2017</time><!-- react-text: 22 --> · <!-- /react-text --><!-- react-text: 23 -->1937<!-- /react-text --><!-- react-text: 24 --> words · <!-- /react-text --><!-- react-text: 25 -->10 min read<!-- /react-text --></div></header><div class="post-content" data-reactid="26"><p><em>Cross Posted from <a href="https://medium.com/engineering-housing/how-we-built-our-react-native-app-3380a33811ac" target="_blank" rel="noopener noreferrer">Engineering @ Housing</a></em></p>
+<figure class="full-width"><img src="./hero.png" alt="housing.com/apps"><figcaption>housing.com/apps</figcaption></figure>
+<p>Last year we <a href="https://medium.com/engineering-housing/progressing-mobile-web-fac3efb8b454" target="_blank" rel="noopener noreferrer">launched our PWA</a> with
+an aim to improve the experience of our users on slow and inconsistent network
+connections. It was the first step towards the quality of the products we strive
+for. We received a very positive response from the community as well as our
+customers and wanted to replicate the same success for our mobile application
+too.</p>
+<blockquote>
+<p>An ideal mobile application should be an extension of the mobile web instead of
+being a replacement.</p>
+</blockquote>
+<h4 id="challenges"><a class="header-anchor" href="#challenges" aria-hidden="true" target="_blank" rel="noopener noreferrer">§</a> Challenges</h4>
+<ol>
+<li>We are building experiences on 3 different platforms, namely: Android, iOS and
+the web (desktop and mobile).</li>
+<li>This means duplication of business logic across 4 codebases, which is not the
+best thing to do if you go by
+<a href="https://en.wikipedia.org/wiki/Don't_repeat_yourself" target="_blank" rel="noopener noreferrer">DRY</a>.</li>
+<li>It also means introducing new features or modifying existing features requires
+making the necessary changes across 4 separate codebases. This is not scalable
+at all and the platforms would soon end up being out of sync.</li>
+<li>Finally, we would have to build and strategically expand 3 separate teams of
+developers for each of the 3 platforms.</li>
+</ol>
+<h4 id="objectives"><a class="header-anchor" href="#objectives" aria-hidden="true" target="_blank" rel="noopener noreferrer">§</a> Objectives</h4>
+<p>To overcome these challenges, we decided to place our bets on the newly emerging
+breed of cross-platform native apps built with a modern frontend stack in
+JavaScript. We began implementing the apps with the following main objectives:</p>
+<ol>
+<li>Although the apps would be written in JavaScript, they should not compromise on
+the experience and responsiveness that users associate with ‘native’ apps. In
+simpler words, if you’re the user, the app should feel just like any other
+native app on the App Store or Play Store.</li>
+<li>The app should reuse as much code as possible across Android and iOS. This would
+be in line with the principle of DRY. It would also imply that maintaining the
+code is far easier and adding/modifying/removing features means touching the
+minimum number of files possible.</li>
+<li>Last but not least, the stack used should be familiar to our team of product
+engineers for the web and the dependence on platform specific native developers
+should be reduced. This is also in line with increasing the <a href="https://en.wikipedia.org/wiki/Bus_factor" target="_blank" rel="noopener noreferrer">bus factor</a> at Housing.</li>
+</ol>
+<h4 id="stack"><a class="header-anchor" href="#stack" aria-hidden="true" target="_blank" rel="noopener noreferrer">§</a> Stack</h4>
+<ul>
+<li><a href="http://reactnavigation.org/" target="_blank" rel="noopener noreferrer">react-navigation</a> — still in its early days but it
+solves the much debated navigation issue in a declarative manner using the
+Animated API. It also fits well into our redux based state management system
+since it’s a purely JS based solution. However, we are investigating into other
+native and hybrid navigation solutions as well.</li>
+<li><a href="https://redux-observable.js.org/" target="_blank" rel="noopener noreferrer">redux-observable</a> — the JS ecosystem is still
+figuring the best solution to async state management but in the end, it is more
+of a ‘to each his own’ problem. We decided to use redux-observable because it
+helps us isolate side effects nicely and handle them with the expressive power
+<a href="http://reactivex.io/rxjs/" target="_blank" rel="noopener noreferrer">RxJS</a> operators. This approach also allows us to
+test our side-effects handling code in an isolated manner.</li>
+<li><a href="https://facebook.github.io/immutable-js/" target="_blank" rel="noopener noreferrer">immutable</a> — we faced nasty and hard
+to find bugs on previous platforms which arose from mutations caused in our
+reducers. To mitigate this issue for once and for all, we decided to use
+immutable data structures throughout the app. This was made possible by a custom
+reducer factory which converts between immutable and vanilla JS data structures.</li>
+<li><a href="http://ramdajs.com/" target="_blank" rel="noopener noreferrer">ramda</a> — as far as possible, we made it a point to code in
+a functional, declarative paradigm via pure functions which handle most of our
+business logic. Ramda has been irreplaceable for us in that regard.</li>
+<li><a href="https://github.com/rt2zz/redux-persist" target="_blank" rel="noopener noreferrer">redux-persist</a> — Unlike web apps,
+native apps have a notion of offline mode and persisted state. This library
+along with
+<a href="https://github.com/wildlifela/redux-persist-migrate" target="_blank" rel="noopener noreferrer">redux-persist-migrate</a>
+gracefully solved this problem with a backing
+<a href="https://facebook.github.io/react-native/docs/asyncstorage.html" target="_blank" rel="noopener noreferrer">AsyncStorage</a>
+layer.</li>
+</ul>
+<h4 id="tooling"><a class="header-anchor" href="#tooling" aria-hidden="true" target="_blank" rel="noopener noreferrer">§</a> Tooling</h4>
+<figure class="full-width"><img src="./tools.png" alt=""></figure>
+<p>Besides the usual suspects — <a href="https://yarnpkg.com/en/" target="_blank" rel="noopener noreferrer">yarn</a>,
+<a href="https://prettier.io/" target="_blank" rel="noopener noreferrer">prettier</a>, <a href="https://eslint.org/" target="_blank" rel="noopener noreferrer">eslint</a> and
+<a href="https://github.com/typicode/husky" target="_blank" rel="noopener noreferrer">husky</a>, we depend on the following tools as
+well:</p>
+<ul>
+<li><a href="https://storybook.js.org/" target="_blank" rel="noopener noreferrer">storybook</a> — it provides excellent support for
+developing isolated native components. As a result, we were able to code our UI
+components as a one-to-one mapping of our design guide. We are looking into
+deploying it internally so that designers have access to actual components as
+well.</li>
+</ul>
+<figure class="full-width"><img src="./styleguide.png" alt="Styleguide (Consistent across Android and iOS)"><figcaption>Styleguide (Consistent across Android and iOS)</figcaption></figure>
+<ul>
+<li><a href="https://microsoft.github.io/code-push/" target="_blank" rel="noopener noreferrer">codepush</a> — this is one area where
+react native apps really shine. We use codepush for releasing unobtrusive over
+the air updates to our users while completely owning the rollout percentages and
+target versions.</li>
+<li><a href="https://fastlane.tools/" target="_blank" rel="noopener noreferrer">fastlane</a> — managing different environments (staging,
+development, production) and automating our builds proved to be a breeze with
+fastlane. We exposed a parameterized build dashboard on our internal
+<a href="https://jenkins.io/" target="_blank" rel="noopener noreferrer">Jenkins</a> CI which manages everything from app secrets,
+code signing, <a href="https://developer.apple.com/testflight/" target="_blank" rel="noopener noreferrer">Test Flight</a> and
+<a href="http://try.crashlytics.com/beta/" target="_blank" rel="noopener noreferrer">Crashlytics Beta</a> uploads, registering
+devices for internal test builds, releasing OTA updates through codepush etc.</li>
+<li><a href="http://facebook.github.io/jest/" target="_blank" rel="noopener noreferrer">jest</a> and
+<a href="https://github.com/wix/detox" target="_blank" rel="noopener noreferrer">detox</a> — this combination resulted in a
+delightful testing platform for our app. Jest proved to be slightly cumbersome
+to set up for react native given the fact that we had to write mocks for native
+modules, but it was worth the effort. Detox by the folks at <a href="https://www.wix.engineering/" target="_blank" rel="noopener noreferrer">Wix Engineering</a> simplified the end-to-end testing
+story for us.</li>
+<li><a href="https://sentry.io/welcome/" target="_blank" rel="noopener noreferrer">sentry</a> — The folks at
+<a href="http://sentry.io/" target="_blank" rel="noopener noreferrer">sentry.io</a> introduced first class support for react-native
+apps sometime back. The new SDK enriches error reports with a lot of useful
+device specific data and provides holistic reports with both native and JS stack
+traces.</li>
+</ul>
+<blockquote>
+<p>More than 90% of the app’s source code is in JavaScript while not compromising
+on performance and quality.</p>
+</blockquote>
+<h3 id="learnings"><a class="header-anchor" href="#learnings" aria-hidden="true" target="_blank" rel="noopener noreferrer">§</a> Learnings</h3>
+<p>React Native is a <strong>relatively</strong> young platform. The community around it is
+still deliberating on best practices and the <em>right way</em> to do certain things.
+As a starting point, however, the <a href="https://facebook.github.io/react-native/" target="_blank" rel="noopener noreferrer">official docs</a> are the best resource we have come across. Here are some things we learnt along the way:</p>
+<ul>
+<li><strong>InteractionManager —</strong> This is your best friend when it comes to perf. There
+has been a
+<a href="https://facebook.github.io/react-native/blog/2017/02/14/using-native-driver-for-animated.html" target="_blank" rel="noopener noreferrer">considerable</a>
+<a href="https://github.com/wix/react-native-interactable" target="_blank" rel="noopener noreferrer">effort</a> by the community to
+move expensive things to run on native threads since JS is single threaded.
+There are times when you need to do expensive stuff in JS without affecting the
+perf of your animations/transitions/user interactions. InteractionManager
+provides a <a href="http://facebook.github.io/react-native/releases/0.48/docs/interactionmanager.html#interactionmanager" target="_blank" rel="noopener noreferrer">nice scheduling API</a> to defer this expensive stuff until after said animations/transitions/interactions
+have completed.</li>
+</ul>
+<ul>
+<li><strong>requestAnimationFrame —</strong> This one is borrowed from the web and works
+identically. A particular use case is the ripple effect on Android devices. The
+usual approach of using a<code>TouchableNativeFeedback</code> with an apt <code>onPress</code> handler
+does not always work here. At times, you might not see the ripple. Instead, if
+you wrap your <code>onPress</code> handler in a <code>requestAnimationFrame</code> block, you’ll
+notice the animations are visible perfectly.</li>
+</ul>
+<ul>
+<li><strong>MessageQueue —</strong> React Native works by communicating between the JS and native
+realms over a bridge. As a result, there is constant chit-chat over this bridge
+which can affect performance adversely if not moderated properly. The <code>spy</code>
+method on <code>MessageQueue</code> , as the name suggest, lets you spy on this chit-chat
+and see what’s being sent across. This might help you understand what’s actually
+happening underneath and improve performance.</li>
+</ul>
+<pre><code class="language-js">MessageQueue.spy(<span class="hljs-literal">true</span>)
+</code></pre>
+<ul>
+<li><strong>setNativeProps —</strong> From the official docs — “<code>setNativeProps</code> is the React
+Native equivalent to setting properties directly on a DOM node”. At times, for
+reasons only known to you, you might want to manipulate the underlying native
+view that backs your JS view while short-circuiting the react render cycle. We
+used this only in a couple of places because everything else just did not work
+well enough. Avoid using it or use it very wisely if you must.</li>
+</ul>
+<ul>
+<li><strong>Structuring —</strong> From the get go, we followed a simple organization structure
+for our repo. We separated our dumb UI <strong>components</strong> from stateful <strong>views</strong>.
+State management was all taken care of in our <strong>epics</strong> and <strong>reducers</strong>. We
+observed that randomly scattered side-effect generating code becomes the
+bottleneck in keeping our codebase performant and testable. Our approach with
+redux-observable helped us mitigate some of those pains. Consider the following
+example:</li>
+</ul>
+<pre><code class="language-js"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">localitySelect</span>(<span class="hljs-params">action$, store, { ajax }</span>) </span>{
+  <span class="hljs-keyword">return</span> action$
+    .ofType(<span class="hljs-string">'LOCALITY_AUTOCOMPLETE'</span>)
+    .debounceTime(<span class="hljs-number">150</span>)
+    .distinctUntilChanged()
+    .switchMap(<span class="hljs-function">(<span class="hljs-params">{ payload: { text, cursor } }</span>) =&gt;</span> {
+      <span class="hljs-keyword">return</span> ajax
+        .getJSON(
+          <span class="hljs-string">`<span class="hljs-subst">${api.searchSuggest}</span>&amp;cursor=<span class="hljs-subst">${cursor}</span>&amp;string=<span class="hljs-subst">${text}</span>`</span>
+        )
+        .retry(<span class="hljs-number">3</span>)
+        .map(<span class="hljs-function">(<span class="hljs-params">{ response }</span>) =&gt;</span> ({
+          <span class="hljs-attr">type</span>: <span class="hljs-string">'LOCALITY_SUGGEST'</span>,
+          <span class="hljs-attr">payload</span>: { <span class="hljs-attr">data</span>: response }
+        }))
+        .catch(<span class="hljs-function"><span class="hljs-params">error</span> =&gt;</span>
+          Observable.of({
+            <span class="hljs-attr">type</span>: <span class="hljs-string">'LOCALITY_SUGGEST'</span>,
+            <span class="hljs-attr">payload</span>: { error },
+            <span class="hljs-attr">error</span>: <span class="hljs-literal">true</span>
+          })
+        )
+    })
+}
+</code></pre>
+<p>We were able to contain most of the side-effect code in a single function rather
+than piggy-backing on component lifecycle methods. Also, we injected the
+side-effect making dependency — <code>ajax</code> in this case, into the function itself.
+This can be replaced by something that just mocks the network requests in a test
+environment.</p>
+<ul>
+<li><strong>Redux Middleware —</strong> Since the entire app state lives in redux including
+navigation, redux middleware become indispensable in executing code in response
+to actions. In our case, we delegated the analytics (screen tracking), logging,
+error reporting, modifying the device status bar and memory management to
+dedicated middleware. This effectively removes this code from individual views
+and keeps them lean. Here’s an example that switches between a dark or light
+status bar on iOS based on the current screen:</li>
+</ul>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> statusBarMiddleware = <span class="hljs-function">(<span class="hljs-params">{ getState }</span>) =&gt;</span> next =&gt; <span class="hljs-function">(<span class="hljs-params">action</span>) =&gt;</span> {
+  <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">Object</span>.values(NavigationActions).includes(action.type)) {
+    <span class="hljs-keyword">return</span> next(action)
+  }
+  <span class="hljs-keyword">const</span> currentScreen = getCurrentRouteName(getState().rootNavigation)
+  <span class="hljs-keyword">const</span> result = next(action)
+  <span class="hljs-keyword">const</span> nextScreen = getCurrentRouteName(getState().rootNavigation)
+  <span class="hljs-keyword">if</span> (nextScreen !== currentScreen &amp;&amp; Platform.OS === <span class="hljs-string">'ios'</span>) {
+    setStyleForRoute(nextScreen)
+  }
+  <span class="hljs-keyword">return</span> result
+}
+</code></pre>
+<h3 id="build-pipeline"><a class="header-anchor" href="#build-pipeline" aria-hidden="true" target="_blank" rel="noopener noreferrer">§</a> Build Pipeline</h3>
+<figure class="full-width"><img src="./pipeline.png" alt=""></figure>
+<p>The official docs provide a plethora of insight into the API and the platform
+itself. In the end, however, you need to deploy your new shiny app. This also
+involves challenges like maintaining multiple environments for testing and
+staging, incorporating different credentials in an unobtrusive manner,
+generating release notes and notifying all stakeholders (product managers,
+testers and designers). After experimenting and struggling with a bunch of
+approaches, we moved to Fastlane to automate this entire process. Following is
+an abridged version of our beta release cycle on iOS:</p>
+<pre><code class="language-ruby">desc <span class="hljs-string">"Submit a new Beta Build to Crashlytics"</span>
+  lane <span class="hljs-symbol">:beta</span> <span class="hljs-keyword">do</span> <span class="hljs-params">|options|</span>
+    automatic_code_signing(
+      <span class="hljs-symbol">path:</span> <span class="hljs-string">"housing.xcodeproj"</span>,
+      <span class="hljs-symbol">use_automatic_signing:</span> <span class="hljs-literal">true</span>
+    )
+    register_devices(<span class="hljs-symbol">devices_file:</span> <span class="hljs-string">"./devices.txt"</span>)
+    match(
+      <span class="hljs-symbol">type:</span> <span class="hljs-string">"development"</span>,
+      <span class="hljs-symbol">force_for_new_devices:</span> <span class="hljs-literal">true</span>
+    )
+    humanable_build_number(<span class="hljs-symbol">update:</span> <span class="hljs-literal">true</span>)
+    gym(
+      <span class="hljs-symbol">scheme:</span> <span class="hljs-string">"housing"</span>,
+      <span class="hljs-symbol">clean:</span> <span class="hljs-literal">true</span>
+    )
+    crashlytics(
+      <span class="hljs-symbol">api_token:</span> <span class="hljs-string">"XXXXXXXX"</span>,
+      <span class="hljs-symbol">build_secret:</span> <span class="hljs-string">"XXXXXXXX"</span>,
+      <span class="hljs-symbol">crashlytics_path:</span> <span class="hljs-string">"./Pods/Crashlytics"</span>,
+      <span class="hljs-symbol">emails:</span> user_email,
+      <span class="hljs-symbol">groups:</span> <span class="hljs-string">"coders,qa"</span>,
+      <span class="hljs-symbol">notes:</span> options &amp;&amp; options[<span class="hljs-symbol">:notes</span>] ? options[<span class="hljs-symbol">:notes</span>]
+        : <span class="hljs-string">"Branch <span class="hljs-subst">#{git_branch}</span> built by <span class="hljs-subst">#{user_email}</span>\n<span class="hljs-subst">#{changelog_from_git_commits(
+          <span class="hljs-symbol">commits_count:</span> sh(<span class="hljs-string">"git cherry beta | wc -l"</span>).to_i,
+          <span class="hljs-symbol">date_format:</span> <span class="hljs-string">"short"</span>,
+          <span class="hljs-symbol">merge_commit_filtering:</span> <span class="hljs-string">"exclude_merges"</span>
+        )}</span>"</span>
+    )
+    release(
+      <span class="hljs-symbol">bundle_identifier:</span> <span class="hljs-string">"XXXXXXX"</span>,
+      <span class="hljs-symbol">sentry_organisation:</span> <span class="hljs-string">"housing"</span>,
+      <span class="hljs-symbol">sentry_app_name:</span> <span class="hljs-string">"housing-app-staging"</span>,
+      <span class="hljs-symbol">deployment_name:</span> <span class="hljs-string">"Staging"</span>,
+      <span class="hljs-symbol">target_version:</span> <span class="hljs-string">"1.0"</span>
+    )
+    slack(
+      <span class="hljs-symbol">slack_url:</span> <span class="hljs-string">"https://hooks.slack.com/services/XXXXXXXXXX"</span>,
+      <span class="hljs-symbol">payload:</span> {
+        <span class="hljs-string">"Build Number"</span> =&gt; humanable_build_number,
+        <span class="hljs-string">"Built By"</span> =&gt; user_email
+      }
+    )
+    add_git_tag(
+      <span class="hljs-symbol">grouping:</span> <span class="hljs-string">"ios"</span>,
+      <span class="hljs-symbol">prefix:</span> <span class="hljs-string">"v"</span>,
+      <span class="hljs-symbol">build_number:</span> humanable_build_number
+    )
+  <span class="hljs-keyword">end</span>
+</code></pre>
+<p>This piece of code handles code-signing, registering devices for testing,
+incrementing build numbers, building the app, uploading it to Crashlytics Beta,
+generating release notes, releasing it on code-push and uploading the
+source-maps to sentry, notifying on a slack channel and finally adding a release
+tag on GitHub. You can potentially do anything that pertains to building here.
+This code sits beside the main application code. Since the CI pulls in a fresh
+version of our repo before each build, it is ridiculously easy to modify the
+build pipeline without breaking the CI.</p>
+<h3 id="pro-tips"><a class="header-anchor" href="#pro-tips" aria-hidden="true" target="_blank" rel="noopener noreferrer">§</a> Pro-Tips</h3>
+<ol>
+<li>Read the <a href="https://facebook.github.io/react-native/" target="_blank" rel="noopener noreferrer">docs</a> as well as the
+<a href="https://github.com/facebook/react-native/releases" target="_blank" rel="noopener noreferrer">release notes</a>.</li>
+<li><code>yarn start —- --reset-cache</code> — for when you installed something and it does not
+work/can’t be found.</li>
+<li><a href="https://github.com/jhen0409/react-native-debugger" target="_blank" rel="noopener noreferrer">react-native-debugger</a> — The
+standalone app based on official debugger of React Native, and includes React
+Inspector / Redux DevTools.</li>
+<li>Make the bundled <a href="https://facebook.github.io/react-native/docs/performance.html#what-you-need-to-know-about-frames" target="_blank" rel="noopener noreferrer">Perf
+Monitor</a>
+your best friend.</li>
+<li>Always test on a real device.</li>
+<li><a href="https://facebook.github.io/react/" target="_blank" rel="noopener noreferrer">Knowing React</a> is a pre-requisite.</li>
+</ol>
+<h3 id="acknowledgement"><a class="header-anchor" href="#acknowledgement" aria-hidden="true" target="_blank" rel="noopener noreferrer">§</a> Acknowledgement</h3>
+<p><em><a href="https://twitter.com/f0rr0" target="_blank" rel="noopener noreferrer">Siddharth</a></em>,
+<em><a href="https://twitter.com/shahbhavir" target="_blank" rel="noopener noreferrer">Bhavir</a></em>,
+<em><a href="https://twitter.com/ritz078" target="_blank" rel="noopener noreferrer">Ritesh</a></em>,
+<em><a href="https://twitter.com/Innocent__Freak" target="_blank" rel="noopener noreferrer">Vikas</a></em>,
+<em><a href="https://twitter.com/dxtr026" target="_blank" rel="noopener noreferrer">Rahul</a></em>, Amandeep and
+<em><a href="https://twitter.com/heavenhackers" target="_blank" rel="noopener noreferrer">Dron</a></em> worked in the React Native Apps
+Team. Rohit and <em><a href="https://twitter.com/HarishBarge33" target="_blank" rel="noopener noreferrer">Harish</a></em> handled QA.</p>
+<p>Special thanks to <em><a href="https://twitter.com/ritz078" target="_blank" rel="noopener noreferrer">Ritesh</a></em> for the illustrations.</p>
+<blockquote>
+<p>Disclaimer: We don’t advocate for any of the tools, libraries, coding practices
+or software development philosophies mentioned here. You are welcome to read,
+learn, accept, reject and critique however you see fit.</p>
+</blockquote>
+</div></article><aside class="post-footer" data-reactid="27"><ul data-reactid="28"><li data-reactid="29"><div class="SocialMediaShareButton SocialMediaShareButton--twitter share-icons" data-reactid="30"><div style="width:32px;height:32px;" data-reactid="31"><svg viewBox="0 0 64 64" fill="white" width="32" height="32" class="social-icon social-icon--twitter " data-reactid="32"><g data-reactid="33"><circle cx="32" cy="32" r="31" fill="#00aced" data-reactid="34"></circle></g><g data-reactid="35"><path d="M48,22.1c-1.2,0.5-2.4,0.9-3.8,1c1.4-0.8,2.4-2.1,2.9-3.6c-1.3,0.8-2.7,1.3-4.2,1.6 C41.7,19.8,40,19,38.2,19c-3.6,0-6.6,2.9-6.6,6.6c0,0.5,0.1,1,0.2,1.5c-5.5-0.3-10.3-2.9-13.5-6.9c-0.6,1-0.9,2.1-0.9,3.3 c0,2.3,1.2,4.3,2.9,5.5c-1.1,0-2.1-0.3-3-0.8c0,0,0,0.1,0,0.1c0,3.2,2.3,5.8,5.3,6.4c-0.6,0.1-1.1,0.2-1.7,0.2c-0.4,0-0.8,0-1.2-0.1 c0.8,2.6,3.3,4.5,6.1,4.6c-2.2,1.8-5.1,2.8-8.2,2.8c-0.5,0-1.1,0-1.6-0.1c2.9,1.9,6.4,2.9,10.1,2.9c12.1,0,18.7-10,18.7-18.7 c0-0.3,0-0.6,0-0.8C46,24.5,47.1,23.4,48,22.1z" data-reactid="36"></path></g></svg></div></div></li><li data-reactid="37"><div class="SocialMediaShareButton SocialMediaShareButton--facebook share-icons" data-reactid="38"><div style="width:32px;height:32px;" data-reactid="39"><svg viewBox="0 0 64 64" fill="white" width="32" height="32" class="social-icon social-icon--facebook " data-reactid="40"><g data-reactid="41"><circle cx="32" cy="32" r="31" fill="#3b5998" data-reactid="42"></circle></g><g data-reactid="43"><path d="M34.1,47V33.3h4.6l0.7-5.3h-5.3v-3.4c0-1.5,0.4-2.6,2.6-2.6l2.8,0v-4.8c-0.5-0.1-2.2-0.2-4.1-0.2 c-4.1,0-6.9,2.5-6.9,7V28H24v5.3h4.6V47H34.1z" data-reactid="44"></path></g></svg></div></div></li></ul><article data-reactid="45"><header data-reactid="46"><h4 data-reactid="47">Read Next</h4></header><ul data-reactid="48"><li data-reactid="49"><a href="/blog/interviewing-with-housing-com/" data-reactid="50">Interviewing with Housing.com</a><!-- react-text: 51 --> · <!-- /react-text --><small data-reactid="52">6 min read</small><p data-reactid="53"><small data-reactid="54">My experience and lessons learnt from interviewing with a leading Indian tech startup.</small></p></li><li data-reactid="55"><a href="/blog/2016-music-in-review/" data-reactid="56">2016 Music in Review</a><!-- react-text: 57 --> · <!-- /react-text --><small data-reactid="58">2 min read</small><p data-reactid="59"><small data-reactid="60">A round up of the seven best artists, both old and new, that I discovered in 2016.</small></p></li><li data-reactid="61"><a href="/blog/kickback-with-koa-webpack/" data-reactid="62">Kickback With Koa &amp; Webpack</a><!-- react-text: 63 --> · <!-- /react-text --><small data-reactid="64">13 min read</small><p data-reactid="65"><small data-reactid="66">Build a KoaJS server with ES7 async/await. Hot patch it without restarting via Webpack Hot Module Replacement. Achieve DX nirvana.</small></p></li></ul></article><hr data-reactid="67"/><div class="bio" data-reactid="68"><img class="avatar" alt="avatar" src="/38efebf2bc5832b39113314d2fd9cc07.jpg" data-reactid="69"/><p class="intro" data-reactid="70"><!-- react-text: 71 -->Written by <!-- /react-text --><a href="/about/" data-reactid="72">Siddharth Jain</a><!-- react-text: 73 --> — an open source developer interested in minimal design, advanced JavaScript and everything λ. He is currently <!-- /react-text --><a href="/hire/" data-reactid="74">available</a><!-- react-text: 75 --> for contract development on a project basis.<!-- /react-text --></p></div></aside></section><footer data-reactid="76"><section data-reactid="77"><p data-reactid="78"><a href="mailto:sid_26@outlook.com" data-reactid="79"><span class="footer-icon" style="background-image:url(/icons/send.svg);" data-reactid="80"></span><!-- react-text: 81 --> sid_26@outlook.com<!-- /react-text --></a></p><ul data-reactid="82"><li data-reactid="83"><a rel="noopener noreferrer" target="__blank" href="//yuppi.es/atom" data-reactid="84"><span class="footer-icon" style="background-image:url(/icons/rss.svg);" data-reactid="85"></span></a></li><li data-reactid="86"><a rel="noopener noreferrer" target="__blank" href="//facebook.com/f0rr0" data-reactid="87"><span class="footer-icon" style="background-image:url(/icons/facebook.svg);" data-reactid="88"></span></a></li><li data-reactid="89"><a rel="noopener noreferrer" target="__blank" href="//twitter.com/f0rr0" data-reactid="90"><span class="footer-icon" style="background-image:url(/icons/twitter.svg);" data-reactid="91"></span></a></li><li data-reactid="92"><a rel="noopener noreferrer" target="__blank" href="//github.com/f0rr0" data-reactid="93"><span class="footer-icon" style="background-image:url(/icons/github.svg);" data-reactid="94"></span></a></li><li data-reactid="95"><a rel="noopener noreferrer" target="__blank" href="//linkedin.com/in/f0rr0" data-reactid="96"><span class="footer-icon" style="background-image:url(/icons/linkedin.svg);" data-reactid="97"></span></a></li><li data-reactid="98"><a rel="noopener noreferrer" target="__blank" href="//medium.com/@f0rr0" data-reactid="99"><span class="footer-icon" style="background-image:url(/icons/medium.svg);" data-reactid="100"></span></a></li><li data-reactid="101"><a rel="noopener noreferrer" target="__blank" href="//open.spotify.com/user/sidjain95" data-reactid="102"><span class="footer-icon" style="background-image:url(/icons/spotify.svg);" data-reactid="103"></span></a></li><li data-reactid="104"><a rel="noopener noreferrer" target="__blank" href="//www.last.fm/user/sidjain26" data-reactid="105"><span class="footer-icon" style="background-image:url(/icons/lastfm.svg);" data-reactid="106"></span></a></li><li style="padding-left:0;" data-reactid="107"><a rel="noopener noreferrer" target="__blank" href="//goodreads.com/f0rr0" data-reactid="108"><span class="footer-icon" style="background-image:url(/icons/goodreads.svg);" data-reactid="109"></span></a></li></ul></section></footer></main></div><script async="" src="/bundle.js?t=1505440707288"></script><script async="">(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m) })(window,document,'script','https://www.google-analytics.com/analytics.js','ga'); ga('create', 'UA-84957482-1', 'auto'); ga('send', 'pageview');</script></body></html>

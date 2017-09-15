@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yuppi.es/</id>
     <title>Yuppies</title>
-    <updated>2017-09-15T01:58:59Z</updated>
+    <updated>2017-09-15T02:01:07Z</updated>
     <author>
         <name>Siddharth Jain</name>
         <email>sid_26@outlook.com</email>
@@ -59,7 +59,7 @@ Los Angeles based producer, singer-songwriter Stephen Swartz, known by his stage
         <id>https://yuppi.es/blog/how-we-built-our-react-native-app/</id>
         <link href="https://yuppi.es/blog/how-we-built-our-react-native-app/">
         </link>
-        <updated>2017-09-14T18:30:00Z</updated>
+        <updated>2017-09-07T18:30:00Z</updated>
         <summary type="html"><![CDATA[The design philosophy, tech stack and tooling that went into building a React Native App at Housing.com]]></summary>
         <content type="html"><![CDATA[<p><em>Cross Posted from <a href="https://medium.com/engineering-housing/how-we-built-our-react-native-app-3380a33811ac">Engineering @ Housing</a></em></p>
 <figure class="full-width"><img src="https://yuppi.es/blog/how-we-built-our-react-native-app/hero.png" alt="housing.com/apps"><figcaption>housing.com/apps</figcaption></figure>

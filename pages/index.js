@@ -36,10 +36,10 @@ export default function BlogIndex(props) {
           { name: 'twitter:title', content: docTitle }
         ]}
       />
-      <p>Hello, my name is <Link to='/about/'>Siddharth Jain</Link>.</p>
+      <p>Hello, my name is <Link to='/about/'>Sid Jain</Link>.</p>
       <p>
-        I am a web developer-designer living in <del>Los Angeles</del>
-        &nbsp;<del>New Delhi</del>&nbsp;Mumbai, currently at <Anchor href='//housing.com' title='Housing.com' />. Previously contracted independently for <Anchor href='//bridg.com' title='Bridg' /> and <Anchor href='//1mg.com' title='1mg Technologies' />.
+        I am a developer living in <del>Los Angeles</del>
+        &nbsp;<del>New Delhi</del>&nbsp;<del>Mumbai</del>&nbsp;Berlin. I work at <Anchor href='//8fit.com' title='8fit' />. I'm passionate about lambda calculus, house music and Mexican food.
       </p>
       <p>
         I use <Link to='/about/#about-yuppies'>this space</Link> primarily for <Link to='/blog/'>writing</Link> and <Link to='/hire/'>reaching out</Link> to clients. The last piece I wrote was&nbsp;

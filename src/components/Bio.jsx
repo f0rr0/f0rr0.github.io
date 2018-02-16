@@ -9,7 +9,7 @@ export default function Bio() {
     <div className='bio'>
       <img className='avatar' alt='avatar' src={prefixLink(`${avatar}`)} />
       <p className='intro'>
-        Written by <Link to='/about/'>Siddharth Jain</Link> &mdash; an open source developer interested in minimal design, advanced JavaScript and everything &lambda;. He is currently <Link to='/hire/'>available</Link> for contract development on a project basis.
+        Written by <Link to='/about/'>Sid Jain</Link> &mdash; an autodidact developer interested in minimal design, advanced JavaScript and everything &lambda;.
       </p>
     </div>
   );

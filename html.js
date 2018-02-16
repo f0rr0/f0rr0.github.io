@@ -29,7 +29,7 @@ export default function HTML(props) {
         {title.toComponent()}
 
         <meta name='robots' content='index, follow' />
-        <meta name='author' content='Siddharth Jain' />
+        <meta name='author' content='Sid Jain' />
 
         <meta name='twitter:card' content='summary_large_image' />
         <meta name='twitter:creator' content='@f0rr0' />

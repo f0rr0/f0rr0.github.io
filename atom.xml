@@ -2,15 +2,15 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yuppi.es/</id>
     <title>Yuppies</title>
-    <updated>2018-02-16T22:16:53Z</updated>
+    <updated>2018-02-16T22:34:18Z</updated>
     <author>
-        <name>Siddharth Jain</name>
+        <name>Sid Jain</name>
         <email>sid_26@outlook.com</email>
         <uri>https://yuppi.es/about</uri>
     </author>
     <link rel="alternate" href="https://yuppi.es"/>
-    <subtitle>By Siddharth Jain — an open source developer interested in minimal design, advanced JavaScript and everything λ. He is currently available for contract development on a project basis.</subtitle>
-    <rights>All rights reserved  2018, Siddharth Jain</rights>
+    <subtitle>By Sid Jain — an autodidact developer interested in minimal design, advanced JavaScript and everything λ.</subtitle>
+    <rights>All rights reserved  2018, Sid Jain</rights>
     <generator>Feed for Node.js</generator>
     <entry>
         <title type="html"><![CDATA[2016 Music in Review]]></title>
@@ -49,7 +49,7 @@ Los Angeles based producer, singer-songwriter Stephen Swartz, known by his stage
 <em>Playlist on <a href="https://soundcloud.com/sid-jain-6/sets/2016-fresh">SoundCloud</a></em></p>
 ]]></content>
         <author>
-            <name>Siddharth Jain</name>
+            <name>Sid Jain</name>
             <email>sid_26@outlook.com</email>
             <uri>https://yuppi.es/about</uri>
         </author>
@@ -379,7 +379,7 @@ learn, accept, reject and critique however you see fit.</p>
 </blockquote>
 ]]></content>
         <author>
-            <name>Siddharth Jain</name>
+            <name>Sid Jain</name>
             <email>sid_26@outlook.com</email>
             <uri>https://yuppi.es/about</uri>
         </author>
@@ -429,7 +429,7 @@ Now, among the immediately visible players in India, who have placed their bets 
 <p>Take this as a derision of educational institutions, not education itself. In my humble opinion, if going to college makes you more prepared for the kind of roles you want to take on in the future, by all means - go to college. It is still the best way to accumulate a diversity of experiences and increase your connection capital. But if you feel that restricting yourself and &#x2018;your&#x2019; education to the rigidity of a college structure <a href="https://www.ted.com/talks/ken_robinson_says_schools_kill_creativity">kills your creativity</a> or unduly stigmatizes failure and mistakes, just don&#x2019;t do it. Do your own thing.</p>
 ]]></content>
         <author>
-            <name>Siddharth Jain</name>
+            <name>Sid Jain</name>
             <email>sid_26@outlook.com</email>
             <uri>https://yuppi.es/about</uri>
         </author>
@@ -770,7 +770,7 @@ implement soon.</p>
 <p>Originally &#x1F4DD; on <a href="https://medium.com/@f0rr0/kickback-with-koa-webpack-a51d7e5d7911">Medium</a>.</p>
 ]]></content>
         <author>
-            <name>Siddharth Jain</name>
+            <name>Sid Jain</name>
             <email>sid_26@outlook.com</email>
             <uri>https://yuppi.es/about</uri>
         </author>

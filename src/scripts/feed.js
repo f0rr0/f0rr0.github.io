@@ -25,7 +25,7 @@ export default function generateFeed(pages) {
     description: config.description,
     id: `${config.domain}/`,
     link: config.domain,
-    copyright: `All rights reserved  ${now.format('YYYY')}, Siddharth Jain`,
+    copyright: `All rights reserved  ${now.format('YYYY')}, Sid Jain`,
     updated: now.toJSON(),
     author
   });

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yuppi.es/</id>
     <title>Yuppies</title>
-    <updated>2017-09-15T02:13:02Z</updated>
+    <updated>2018-02-16T22:16:53Z</updated>
     <author>
         <name>Siddharth Jain</name>
         <email>sid_26@outlook.com</email>
@@ -10,14 +10,14 @@
     </author>
     <link rel="alternate" href="https://yuppi.es"/>
     <subtitle>By Siddharth Jain — an open source developer interested in minimal design, advanced JavaScript and everything λ. He is currently available for contract development on a project basis.</subtitle>
-    <rights>All rights reserved  2017, Siddharth Jain</rights>
+    <rights>All rights reserved  2018, Siddharth Jain</rights>
     <generator>Feed for Node.js</generator>
     <entry>
         <title type="html"><![CDATA[2016 Music in Review]]></title>
         <id>https://yuppi.es/blog/2016-music-in-review/</id>
         <link href="https://yuppi.es/blog/2016-music-in-review/">
         </link>
-        <updated>2016-11-02T18:30:00Z</updated>
+        <updated>2016-11-02T17:00:00Z</updated>
         <summary type="html"><![CDATA[A round up of the seven best artists, both old and new, that I discovered in 2016.]]></summary>
         <content type="html"><![CDATA[<p>2016 saw me clocking 10,972 listens of 2,238 different tracks from 1,344 unique artists. If anything, these numbers indicate that I spend a lot of time with my <a href="https://www.marshallheadphones.com/mh_us_en/woburn-black">Marshall</a> and <a href="http://v-moda.com/crossfade-m-100/">V-Moda</a>. But as a wise statistician once said,</p>
 <blockquote>
@@ -59,7 +59,7 @@ Los Angeles based producer, singer-songwriter Stephen Swartz, known by his stage
         <id>https://yuppi.es/blog/how-we-built-our-react-native-app/</id>
         <link href="https://yuppi.es/blog/how-we-built-our-react-native-app/">
         </link>
-        <updated>2017-09-07T18:30:00Z</updated>
+        <updated>2017-09-14T17:00:00Z</updated>
         <summary type="html"><![CDATA[The design philosophy, tech stack and tooling that went into building a React Native App at Housing.com]]></summary>
         <content type="html"><![CDATA[<p><em>Cross Posted from <a href="https://medium.com/engineering-housing/how-we-built-our-react-native-app-3380a33811ac">Engineering @ Housing</a></em></p>
 <figure class="full-width"><img src="https://yuppi.es/blog/how-we-built-our-react-native-app/hero.png" alt="housing.com/apps"><figcaption>housing.com/apps</figcaption></figure>
@@ -389,7 +389,7 @@ learn, accept, reject and critique however you see fit.</p>
         <id>https://yuppi.es/blog/interviewing-with-housing-com/</id>
         <link href="https://yuppi.es/blog/interviewing-with-housing-com/">
         </link>
-        <updated>2016-11-30T18:30:00Z</updated>
+        <updated>2016-11-30T17:00:00Z</updated>
         <summary type="html"><![CDATA[My experience and lessons learnt from interviewing with a leading Indian tech startup.]]></summary>
         <content type="html"><![CDATA[<figure class="full-width"><img src="https://yuppi.es/blog/interviewing-with-housing-com/housing.jpg" alt=""></figure>
 <p><em>Disclaimer: The opinions expressed in this article are my own and are, in no conceivable way, connected, correlated or inspired by those of <a href="http://Housing.com">Housing.com</a> or its employees and representatives.</em></p>
@@ -439,7 +439,7 @@ Now, among the immediately visible players in India, who have placed their bets 
         <id>https://yuppi.es/blog/kickback-with-koa-webpack/</id>
         <link href="https://yuppi.es/blog/kickback-with-koa-webpack/">
         </link>
-        <updated>2016-06-27T18:30:00Z</updated>
+        <updated>2016-06-27T17:00:00Z</updated>
         <summary type="html"><![CDATA[Build a KoaJS server with ES7 async/await. Hot patch it without restarting via Webpack Hot Module Replacement. Achieve DX nirvana.]]></summary>
         <content type="html"><![CDATA[<figure class="full-width"><img src="https://yuppi.es/blog/kickback-with-koa-webpack/banner.png" alt="Written at Kerckhoff Coffee House ~ LA Westside"><figcaption>Written at Kerckhoff Coffee House ~ LA Westside</figcaption></figure>
 <h4>Yet Another JavaScript Framework?</h4>

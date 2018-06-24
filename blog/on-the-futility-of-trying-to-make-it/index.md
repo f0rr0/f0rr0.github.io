@@ -2,7 +2,10 @@
 title: On The Futility Of Trying To Make It
 date: 06/24/2018
 description: About two years ago, I had decided to abandon an idle existence and put myself out in what some call the 'real world’. The idea, back then, was to cultivate pragmatic skills and be successful in the trade of my choosing. Two years later, I am still as troubled as I was back then and perhaps even more so.
+thumbnail: hero.jpg
 ---
+
+![[‘Gloomy Skyline of Berlin’ - Painting by M Bleichner](https://www.saatchiart.com/art/Painting-Gloomy-Skyline-of-Berlin-Germany/311983/2040173/view)](./hero.jpg){.full-width}
 
 It has been a series of fortuitous events and impetuous decisions that have led me to where I am in my career. About two years ago, I had decided to abandon an idle existence and put myself out in what some call the ‘real world’. The idea, back then, was to cultivate pragmatic skills and be successful in the trade of my choosing. Two years later, I am still as troubled as I was back then and perhaps even more so. I have never subscribed to the dogma of finding and following one’s passion. There is no such thing. As Cal Newport puts it-
 

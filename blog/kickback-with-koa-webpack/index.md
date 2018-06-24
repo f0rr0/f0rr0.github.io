@@ -4,7 +4,7 @@ date: 06/28/2016
 description: Build a KoaJS server with ES7 async/await. Hot patch it without restarting via Webpack Hot Module Replacement. Achieve DX nirvana.
 ---
 
-![Written at Kerckhoff Coffee House ~ LA Westside](./banner.png) {.full-width}
+![Written at Kerckhoff Coffee House ~ LA Westside](./banner.png){.full-width}
 
 #### Yet Another JavaScript Framework?
 

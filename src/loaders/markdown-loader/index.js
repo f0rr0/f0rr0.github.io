@@ -27,20 +27,24 @@ const md = markdownIt({
   linkify: true,
   typographer: true,
   highlight
-}).use(require('markdown-it-emoji'))
+}).use(require('markdown-it-attrs'))
+  .use(require('markdown-it-emoji'))
   .use(require('markdown-it-implicit-figures'), {
-    figcaption: true
+    figcaption: true,
+    copyAttrs: '^class$'
   })
   .use(require('markdown-it-link-attributes'), {
-    target: '_blank',
-    rel: 'noopener noreferrer'
+    pattern: /^https?:\/\//,
+    attrs: {
+      target: '_blank',
+      rel: 'noopener noreferrer'
+    }
   })
   .use(require('markdown-it-anchor'), {
     permalink: true,
     permalinkBefore: true,
     permalinkSymbol: '§'
-  })
-  .use(require('markdown-it-attrs'));
+  });
 
 md.linkify.tlds('onion', true);
 md.linkify.add('git:', 'http:');

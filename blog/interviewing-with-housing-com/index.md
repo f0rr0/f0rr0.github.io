@@ -5,7 +5,7 @@ description: My experience and lessons learnt from interviewing with a leading I
 thumbnail: housing.jpg
 ---
 
-![](./housing.jpg) {.full-width}
+![](./housing.jpg){.full-width}
 
 *Disclaimer: The opinions expressed in this article are my own and are, in no conceivable way, connected, correlated or inspired by those of Housing.com or its employees and representatives.*
 

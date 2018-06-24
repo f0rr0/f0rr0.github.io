@@ -39,7 +39,7 @@ export default function BlogIndex(props) {
       <p>Hello, my name is <Link to='/about/'>Sid Jain</Link>.</p>
       <p>
         I am a developer living in <del>Los Angeles</del>
-        &nbsp;<del>New Delhi</del>&nbsp;<del>Mumbai</del>&nbsp;Berlin. I work at <Anchor href='//8fit.com' title='8fit' />. I'm passionate about lambda calculus, house music and Mexican food.
+        &nbsp;<del>New Delhi</del>&nbsp;<del>Mumbai</del>&nbsp;Berlin. I work at <Anchor href='//lh-innovationhub.de/en/' title='Lufthansa' />. I'm passionate about lambda calculus, house music and Mexican food.
       </p>
       <p>
         I use <Link to='/about/#about-yuppies'>this space</Link> primarily for <Link to='/blog/'>writing</Link> and <Link to='/hire/'>reaching out</Link> to clients. The last piece I wrote was&nbsp;

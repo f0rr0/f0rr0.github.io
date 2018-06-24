@@ -6,7 +6,7 @@ description: The design philosophy, tech stack and tooling that went into buildi
 
 *Cross Posted from [Engineering @ Housing](https://medium.com/engineering-housing/how-we-built-our-react-native-app-3380a33811ac)*
 
-![housing.com/apps](./hero.png) {.full-width}
+![housing.com/apps](./hero.png){.full-width}
 
 Last year we [launched our PWA](https://medium.com/engineering-housing/progressing-mobile-web-fac3efb8b454) with
 an aim to improve the experience of our users on slow and inconsistent network
@@ -80,7 +80,7 @@ layer.
 
 #### Tooling
 
-![](./tools.png) {.full-width}
+![](./tools.png){.full-width}
 
 Besides the usual suspects — [yarn](https://yarnpkg.com/en/),
 [prettier](https://prettier.io/), [eslint](https://eslint.org/) and
@@ -93,7 +93,7 @@ components as a one-to-one mapping of our design guide. We are looking into
 deploying it internally so that designers have access to actual components as
 well.
 
-![Styleguide (Consistent across Android and iOS)](./styleguide.png) {.full-width}
+![Styleguide (Consistent across Android and iOS)](./styleguide.png){.full-width}
 
 * [codepush](https://microsoft.github.io/code-push/) — this is one area where
 react native apps really shine. We use codepush for releasing unobtrusive over
@@ -232,7 +232,7 @@ const statusBarMiddleware = ({ getState }) => next => (action) => {
 
 ### Build Pipeline
 
-![](./pipeline.png) {.full-width}
+![](./pipeline.png){.full-width}
 
 The official docs provide a plethora of insight into the API and the platform
 itself. In the end, however, you need to deploy your new shiny app. This also

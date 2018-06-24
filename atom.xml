@@ -2,14 +2,14 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yuppi.es/</id>
     <title>Yuppies</title>
-    <updated>2018-02-16T22:34:18Z</updated>
+    <updated>2018-06-24T08:31:26Z</updated>
     <author>
         <name>Sid Jain</name>
         <email>sid_26@outlook.com</email>
         <uri>https://yuppi.es/about</uri>
     </author>
     <link rel="alternate" href="https://yuppi.es"/>
-    <subtitle>By Sid Jain — an autodidact developer interested in minimal design, advanced JavaScript and everything λ.</subtitle>
+    <subtitle>By Sid Jain — an autodidact, tinkerer and maker of things. Interested in everything λ.</subtitle>
     <rights>All rights reserved  2018, Sid Jain</rights>
     <generator>Feed for Node.js</generator>
     <entry>
@@ -17,7 +17,7 @@
         <id>https://yuppi.es/blog/2016-music-in-review/</id>
         <link href="https://yuppi.es/blog/2016-music-in-review/">
         </link>
-        <updated>2016-11-02T17:00:00Z</updated>
+        <updated>2016-11-02T23:00:00Z</updated>
         <summary type="html"><![CDATA[A round up of the seven best artists, both old and new, that I discovered in 2016.]]></summary>
         <content type="html"><![CDATA[<p>2016 saw me clocking 10,972 listens of 2,238 different tracks from 1,344 unique artists. If anything, these numbers indicate that I spend a lot of time with my <a href="https://www.marshallheadphones.com/mh_us_en/woburn-black">Marshall</a> and <a href="http://v-moda.com/crossfade-m-100/">V-Moda</a>. But as a wise statistician once said,</p>
 <blockquote>
@@ -59,10 +59,10 @@ Los Angeles based producer, singer-songwriter Stephen Swartz, known by his stage
         <id>https://yuppi.es/blog/how-we-built-our-react-native-app/</id>
         <link href="https://yuppi.es/blog/how-we-built-our-react-native-app/">
         </link>
-        <updated>2017-09-14T17:00:00Z</updated>
+        <updated>2017-09-14T22:00:00Z</updated>
         <summary type="html"><![CDATA[The design philosophy, tech stack and tooling that went into building a React Native App at Housing.com]]></summary>
         <content type="html"><![CDATA[<p><em>Cross Posted from <a href="https://medium.com/engineering-housing/how-we-built-our-react-native-app-3380a33811ac">Engineering @ Housing</a></em></p>
-<figure class="full-width"><img src="https://yuppi.es/blog/how-we-built-our-react-native-app/hero.png" alt="housing.com/apps"><figcaption>housing.com/apps</figcaption></figure>
+<figure><img src="https://yuppi.es/blog/how-we-built-our-react-native-app/hero.png" alt="housing.com/apps" class="full-width"><figcaption>housing.com/apps</figcaption></figure>
 <p>Last year we <a href="https://medium.com/engineering-housing/progressing-mobile-web-fac3efb8b454">launched our PWA</a> with
 an aim to improve the experience of our users on slow and inconsistent network
 connections. It was the first step towards the quality of the products we strive
@@ -133,7 +133,7 @@ gracefully solved this problem with a backing
 layer.</li>
 </ul>
 <h4>Tooling</h4>
-<figure class="full-width"><img src="https://yuppi.es/blog/how-we-built-our-react-native-app/tools.png" alt=""></figure>
+<figure><img src="https://yuppi.es/blog/how-we-built-our-react-native-app/tools.png" alt="" class="full-width"></figure>
 <p>Besides the usual suspects &#x2014; <a href="https://yarnpkg.com/en/">yarn</a>,
 <a href="https://prettier.io/">prettier</a>, <a href="https://eslint.org/">eslint</a> and
 <a href="https://github.com/typicode/husky">husky</a>, we depend on the following tools as
@@ -145,7 +145,7 @@ components as a one-to-one mapping of our design guide. We are looking into
 deploying it internally so that designers have access to actual components as
 well.</li>
 </ul>
-<figure class="full-width"><img src="https://yuppi.es/blog/how-we-built-our-react-native-app/styleguide.png" alt="Styleguide (Consistent across Android and iOS)"><figcaption>Styleguide (Consistent across Android and iOS)</figcaption></figure>
+<figure><img src="https://yuppi.es/blog/how-we-built-our-react-native-app/styleguide.png" alt="Styleguide (Consistent across Android and iOS)" class="full-width"><figcaption>Styleguide (Consistent across Android and iOS)</figcaption></figure>
 <ul>
 <li><a href="https://microsoft.github.io/code-push/">codepush</a> &#x2014; this is one area where
 react native apps really shine. We use codepush for releasing unobtrusive over
@@ -281,7 +281,7 @@ status bar on iOS based on the current screen:</li>
 }
 </code></pre>
 <h3>Build Pipeline</h3>
-<figure class="full-width"><img src="https://yuppi.es/blog/how-we-built-our-react-native-app/pipeline.png" alt=""></figure>
+<figure><img src="https://yuppi.es/blog/how-we-built-our-react-native-app/pipeline.png" alt="" class="full-width"></figure>
 <p>The official docs provide a plethora of insight into the API and the platform
 itself. In the end, however, you need to deploy your new shiny app. This also
 involves challenges like maintaining multiple environments for testing and
@@ -389,9 +389,9 @@ learn, accept, reject and critique however you see fit.</p>
         <id>https://yuppi.es/blog/interviewing-with-housing-com/</id>
         <link href="https://yuppi.es/blog/interviewing-with-housing-com/">
         </link>
-        <updated>2016-11-30T17:00:00Z</updated>
+        <updated>2016-11-30T23:00:00Z</updated>
         <summary type="html"><![CDATA[My experience and lessons learnt from interviewing with a leading Indian tech startup.]]></summary>
-        <content type="html"><![CDATA[<figure class="full-width"><img src="https://yuppi.es/blog/interviewing-with-housing-com/housing.jpg" alt=""></figure>
+        <content type="html"><![CDATA[<figure><img src="https://yuppi.es/blog/interviewing-with-housing-com/housing.jpg" alt="" class="full-width"></figure>
 <p><em>Disclaimer: The opinions expressed in this article are my own and are, in no conceivable way, connected, correlated or inspired by those of <a href="http://Housing.com">Housing.com</a> or its employees and representatives.</em></p>
 <p>With that verbose legalese out of the way, let&#x2019;s get started.</p>
 <h4>Motivation</h4>
@@ -439,9 +439,9 @@ Now, among the immediately visible players in India, who have placed their bets 
         <id>https://yuppi.es/blog/kickback-with-koa-webpack/</id>
         <link href="https://yuppi.es/blog/kickback-with-koa-webpack/">
         </link>
-        <updated>2016-06-27T17:00:00Z</updated>
+        <updated>2016-06-27T22:00:00Z</updated>
         <summary type="html"><![CDATA[Build a KoaJS server with ES7 async/await. Hot patch it without restarting via Webpack Hot Module Replacement. Achieve DX nirvana.]]></summary>
-        <content type="html"><![CDATA[<figure class="full-width"><img src="https://yuppi.es/blog/kickback-with-koa-webpack/banner.png" alt="Written at Kerckhoff Coffee House ~ LA Westside"><figcaption>Written at Kerckhoff Coffee House ~ LA Westside</figcaption></figure>
+        <content type="html"><![CDATA[<figure><img src="https://yuppi.es/blog/kickback-with-koa-webpack/banner.png" alt="Written at Kerckhoff Coffee House ~ LA Westside" class="full-width"><figcaption>Written at Kerckhoff Coffee House ~ LA Westside</figcaption></figure>
 <h4>Yet Another JavaScript Framework?</h4>
 <p><a href="https://nodejs.org/en/about/">Node.js</a> itself offers a
 <a href="https://nodejs.org/docs/latest/doc/api/http.html#http_http">http</a> module which
@@ -768,6 +768,33 @@ instance. Koa apps can be tested fluently with
 <a href="https://github.com/visionmedia/supertest">supertest</a> which this repository will
 implement soon.</p>
 <p>Originally &#x1F4DD; on <a href="https://medium.com/@f0rr0/kickback-with-koa-webpack-a51d7e5d7911">Medium</a>.</p>
+]]></content>
+        <author>
+            <name>Sid Jain</name>
+            <email>sid_26@outlook.com</email>
+            <uri>https://yuppi.es/about</uri>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[On The Futility Of Trying To Make It]]></title>
+        <id>https://yuppi.es/blog/on-the-futility-of-trying-to-make-it/</id>
+        <link href="https://yuppi.es/blog/on-the-futility-of-trying-to-make-it/">
+        </link>
+        <updated>2018-06-23T22:00:00Z</updated>
+        <summary type="html"><![CDATA[About two years ago, I had decided to abandon an idle existence and put myself out in what some call the 'real world’. The idea, back then, was to cultivate pragmatic skills and be successful in the trade of my choosing. Two years later, I am still as troubled as I was back then and perhaps even more so.]]></summary>
+        <content type="html"><![CDATA[<p>It has been a series of fortuitous events and impetuous decisions that have led me to where I am in my career. About two years ago, I had decided to abandon an idle existence and put myself out in what some call the &#x2018;real world&#x2019;. The idea, back then, was to cultivate pragmatic skills and be successful in the trade of my choosing. Two years later, I am still as troubled as I was back then and perhaps even more so. I have never subscribed to the dogma of finding and following one&#x2019;s passion. There is no such thing. As Cal Newport puts it-</p>
+<blockquote>
+<p>Passion comes after you put in the hard work to become excellent at something valuable, not before. In other words, what you do for a living is much less important than how you do it.</p>
+</blockquote>
+<p>But in the sprint to success, there&#x2019;s no prize for being good or even the best. None at all. At the 2008 summer Olympics, Usain Bolt had sufficiently established that he was the fastest man on Earth. Yet, he had to come back and do it all over again in 2012. Setting the precedent is not enough. It has to upheld over and over again with possibly more resolve each consecutive time. V.S. Pritchett, in an essay on the English historian Edward Gibbon, observed that-</p>
+<blockquote>
+<p>Sooner or later, the great men turn out to be all alike. They never stop working. They never lose a minute. It is very depressing.</p>
+</blockquote>
+<p>It is only now becoming apparent to me that absolute success, vernacularly referred to as &#x2018;making it&#x2019;, is an urban myth. It is deceptive like the mirage in a desert. The thirsty traveller toils in its allure only to find it to be a figment of his imagination. His only consolation lies in carrying on and doing this over enough times to &#x2018;make it&#x2019; out of the desert. William Makepeace Thackeray, the author of  Vanity Fair, succinctly puts it as-</p>
+<blockquote>
+<p>Successful people aren&#x2019;t born that way. They become successful by establishing the habit of doing things unsuccessful people don&#x2019;t like to do. The successful people don&#x2019;t always like these things themselves; they just get on and do them.&#x201D;</p>
+</blockquote>
+<p>The utopian dream I had dreamt two years ago is a testament to my na&#xEF;vet&#xE9;. There is no grand moment of arriving, not now, not ever. It is but a grind and you hustle hard everyday or you go home. Success is not an act, it is a habit.</p>
 ]]></content>
         <author>
             <name>Sid Jain</name>

@@ -19,11 +19,12 @@ export function getPostsFromPaths(paths, posts) {
 
 export function getNextPosts(currPath, posts, num = 3) {
   const currIndex = posts.map(({ path }) => prefixLink(path)).indexOf(currPath);
-  if (posts.length === 1) {
+  const total = posts.length;
+  if (total === 1) {
     return null;
-  } else if (currIndex < num) {
-    return posts.slice(0, currIndex)
-     .concat(posts.slice(currIndex + 1, num + 1));
+  } else if (total - (currIndex + 1) >= num) {
+    return posts.slice(currIndex + 1, currIndex + 1 + num);
+  } else {
+    return posts.slice(currIndex + 1).concat(posts.slice(0, num - (total - (currIndex + 1))))
   }
-  return posts.slice(currIndex - num - 1, currIndex);
 }

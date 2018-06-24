@@ -2,6 +2,7 @@
 title: How We Built Our React Native App
 date: 09/15/2017
 description: The design philosophy, tech stack and tooling that went into building a React Native App at Housing.com
+thumbnail: hero.png
 ---
 
 *Cross Posted from [Engineering @ Housing](https://medium.com/engineering-housing/how-we-built-our-react-native-app-3380a33811ac)*

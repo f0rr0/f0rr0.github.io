@@ -11,7 +11,7 @@ It has been a series of fortuitous events and impetuous decisions that have led 
 
 > Passion comes after you put in the hard work to become excellent at something valuable, not before. In other words, what you do for a living is much less important than how you do it.
 
-But in the sprint to success, there’s no prize for being good or even the best. None at all. At the 2008 summer Olympics, Usain Bolt had sufficiently established that he was the fastest man on Earth. Yet, he had to come back and do it all over again in 2012. Setting the precedent is not enough. It has to upheld over and over again with possibly more resolve each consecutive time. V.S. Pritchett, in an essay on the English historian Edward Gibbon, observed that-
+But in the sprint to success, there’s no prize for being good or even the best. None at all. At the 2008 summer Olympics, Usain Bolt had sufficiently established that he was the fastest man on Earth. Yet, he had to come back and do it all over again in 2012. Setting the precedent is not enough. It has to be upheld over and over again with possibly more resolve each consecutive time. V.S. Pritchett, in an essay on the English historian Edward Gibbon, observed that-
 
 > Sooner or later, the great men turn out to be all alike. They never stop working. They never lose a minute. It is very depressing.
 

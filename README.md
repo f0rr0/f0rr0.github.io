@@ -1,5 +1,7 @@
 ## https://yuppi.es
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/f0rr0/f0rr0.github.io.svg)](https://greenkeeper.io/)
+
 Source code for my blog.
 
 ### Installation

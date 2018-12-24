@@ -1,6 +1,7 @@
 @charset "utf-8";
 
 @custom-selector :--headings h1, h2, h3, h4, h5, h6;
+
 @custom-selector :--pseudo ::after, ::before;
 
 /* -------------------------------------------------------------------------- */
@@ -30,7 +31,7 @@ html {
   height: 100%;
   background: #21232d;
   color: #d8d8d6;
-  font-family: 'Inconsolata', 'Andale Mono', 'PT Mono', 'Courier New', monospace;
+  font-family: "Inconsolata", "Andale Mono", "PT Mono", "Courier New", monospace;
   font-size: 18px;
   line-height: 1.5;
   overflow-y: scroll;
@@ -125,7 +126,7 @@ a {
   cursor: pointer;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: 0;
@@ -253,7 +254,7 @@ img::selection {
     font-size: 0.889em;
     background: #1d1f21;
     color: #c5c8c6;
-    font-family: 'Menlo', 'Monaco', 'Consolas', monospace;
+    font-family: "Menlo", "Monaco", "Consolas", monospace;
     display: inline-block;
     padding: 0 0.5em;
     border-radius: 5px;
@@ -279,7 +280,7 @@ img::selection {
     color: #f3f99d;
 
     &::before {
-      content: '“';
+      content: "“";
       font-size: 400%;
       left: -12px;
       line-height: 0.5;
@@ -310,13 +311,14 @@ img::selection {
     padding-top: 1.125em;
 
     &::before {
-      content: '\2014 ';
+      content: "\2014 ";
     }
   }
 
   & figure {
     text-align: center;
     padding: 1.82em 0 2.927em;
+
     & img {
       display: block;
       max-width: 100%;
@@ -336,6 +338,22 @@ img::selection {
     margin: 10px 0 -10px;
     font-size: 0.889em;
     font-style: italic;
+  }
+
+  & .embed-responsive {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+
+    & iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 

@@ -1,6 +1,7 @@
 @charset "utf-8";
 
 @custom-selector :--headings h1, h2, h3, h4, h5, h6;
+
 @custom-selector :--pseudo ::after, ::before;
 
 /* -------------------------------------------------------------------------- */
@@ -257,8 +258,7 @@ img::selection {
     display: inline-block;
     padding: 0 0.5em;
     border-radius: 5px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3),
-      0 0.75px 0 rgba(53, 56, 73, 0.4);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0.75px 0 rgba(53, 56, 73, 0.4);
 
     @media screen and (max-width: 600px) {
       font-size: 14px;
@@ -270,8 +270,7 @@ img::selection {
     padding: 1.266em;
     white-space: pre;
     overflow: auto;
-    box-shadow: inset 0 1px 10px rgba(0, 0, 0, 0.3),
-      0 1px 0 rgba(53, 56, 73, 0.4), 0 -1px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 1px 10px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(53, 56, 73, 0.4), 0 -1px 0 rgba(0, 0, 0, 0.3);
   }
 
   & blockquote {
@@ -319,6 +318,7 @@ img::selection {
   & figure {
     text-align: center;
     padding: 1.82em 0 2.927em;
+
     & img {
       display: block;
       max-width: 100%;
@@ -346,6 +346,7 @@ img::selection {
     height: 0;
     overflow: hidden;
     max-width: 100%;
+
     & iframe {
       position: absolute;
       top: 0;

@@ -3,13 +3,19 @@ import sortBy from 'lodash.sortby';
 import { prefixLink } from 'gatsby-helpers'; // eslint-disable-line
 
 export function isBlogPost({ path }) {
-  return path.indexOf('/blog/') >= 0 && path !== '/blog/' && path !== prefixLink('/blog/');
+  return (
+    path.indexOf('/blog/') >= 0 &&
+    path !== '/blog/' &&
+    path !== prefixLink('/blog/')
+  );
 }
 
 export function getBlogPosts(route) {
   const { pages } = route;
   const posts = pages.filter(page => isBlogPost(page) && !page.data.draft);
-  return sortBy(posts, ({ data: { date } }) => moment(date, 'MM/DD/YYYY').valueOf()).reverse();
+  return sortBy(posts, ({ data: { date } }) =>
+    moment(date, 'MM/DD/YYYY').valueOf()
+  ).reverse();
 }
 
 export function getPostsFromPaths(paths, posts) {
@@ -24,7 +30,8 @@ export function getNextPosts(currPath, posts, num = 3) {
     return null;
   } else if (total - (currIndex + 1) >= num) {
     return posts.slice(currIndex + 1, currIndex + 1 + num);
-  } else {
-    return posts.slice(currIndex + 1).concat(posts.slice(0, num - (total - (currIndex + 1))))
   }
+  return posts
+    .slice(currIndex + 1)
+    .concat(posts.slice(0, num - (total - (currIndex + 1))));
 }

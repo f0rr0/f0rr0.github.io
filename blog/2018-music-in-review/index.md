@@ -1,7 +1,7 @@
 ---
 title: 2018 Music in Review
 date: 12/23/2018
-description: Musings on music and me in 2018.
+description: Musings on music in 2018.
 draft: false
 thumbnail: obscure.png
 ---

@@ -7,7 +7,7 @@ import readingTime from 'reading-time';
 import excerptHtml from 'excerpt-html';
 
 const highlight = (str, lang) => {
-  if ((lang !== null) && hljs.getLanguage(lang)) {
+  if (lang !== null && hljs.getLanguage(lang)) {
     try {
       return hljs.highlight(lang, str).value;
     } catch (error) {
@@ -27,7 +27,8 @@ const md = markdownIt({
   linkify: true,
   typographer: true,
   highlight
-}).use(require('markdown-it-attrs'))
+})
+  .use(require('markdown-it-attrs'))
   .use(require('markdown-it-emoji'))
   .use(require('markdown-it-implicit-figures'), {
     figcaption: true,
@@ -44,17 +45,23 @@ const md = markdownIt({
     permalink: true,
     permalinkBefore: true,
     permalinkSymbol: '§'
-  });
+  })
+  .use(
+    require('markdown-it-video', {
+      youtube: { width: 640, height: 390 }
+    })
+  );
 
 md.linkify.tlds('onion', true);
 md.linkify.add('git:', 'http:');
 md.linkify.add('ftp:', null);
 md.set({ fuzzyIP: true });
 
-md.renderer.rules.emoji = (token, idx) => twemoji.parse(token[idx].content, {
-  ext: '.svg',
-  folder: 'svg'
-});
+md.renderer.rules.emoji = (token, idx) =>
+  twemoji.parse(token[idx].content, {
+    ext: '.svg',
+    folder: 'svg'
+  });
 
 export default function (content) {
   this.cacheable();

@@ -1,4 +1,3 @@
-## https://yuppi.es
 
 Source code for my blog.
 

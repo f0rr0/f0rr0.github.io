@@ -2,14 +2,22 @@
   title: "Sid Jain Resume",
   author: "Sid Jain",
   keywords: (
-    "AI product engineer",
-    "Applied AI lead",
-    "staff full-stack engineer",
-    "founding engineer",
+    "Senior Full-Stack Engineer",
     "TypeScript",
+    "React",
+    "Next.js",
+    "Node.js",
+    "Hono",
+    "PostgreSQL",
     "React Native",
+    "Swift",
+    "Kotlin",
+    "AI SDK",
+    "LangChain",
+    "pgvector",
+    "Temporal",
     "Chromium",
-    "DNS",
+    "CI/CD",
   ),
 )
 #set page(
@@ -120,7 +128,7 @@
   #block[
     #set par(leading: 0.625em)
     #t(
-      "Software engineer and technical leader with 10+ years building and operating production applications, platforms, and infrastructure. Leads Applied AI at Namefi, taking customer workflows from discovery and system design through evaluation, implementation, and support; previously built human-in-the-loop AI content systems at Memorang. Founded a 15-engineer consultancy and shipped browser, messaging, payments, travel, mobile, and cloud systems.",
+      "Senior full-stack engineer with 10+ years in web and mobile. Built Namefi's AI buyer-research workflow, cutting days of manual work to about five minutes per domain. Built Memorang's CMS and media recommender.",
       fill: muted,
       font: "Source Sans 3",
       size: 10pt,
@@ -262,7 +270,7 @@
               style: "normal",
             )],
             [#t(
-              "Built Namefi Outbound from customer discovery through production, cutting buyer research from days to about five minutes per domain: 50-70 ranked leads with fit rationales, decision-maker contacts, and tailored drafts.",
+              "Built Namefi Outbound, cutting buyer research from days to about five minutes per domain: company research, buyer qualification, contact discovery, and outreach drafts. Informed by interviews with 40-50 domain sellers.",
               fill: muted,
               font: "Source Sans 3",
               size: 10pt,
@@ -285,7 +293,7 @@
               style: "normal",
             )],
             [#t(
-              "Built model-judged evals for buyer fit, name and product similarity, and decision-maker contacts; validated outputs through seller reports covering hundreds of prospective buyers.",
+              "Led migration to a new monorepo; established developer tooling, a Next.js app with server-side rendering and static generation, and a Hono backend. Built UI and initial Privy and wallet authentication.",
               fill: muted,
               font: "Source Sans 3",
               size: 10pt,
@@ -308,7 +316,7 @@
               style: "normal",
             )],
             [#t(
-              "Built and operated Namefi Studio, a Temporal pipeline for logos, posters, website mockups, and motion; separated strategy from generation and used prompt constraints plus visual review for domain/TLD fidelity.",
+              "Integrated AI SDK tool calling with Exa; built an internal analytics agent with custom tools for Google Analytics, Twitter Analytics, and PostHog.",
               fill: muted,
               font: "Source Sans 3",
               size: 10pt,
@@ -331,7 +339,7 @@
               style: "normal",
             )],
             [#t(
-              "Built and operated Namefi Feed, a Temporal ingestion and AI-classification system serving nearly 8,000 active listings, with reliable concurrent ingestion, retries, price verification, and auditable decisions.",
+              "Built Namefi Studio's multi-step logo and video generation workflows with Temporal, separating strategy from generation and reviewing outputs for domain-name accuracy.",
               fill: muted,
               font: "Source Sans 3",
               size: 10pt,
@@ -354,7 +362,7 @@
               style: "normal",
             )],
             [#t(
-              "Built registrar and commerce systems across integrations, registration, checkout, payments, and analytics; replaced Airflow with testable Temporal workflows, simplifying recovery and making orchestration failures rare.",
+              "Built domain registration, checkout, payment integrations, and listing ingestion; migrated Airflow orchestration to Temporal. Currently building AI usage metering.",
               fill: muted,
               font: "Source Sans 3",
               size: 10pt,
@@ -489,7 +497,7 @@
             style: "normal",
           )],
           [#t(
-            "Built and shipped EdWrite, a graph-based CMS and content API managing tens of thousands of Cambridge and TOEFL questions, with adaptive practice, scoring, and semantic media recommendations.",
+            "Built EdWrite's CMS services and UI, including a TanStack Table data grid and shared component library developed with designers.",
             fill: muted,
             font: "Source Sans 3",
             size: 10pt,
@@ -512,7 +520,7 @@
             style: "normal",
           )],
           [#t(
-            "Built human-in-the-loop generation for question sets, audio, and images, cutting content cycles from months to days; SME review calibrated model-based evals, while client SMEs controlled publishing.",
+            "Shipped a media recommender using embeddings and pgvector similarity search, with LangChain self-querying to generate metadata filters from natural-language queries.",
             fill: muted,
             font: "Source Sans 3",
             size: 10pt,
@@ -535,7 +543,7 @@
             style: "normal",
           )],
           [#t(
-            "Led a three-developer CMS team and roadmap across backend, frontend, and mobile, working directly with the CTO and CEO.",
+            "Led two CMS engineers; planned scope and architecture with the CTO and weekly priorities with the CEO. Defined TOEFL content schemas with ETS subject-matter experts.",
             fill: muted,
             font: "Source Sans 3",
             size: 10pt,
@@ -558,7 +566,7 @@
             style: "normal",
           )],
           [#t(
-            "Led an AI-assisted Flow-to-TypeScript migration across hundreds of thousands of lines; cut compilation to single-digit minutes, accelerated CI and merges, and enabled safer refactors with fewer runtime errors.",
+            "Built AI-assisted question, audio, and image generation with subject-matter-expert review and publishing approval; led a Flow-to-TypeScript migration using codemods and AI-assisted refactoring.",
             fill: muted,
             font: "Source Sans 3",
             size: 10pt,
@@ -588,11 +596,11 @@
       )]],
       [
         #grid(
-          columns: (auto, auto),
+          columns: auto,
           gutter: 5pt,
           align: horizon,
           [#t(
-            "Yuppies Tech",
+            "Product engineering engagements",
             fill: strong,
             font: "Literata",
             size: 12pt,
@@ -600,23 +608,10 @@
             style: "normal",
             kerning: false,
           )],
-          [#box(
-            inset: (x: 4pt, y: 3pt),
-            radius: 8pt,
-            fill: rgb("#242220"),
-            stroke: 0.75pt + rgb("#57534e"),
-          )[#t(
-            "0 → 1",
-            fill: rgb("#c7c2bd"),
-            font: "Source Sans 3",
-            size: 7.5pt,
-            weight: "medium",
-            style: "normal",
-          )]],
         )
         #v(-3.75pt)
         #t(
-          "Product engineering consultancy for complex client products.",
+          "Client work through Yuppies Tech.",
           fill: muted,
           font: "Source Sans 3",
           size: 9pt,
@@ -633,7 +628,7 @@
             gutter: 4pt,
             align: horizon,
             [#t(
-              "Founder & Technical Director",
+              "Self-employed",
               fill: strong,
               font: "Source Sans 3",
               size: 10pt,
@@ -678,7 +673,7 @@
         )
         #v(2.25pt)
         #t(
-          "Founded and grew Yuppies Tech to 15 engineers while remaining the client-facing technical lead. Turned unclear requirements into architecture, delivery plans, and production releases. Selected engagements:",
+          "Hands-on full-stack and mobile engineering with client product teams, working directly with CTOs and engineering leads. Selected engagements:",
           fill: muted,
           font: "Source Sans 3",
           size: 10pt,
@@ -707,7 +702,7 @@
               weight: "medium",
               style: "normal",
             )#t(
-              "led a Chromium-based Android browser from initial architecture through Play Store launch, owning upstream patch management, release tooling, product features, and privacy updates. Later established the iOS platform and release setup.",
+              "led a Chromium-based Android browser through Play Store launch, maintaining C++ and Java patches, upstream updates, and release tooling. Later established the iOS platform and release setup.",
               fill: muted,
               font: "Source Sans 3",
               size: 10pt,
@@ -737,7 +732,7 @@
               weight: "medium",
               style: "normal",
             )#t(
-              "built a production Facebook Messenger integration by reverse-engineering undocumented protocols, then implemented encrypted messaging, synchronization, groups, attachments, reactions, read receipts, typing indicators, and presence.",
+              "shipped the Facebook Messenger integration in TypeScript and Electron; reverse-engineered Messenger's undocumented interfaces and implemented MQTT transport, typed Thrift codecs, message synchronization, and media handling.",
               fill: muted,
               font: "Source Sans 3",
               size: 10pt,
@@ -767,7 +762,7 @@
               weight: "medium",
               style: "normal",
             )#t(
-              "led modernization of ZebPay's iOS and Android apps, release infrastructure, exchange and payment features, and international KYC. During stabilization, increased the release cadence from monthly to weekly.",
+              "modernized iOS and Android apps and release pipelines; shipped exchange and payment features, wallet integrations, and country-specific KYC.",
               fill: muted,
               font: "Source Sans 3",
               size: 10pt,
@@ -797,7 +792,7 @@
               weight: "medium",
               style: "normal",
             )#t(
-              "led MiAR, a remote dealership experience delivered through native iOS and iPadOS apps plus WebAR. Shipped optimized 3D vehicle models, support for lower-end Android devices, bilingual content, and contest-administration tooling.",
+              "built MiAR's native iOS and iPadOS apps and React WebAR experience, optimizing 3D vehicle assets for mobile devices and building photo-contest tooling.",
               fill: muted,
               font: "Source Sans 3",
               size: 10pt,
@@ -827,7 +822,7 @@
               weight: "medium",
               style: "normal",
             )#t(
-              "owned end-to-end technical delivery of Airbus Tripset, a public iOS and Android travel companion launched during COVID. Built the React Native app and backend services that combined Airbus and Amadeus APIs, CMS-managed travel guidance, itinerary data, and notifications.",
+              "built the React Native app and backend integrating Airbus and Amadeus APIs, travel guidance, itineraries, and notifications, with Milkinside as design partner.",
               fill: muted,
               font: "Source Sans 3",
               size: 10pt,
@@ -902,7 +897,7 @@
             gutter: 4pt,
             align: horizon,
             [#t(
-              "Vice President of Engineering",
+              "Head of Mobile Engineering",
               fill: strong,
               font: "Source Sans 3",
               size: 10pt,
@@ -961,7 +956,7 @@
             style: "normal",
           )],
           [#t(
-            "Led a 10-engineer team and owned Kult's zero-to-one product and engineering strategy, covering an AWS-hosted Elixir backend and native iOS and Android apps.",
+            "Led 10 mobile engineers building native Android and iOS apps in Kotlin and Swift, working with product and interaction designers.",
             fill: muted,
             font: "Source Sans 3",
             size: 10pt,
@@ -984,7 +979,30 @@
             style: "normal",
           )],
           [#t(
-            "Architected both apps and contributed directly in Swift and Kotlin while establishing CI/CD, analytics, deep linking, observability, and the foundations for commerce and engagement features.",
+            "Designed backend-driven UI architecture for dynamic layouts and rich animations; built and optimized product-listing and product-detail screens.",
+            fill: muted,
+            font: "Source Sans 3",
+            size: 10pt,
+            weight: "regular",
+            style: "normal",
+          )],
+        )
+        #v(1.5pt)
+
+        #grid(
+          columns: (6pt, 1fr),
+          gutter: 6pt,
+          align: top,
+          [#t(
+            "·",
+            fill: accent,
+            font: "Source Sans 3",
+            size: 10pt,
+            weight: "bold",
+            style: "normal",
+          )],
+          [#t(
+            "Defined API contracts with backend engineers and established mobile CI/CD, analytics, deep linking, and error monitoring.",
             fill: muted,
             font: "Source Sans 3",
             size: 10pt,
@@ -1141,7 +1159,7 @@
             style: "normal",
           )],
           [#t(
-            "As the first engineering hire, led a five-developer full-stack pod with a product manager and designer; partnered with the CTO on key hires and served as Scrum Master for early sprints, establishing the team's delivery cadence.",
+            "Joined as the first engineering hire; led a five-developer full-stack team and partnered with the CTO on hiring.",
             fill: muted,
             font: "Source Sans 3",
             size: 10pt,
@@ -1262,7 +1280,7 @@
             style: "normal",
           )],
           [#t(
-            "Architected a hybrid Apple TV fitness app that ranked No. 1 in its Health & Fitness category in more than 30 countries, including Germany, and No. 7 in the United States.",
+            "Architected a hybrid Apple TV fitness app.",
             fill: muted,
             font: "Source Sans 3",
             size: 10pt,
@@ -1406,7 +1424,7 @@
             style: "normal",
           )],
           [#t(
-            "Led the architecture of Housing's React Native app, sharing more than 90% of its JavaScript code across iOS and Android.",
+            "Led Housing's React Native app architecture, sharing JavaScript across iOS and Android.",
             fill: muted,
             font: "Source Sans 3",
             size: 10pt,

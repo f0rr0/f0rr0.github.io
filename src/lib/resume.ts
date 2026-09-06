@@ -88,9 +88,6 @@ const formatNaturalList = (items: string[]) => {
   return `${items.slice(0, -1).join(", ")}, and ${items.at(-1)}`;
 };
 
-const isClaimGuidance = (note: string) =>
-  /^(avoid|do not|only|treat|use|when|work summaries)\b/i.test(note);
-
 const educationStudyType = (tagline: string) => {
   const degree = tagline.replace(/\.$/, "").split(",")[0]?.trim();
 
@@ -109,18 +106,14 @@ const educationSummary = resumeData.education
   )
   .join("; ");
 
-const foundedOrganizations = resumeData.experience
-  .filter((item) => item.roles.some((role) => /\bFounder\b/.test(role.title)))
-  .map((item) => item.company);
-
 const buildAskAboutMePrompt = () => {
   const contextUrl = publicUrl("/llms.txt");
 
   return [
-    `Read ${contextUrl} for full context about ${resumeData.person.name}.`,
+    `Start at ${contextUrl} and follow the relevant links for context about ${resumeData.person.name}.`,
     "This is an informational research chat, not a code-editing task.",
     `I want to ask questions about ${resumeData.person.name}'s work, technical depth, projects, and fit for roles such as ${resumeData.person.targetPositioning}.`,
-    "Use the public source links in that file when verification is needed, and call out uncertainty when a claim is not supported.",
+    "Use his résumé and linked work as sources for your answers.",
   ].join(" ");
 };
 
@@ -205,22 +198,7 @@ export const buildJsonResume = () => ({
   })),
   skills: [
     {
-      keywords: [
-        "Applied AI solutions architecture",
-        "AI product engineering",
-        "technical advisory",
-        "AI evaluation",
-        "AI-assisted workflows",
-        "TypeScript",
-        "React",
-        "Next.js",
-        "Node.js",
-        "React Native",
-        "Chromium",
-        "DNS",
-        "Temporal",
-        "CI/CD",
-      ],
+      keywords: [...resumeData.skills],
       name: "Core strengths",
     },
   ],
@@ -262,92 +240,114 @@ export const buildJsonResume = () => ({
   ),
 });
 
-export const buildLlmsTxt = (blogPosts: BlogPost[] = []) => {
-  const {
-    accuracyNotes,
-    deepDives,
-    positioning,
-    publicReferences,
-    publicSignalGuidance,
-    roleFit,
-    strengths,
-  } = resumeData.machineReadable;
+const llmProfileIntroduction = () => `# ${resumeData.person.name}
+
+> ${resumeData.summary}
+
+Last updated: ${resumeData.lastUpdated}
+
+Identity: ${resumeData.person.name} uses the public handles ${formatNaturalList([...resumeData.person.alternateNames])}.
+Current role: ${currentRole?.title ?? resumeData.person.role} at ${currentExperience?.company ?? "the current company"}.
+Location and mobility: ${formatResumeLocation(resumeData.person, "; ")}.
+
+Reading notes:
+${resumeData.machineReadable.agentNotes.map((note) => `- ${note}`).join("\n")}`;
+
+const buildWritingSection = (
+  blogPosts: BlogPost[],
+  limit = blogPosts.length
+) => {
+  const links = blogPosts
+    .filter((post) => post.metadata.draft !== true)
+    .slice(0, limit)
+    .map(
+      (post) =>
+        `- [${post.metadata.title}](${localProfileUrl(`/blog/${post.slug}.md`)}) — ${post.date.toISOString().slice(0, 10)}. ${post.metadata.summary}`
+    );
+
+  return links.length === 0 ? "" : `## Writing\n\n${links.join("\n")}\n\n`;
+};
+
+export const buildLlmsTxt = (
+  blogPosts: BlogPost[] = []
+) => `${llmProfileIntroduction()}
+
+## Start Here
+
+- [JSON résumé](${localProfileUrl("/resume.json")}): Role titles, employers, dates, skills, and concise accomplishments in structured form.
+- [Detailed career context](${localProfileUrl("/llms-full.txt")}): Full work history, engineering decisions, leadership scope, client engagements, and source links. Read for technical interviews or role-fit questions.
+- [Résumé](${localProfileUrl("/resume")}): Human-readable experience and education.
+
+## Namefi Work
+
+${resumeData.machineReadable.publicReferences
+  .filter((reference) => new URL(reference.href).hostname === "namefi.io")
+  .map(markdownLink)
+  .join("\n")}
+
+## Code and Technical Writing
+
+${resumeData.openSource.map(markdownLink).join("\n")}
+
+${buildWritingSection(blogPosts, 5)}## Contact
+
+${resumeData.links.map((link) => `- [${link.label}](${link.href})`).join("\n")}
+
+## Optional
+
+- [PDF résumé](${localProfileUrl("/resume/sid-jain-resume.pdf")}): Downloadable résumé.
+- [Work Log](${localProfileUrl("/work-log")}): Recent code activity.
+- [Blog](${localProfileUrl("/blog")}): All published articles; each article is also available at /blog/{slug}.md.
+- [RSS](${localProfileUrl("/rss.xml")}): Article feed.
+`;
+
+export const buildLlmsFullTxt = (blogPosts: BlogPost[] = []) => {
+  const { deepDives, publicReferences, strengths } = resumeData.machineReadable;
 
   const canonicalLinks = [
     {
       href: localProfileUrl("/"),
       label: "Website",
-      note: "Sid Jain's personal website.",
+      note: "Selected work and writing.",
     },
     {
       href: localProfileUrl("/resume"),
       label: "Resume",
-      note: "Human-readable resume with work history, projects, education, and contact links.",
-    },
-    {
-      href: localProfileUrl("/llms.txt"),
-      label: "llms.txt",
-      note: "This machine-readable public profile.",
+      note: "Experience, education, and contact details.",
     },
     {
       href: localProfileUrl("/resume.json"),
       label: "JSON Resume",
-      note: "Structured JSON Resume-style export generated from the same profile data.",
+      note: "Structured experience and skills.",
     },
     {
       href: localProfileUrl("/resume/sid-jain-resume.pdf"),
       label: "PDF Resume",
-      note: "Dark, text-based PDF resume generated from the same profile data.",
+      note: "Downloadable résumé.",
     },
     {
       href: "https://linkedin.com/in/f0rr0",
       label: "LinkedIn",
-      note: "Sid Jain's LinkedIn profile.",
+      note: "Professional profile.",
     },
     {
       href: "https://github.com/f0rr0",
       label: "GitHub: f0rr0",
-      note: "Sid Jain's primary GitHub profile.",
+      note: "Open-source projects.",
     },
     {
       href: "https://github.com/yuppiestechdev",
       label: "GitHub: yuppiestechdev",
-      note: "Sid Jain's Yuppies Tech GitHub profile.",
+      note: "Additional engineering work.",
     },
     {
       href: `mailto:${resumeData.person.email}`,
       label: "Email",
-      note: "Public contact email listed on Sid's resume.",
+      note: "Contact Sid.",
     },
   ];
 
   const canonicalText = canonicalLinks.map(markdownLink).join("\n");
-  const factualContext = accuracyNotes.filter((note) => !isClaimGuidance(note));
-  const claimGuidance = [
-    ...accuracyNotes.filter(isClaimGuidance),
-    ...publicSignalGuidance,
-  ];
-  const roleMarkerAssignments = resumeData.experience
-    .flatMap((item) =>
-      item.roles.flatMap((role) => {
-        const markerList = formatNaturalList(roleMarkers(role));
-        if (markerList.length === 0) {
-          return [];
-        }
-
-        return [`- ${role.title} at ${item.company} — ${markerList}.`];
-      })
-    )
-    .join("\n");
-  const companyStageAssignments = resumeData.experience
-    .flatMap((item) =>
-      item.companyStage === undefined
-        ? []
-        : [
-            `- ${item.company} — ${resumeCompanyStageLabels[item.companyStage]}.`,
-          ]
-    )
-    .join("\n");
   const deepDiveText = deepDives
     .map((deepDive) =>
       [
@@ -370,23 +370,6 @@ export const buildLlmsTxt = (blogPosts: BlogPost[] = []) => {
       deepDive.title.toLocaleLowerCase().includes(companyKey ?? "")
     );
   });
-  const writingText =
-    blogPosts.length === 0
-      ? "- No published blog posts were found in the current build."
-      : blogPosts
-          .map(
-            (post) =>
-              `- [${post.metadata.title}](${localProfileUrl(`/blog/${post.slug}`)}) — ${post.date.toISOString().slice(0, 10)}. ${post.metadata.summary}`
-          )
-          .join("\n");
-  const claimGuidanceSection =
-    claimGuidance.length === 0
-      ? ""
-      : `## Claim and Citation Guidance
-
-${claimGuidance.map((guidance) => `- ${guidance}`).join("\n")}
-
-`;
   const openSourceSection =
     openSourceProjects.length === 0
       ? ""
@@ -404,50 +387,22 @@ ${publications.map(markdownLink).join("\n")}
 
 `;
 
-  return `# ${resumeData.person.name}
+  return `${llmProfileIntroduction()}
 
-> ${resumeData.summary}
-
-Last updated: ${resumeData.lastUpdated}
-
-This is the canonical machine-readable profile for ${resumeData.person.name} on this website. It provides public career context for recruiters, search systems, and AI tools.
-
-## Verified Context
-
-${factualContext.map((note) => `- ${note}`).join("\n")}
-
-## Canonical Links
+## Résumé and Contact
 
 ${canonicalText}
 
-## Identity
+## Profile
 
-- Name: ${resumeData.person.name}.
-- Public aliases: ${formatNaturalList([...resumeData.person.alternateNames])}.
-- Location and mobility: ${formatResumeLocation(resumeData.person, "; ")}.
 - Professional focus: ${resumeData.person.role}.
-- Current role: ${currentRole?.title ?? resumeData.person.role} at ${currentExperience?.company ?? "the current company"}.
 - Roles of interest: ${resumeData.person.targetPositioning}.
-${foundedOrganizations.length === 0 ? "" : `- Founded: ${formatNaturalList(foundedOrganizations)}.\n`}- Education: ${educationSummary}.
+- Education: ${educationSummary}.
 
-## High-Level Positioning
+## Engineering Expertise
 
-${positioning}
-
-Representative strengths:
 ${strengths.map((strength) => `- ${strength}`).join("\n")}
 
-Role indicators used on the human-readable resume:
-- Hands-on: material, direct contribution to architecture or implementation.
-- Leadership: responsibility for other engineers, team direction, and delivery outcomes.
-
-Role indicators by position:
-${roleMarkerAssignments}
-
-Company stage during each role:
-${companyStageAssignments}
-
-${claimGuidanceSection}
 ${deepDiveText}
 
 ## Earlier Experience
@@ -466,24 +421,13 @@ ${compactHistory
   )
   .join("\n\n")}
 
-${openSourceSection}${publicationsSection}## Writing
-
-${writingText}
-
-## Role Alignment
-
-Best-aligned roles:
-${roleFit.strongFit.map((item) => `- ${item}`).join("\n")}
-
-## Public References
+${openSourceSection}${publicationsSection}${buildWritingSection(blogPosts)}## Products and Coverage
 
 ${publicReferences.map(markdownLink).join("\n")}
 
 ## Optional
 
-- [Blog](${localProfileUrl("/blog")}): Sid Jain's blog index.
-- [Sitemap](${localProfileUrl("/sitemap.xml")}): XML sitemap for crawl discovery.
-- [Robots](${localProfileUrl("/robots.txt")}): Robots file with sitemap reference.
-- [RSS](${localProfileUrl("/rss.xml")}): RSS feed for blog posts.
+- [Blog](${localProfileUrl("/blog")}): Technical writing.
+- [RSS](${localProfileUrl("/rss.xml")}): Subscribe to new articles.
 `;
 };

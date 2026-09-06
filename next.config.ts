@@ -36,6 +36,7 @@ const nextConfig: NextConfig = {
     "/blog/[slug]/share-image": ["./src/content/**/*"],
     "/blog/[slug]/twitter-image": ["./src/content/**/*"],
     "/llms.txt": ["./src/content/**/*"],
+    "/llms-full.txt": ["./src/content/**/*"],
     "/rss.xml": ["./src/content/**/*"],
     "/sitemap.xml": ["./src/content/**/*"],
   },

@@ -1,29 +1,28 @@
 export const projectEditorial = {
-  "f0rr0.dev": {
-    bucket: "Product systems" as const,
+  "thrift-compact-protocol": {
+    bucket: "Open source" as const,
     description:
-      "This site: a fast, accessible home for the work, writing, and context behind both.",
+      "TypeScript encoder and decoder for Thrift’s compact protocol.",
   },
   oliphaunt: {
     bucket: "Open source" as const,
-    description:
-      "Embedded PostgreSQL for apps and tests, packaged to feel as simple as SQLite.",
+    description: "Embedded PostgreSQL tooling for applications and tests.",
   },
   "pg-browser-proxy": {
-    bucket: "Product systems" as const,
+    bucket: "Open source" as const,
     description:
-      "A small bridge that lets desktop database clients inspect Postgres running inside a browser.",
+      "Connect desktop database clients to PostgreSQL running in a browser.",
   },
   "react-native-rating": {
     bucket: "Open source" as const,
     description:
-      "An accessible, native-driver rating component that has quietly served React Native apps for years.",
+      "React Native rating component built with Animated and the native driver.",
   },
 } as const;
 
 export const featuredProjectNames = [
   "oliphaunt",
+  "thrift-compact-protocol",
   "react-native-rating",
-  "f0rr0.dev",
   "pg-browser-proxy",
 ] as const;

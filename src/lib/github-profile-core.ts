@@ -1,3 +1,5 @@
+import { projectEditorial } from "@/content/home";
+
 const GITHUB_LOGIN_PATTERN = /^[a-z\d](?:[a-z\d-]{0,37}[a-z\d])?$/i;
 const REPOSITORY_NAME_PATTERN = /^[a-z\d._-]{1,100}$/i;
 
@@ -24,8 +26,7 @@ export interface GitHubProfile {
 
 const fallbackProjects = [
   {
-    description:
-      "Rust library for running embedded PostgreSQL inside applications and tests.",
+    description: projectEditorial.oliphaunt.description,
     forks: null,
     language: "Rust",
     name: "oliphaunt",
@@ -34,13 +35,30 @@ const fallbackProjects = [
     updatedAt: null,
   },
   {
-    description:
-      "Cross-platform React Native rating component built with Animated and the native driver.",
+    description: projectEditorial["react-native-rating"].description,
     forks: null,
     language: "JavaScript",
     name: "react-native-rating",
     stars: null,
     topics: ["react-native", "animation", "component"],
+    updatedAt: null,
+  },
+  {
+    description: projectEditorial["thrift-compact-protocol"].description,
+    forks: null,
+    language: "TypeScript",
+    name: "thrift-compact-protocol",
+    stars: null,
+    topics: ["thrift", "typescript"],
+    updatedAt: null,
+  },
+  {
+    description: projectEditorial["pg-browser-proxy"].description,
+    forks: null,
+    language: null,
+    name: "pg-browser-proxy",
+    stars: null,
+    topics: ["postgresql"],
     updatedAt: null,
   },
 ] as const;

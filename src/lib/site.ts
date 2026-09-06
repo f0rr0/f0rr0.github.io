@@ -2,23 +2,6 @@ import { resumeData } from "@/content/resume";
 import { env } from "@/env";
 import { CANONICAL_SITE_URL } from "@/lib/site-url";
 
-const [currentExperience] = resumeData.experience;
-const [currentRole] = currentExperience?.roles ?? [];
-const foundedExperience = resumeData.experience.find((experience) =>
-  experience.roles.some((role) => /\bFounder\b/.test(role.title))
-);
-const currentRoleTitle = currentRole?.title ?? resumeData.person.role;
-const currentCompany = currentExperience?.company;
-const founderClause =
-  foundedExperience === undefined
-    ? ""
-    : ` who founded ${foundedExperience.company}`;
-const currentRoleClause =
-  currentCompany === undefined
-    ? ""
-    : ` and now serves as ${currentRoleTitle} at ${currentCompany}`;
-const profileDescription = `${resumeData.person.name} is an ${resumeData.person.role}${founderClause}${currentRoleClause}.`;
-
 const withProtocol = (value: string) => {
   const normalized = value.trim().replace(/\/+$/, "");
 
@@ -64,13 +47,13 @@ const resolveSiteUrl = () => {
 
 export const siteConfig = {
   author: {
-    bio: `${resumeData.person.role} building AI products and complex production systems from customer discovery through launch.`,
+    bio: resumeData.summary,
     handle: "f0rr0",
     image: "/resume/sid-jain-profile.png",
     name: resumeData.person.name,
     role: resumeData.person.role,
   },
-  description: profileDescription,
+  description: `${resumeData.person.name}. ${resumeData.summary}`,
   language: "en-US",
   locale: "en_US",
   name: "Sid Jain",

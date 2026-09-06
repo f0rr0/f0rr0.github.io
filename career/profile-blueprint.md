@@ -15,7 +15,7 @@ Use the work to establish that positioning. Backend and infrastructure experienc
 ### Copy standard — agreed editorial direction
 
 - The public profile is a hiring advertisement, not a biography or a record of this review. Human and machine-facing versions share approved facts and positioning, but need not use identical copy. LLM-specific guidance is useful when it improves navigation, interpretation, or attribution.
-- Keep the editing conversation and evidence-review diary out of published formats. Retain concise, relevant agent notes; do not apply a blanket ban on instructions or qualifications. State useful qualifications within the claim itself, such as “about five minutes.” Use past-tense contribution statements rather than project-status updates.
+- Keep the editing conversation and evidence-review diary out of published formats. Retain concise, relevant agent notes; do not apply a blanket ban on instructions or qualifications. State useful qualifications within the claim itself: “about five minutes” or “currently building.”
 - Every public line should answer one of these: what role fits, what Sid built, what changed, what technical depth it demonstrates, or where the work can be inspected. Do not publish a separate ledger telling readers how to assess the claims.
 - Every line must establish fit, identify a contribution, or show a result. Delete routine engineering duties presented as distinguishing qualities.
 - Prefer concrete verbs and objects: what was built, who uses it, or what changed. Sector lists and capability slogans do not supply that information.
@@ -94,7 +94,7 @@ Latest corrections override older résumé text and earlier assistant wording. D
 | Excluded work      | Omit GraphRAG and Neo4j from public career positioning, skills, résumé bullets, and role deep dives, at Sid's explicit request.                                                                       |
 | Kult scope         | **Head of Mobile Engineering**; led **10 engineers**, with design and other cross-functional partners separately.                                                                                     |
 | Kult platforms     | Native **Kotlin/Android and Swift/iOS**. No Kotlin Multiplatform claim.                                                                                                                               |
-| Namefi AI metering | Developed AI usage metering. Do not expand this into a billing or quota-enforcement claim.                                                                                                            |
+| Namefi AI metering | **In progress**, not a completed metering/billing platform.                                                                                                                                           |
 | Independent work   | **Product engineering engagements** is the accepted heading, with **Self-employed** as the arrangement. Yuppies Tech is secondary contracting-company attribution. No company-founder claim or title. |
 
 ## 3. Shared public copy
@@ -113,7 +113,7 @@ Keep company-specific titles distinct from this overall profile label.
 
 ### Résumé summary
 
-> Senior full-stack engineer based in Mumbai with 10+ years in web and mobile. Built Namefi’s AI buyer-research workflow, cutting days of manual work to about five minutes per domain, and Memorang’s CMS backend and editing interface.
+> Senior full-stack engineer with 10+ years in web and mobile. Built Namefi’s AI buyer-research workflow, cutting days of manual work to about five minutes per domain. Built Memorang’s CMS and media recommender.
 
 Sid approved this direction and requested technical terminology review. The summary selects two contributions; the experience section covers the full career. Sid confirmed the time-saving claim on 6 September 2026, with discovery conversations involving roughly 40–50 domain sellers as context for the manual workflow. This is first-person evidence, not an independently measured experiment. The claim concerns research, not autonomous outreach or completed sales.
 
@@ -183,8 +183,8 @@ Dates below are carried from the current repository; they have not been independ
 | Jan 2021–Apr 2024 | Self-employed                   | Product engineering engagements  | Named product contributions; personal implementation and leadership of supporting engineers. |
 | Jan 2020–Jan 2021 | Kult                            | Head of Mobile Engineering       | Ten-engineer mobile leadership with hands-on native architecture and performance work.       |
 | Nov 2018–Dec 2019 | Yilu                            | Founding Engineer                | Early product ownership spanning mobile, infrastructure, and a full-stack pod.               |
-| Nov 2017–Oct 2018 | 8fit                            | Senior Software Engineer         | Cross-platform engineering and an Apple TV product.                                          |
-| Oct 2016–Oct 2017 | Housing                         | Software Development Engineer II | React Native architecture, shared UI/data foundations, and release engineering.              |
+| Nov 2017–Oct 2018 | 8fit                            | Senior Technical Architect       | Cross-platform engineering and an Apple TV product.                                          |
+| Oct 2016–Oct 2017 | Housing                         | Team Lead                        | React Native architecture, shared UI/data foundations, and release engineering.              |
 | 2015–2016         | Earlier consulting/startup work | Software Engineer and Consultant | Web/mobile delivery across several products and teams.                                       |
 
 ### Namefi
@@ -199,7 +199,7 @@ Dates below are carried from the current repository; they have not been independ
 - Conducted extensive discovery conversations with roughly 40–50 domain sellers about buyer research: identifying companies, assessing their ability to buy, finding contacts, and drafting outreach across tens to hundreds of potential buyers per domain.
 - Sid confirms that reducing this manual work from days to about five minutes per domain is a defensible result of the AI research workflow. Treat the interviews as first-person discovery evidence about the manual process, not as a controlled timing study. Candidate-company counts are not the same as final ranked leads or contacted buyers.
 - Built Namefi Studio: multimodal logo/video generation with multiple generation strategies and a multi-step strategist-to-generation flow. Cost-aware behavior is part of the account; the exact routing or optimization mechanism needs a concrete explanation before making stronger claims.
-- Developed AI usage metering.
+- Currently building AI metering.
 
 **Existing work to retain in the source inventory**
 
@@ -216,7 +216,7 @@ Dates below are carried from the current repository; they have not been independ
 1. Led the migration of Namefi's existing products into a new monorepo, establishing developer tooling, a Next.js application with server-side, static, and client-side rendering, and a Hono backend.
 2. Built frontend features and initial Privy/wallet authentication, alongside registrar integrations, domain registration, checkout, payments, and analytics workflows.
 3. Established AI SDK and Exa tool-calling foundations; built an internal analytics agent with custom tools for Google Analytics, Twitter Analytics, and PostHog.
-4. Built Namefi Outbound, an AI tool that finds potential domain buyers and their contact details, then drafts outreach messages. Reduced this work from days to about five minutes per domain.
+4. Built Namefi Outbound's AI buyer-research workflow, reducing days of manual research to about five minutes per domain, including buyer assessment, contact research, and outreach drafts.
 5. Built Namefi Studio's multi-step strategy and generation workflows for logos and video, with multiple generation strategies and review of domain-name fidelity.
 6. Built Namefi Feed's listing-ingestion and AI-classification workflows, including concurrent processing, retries, and price verification; migrated operational orchestration from Airflow to Temporal.
 
@@ -276,7 +276,7 @@ Sid's description: a lead full-stack/mobile engineer and generalist, working dir
 > **Product engineering engagements**  
 > Self-employed · Jan 2021–Apr 2024
 >
-> Full-stack and mobile engineering with client product teams and their CTOs or engineering leads.
+> Hands-on full-stack and mobile engineering with client product teams, working directly with CTOs and engineering leads. Selected engagements:
 
 The client bullets carry the specifics; this sentence only explains the working arrangement. Omit it if the heading, self-employment label, and company attribution already make that clear. Keep team-building detail here if useful for a target lead role, not in the overall summary.
 
@@ -361,21 +361,19 @@ Do not infer a precise client-to-feature mapping where the current source only p
 
 ### Education and personal details
 
-Retain UCLA, Bachelor of Science in Computer Science and Engineering, 2013–2016, from the existing record. Preserve Delhi Public School, R. K. Puram, 2011–2013, in the full inventory; it is optional on a senior-engineer résumé if space is needed. Keep the current Mumbai location, contact details, and public handles unless Sid changes them.
+Retain UCLA, Bachelor of Science in Computer Science and Engineering, 2013–2016, from the existing record. Preserve Delhi Public School, R. K. Puram, 2011–2013, in the full inventory; it is optional on a senior-engineer résumé if space is needed. Keep the current Mumbai location, India/APAC travel availability, contact details, and public handles unless Sid changes them. Travel availability must not be interpreted as international work authorization.
 
 ## 5. Skills: make the organization match the story
 
-| Group                         | Evidence-backed topics to foreground                                                                                                                                                                                       |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Frontend and product UI       | TypeScript, JavaScript, React, Next.js, React Native, TanStack Table, component/design systems, rendering strategies, interaction performance, offline/data flows.                                                         |
-| Backend and product systems   | Node.js, Hono, PostgreSQL/pgvector, APIs, authentication, third-party integrations, Temporal workflows, monorepo tooling, testing and release automation; AWS/Terraform from earlier work.                                 |
-| AI application engineering    | Vercel AI SDK, Mastra, LangGraph, LangChain, tool calling, Exa integration, embeddings, self-querying, vector similarity, multi-step generation, human review, model-based evaluation; Temporal and Trigger.dev workflows. |
-| Mobile and platform depth     | Swift, Kotlin, Objective-C, Java, Chromium/C++, browser builds, native integrations, store delivery, protocol investigation and typed serialization.                                                                       |
-| Hands-on technical leadership | Scope definition, architecture, implementation, mentoring/team coordination, design partnership, communication with CTO/CEO/product stakeholders, production delivery.                                                     |
+| Group                         | Evidence-backed topics to foreground                                                                                                                                                                      |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Frontend and product UI       | TypeScript, JavaScript, React, Next.js, React Native, TanStack Table, component/design systems, rendering strategies, interaction performance, offline/data flows.                                        |
+| Backend and product systems   | Node.js, Hono, PostgreSQL/pgvector, APIs, authentication, third-party integrations, Temporal workflows, monorepo tooling, testing and release automation; AWS/Terraform from earlier work.                |
+| AI application engineering    | AI SDK, tool calling, Exa integration, LangChain, embeddings, self-querying, vector similarity, multi-step generation, human review, model-based evaluation, analytics tools, cost/reliability decisions. |
+| Mobile and platform depth     | Swift, Kotlin, Objective-C, Java, Chromium/C++, browser builds, native integrations, store delivery, protocol investigation and typed serialization.                                                      |
+| Hands-on technical leadership | Scope definition, architecture, implementation, mentoring/team coordination, design partnership, communication with CTO/CEO/product stakeholders, production delivery.                                    |
 
-This is an inventory, not a claim that every technology is equally current or equally deep. Choose a compact subset for each résumé. Do not add model training, fine-tuning, inference serving, or unperformed production controls for keyword coverage.
-
-The concise Skills section includes Vercel AI SDK, Mastra, LangGraph, LangChain, Temporal, Trigger.dev, AWS CDK, and Redis. Keep Swift, Kotlin, and pgvector in the relevant implementation descriptions rather than the Skills list.
+This is an inventory, not a claim that every technology is equally current or equally deep. Choose a compact subset for each résumé. Do not add model training, fine-tuning, inference serving, or unperformed production controls for keyword coverage. AI metering remains ongoing work rather than a completed capability claim.
 
 ## 6. Public proof: what a reviewer can actually inspect
 
@@ -485,7 +483,7 @@ Do not ask again whether Namefi's architecture work covered both migration and f
 ### Acceptance checks for that implementation
 
 - Homepage, résumé, metadata, footer, social image, JSON résumé, `/llms.txt`, and PDF describe the same full-stack-first profile.
-- Namefi describes the monorepo migration, application foundations, and non-AI full-stack work in reader-facing terms; metering is described as an engineering contribution.
+- Namefi describes the monorepo migration, application foundations, and non-AI full-stack work in reader-facing terms; ongoing metering is not described as shipped.
 - Memorang includes CMS services/UI, design-system/data-grid work, shipped retrieval, and two other engineers.
 - Kult consistently says 10 engineers and native Kotlin/Swift, with no Kotlin Multiplatform or company-wide VP/backend claims.
 - The independent period is visibly self-employed, with named engagements and concrete contributions. Yuppies remains secondary contracting-company attribution, not the summary or primary heading; clients are not presented as direct employers. No company-founder claim is exported.

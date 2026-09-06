@@ -23,7 +23,7 @@ export function SiteFooter(): React.ReactNode {
             {resumeData.person.name}
           </p>
           <p className="mt-1 max-w-md text-xs leading-relaxed sm:text-sm">
-            Applied AI engineer building useful, durable systems from Mumbai.
+            {resumeData.person.location}
           </p>
         </div>
         <div className="sm:text-right">

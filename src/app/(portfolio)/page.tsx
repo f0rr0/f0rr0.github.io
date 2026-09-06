@@ -6,6 +6,7 @@ import { CodexStats } from "@/components/codex-stats";
 import { GitHubTimeline } from "@/components/github-timeline";
 import { SiteShell } from "@/components/site-shell";
 import { featuredProjectNames, projectEditorial } from "@/content/home";
+import { resumeData } from "@/content/resume";
 import { getBlogPosts } from "@/lib/blog-utils";
 import { getPublicCodexStats } from "@/lib/codex/public-stats";
 import { formatDate } from "@/lib/date";
@@ -13,8 +14,8 @@ import { getInitialGitHubActivity } from "@/lib/github-activity-feed";
 import { getGitHubProfile } from "@/lib/github-profile";
 import { publicUrl, siteConfig } from "@/lib/site";
 
-const description =
-  "Sid Jain is an applied AI engineer building useful, durable products and production systems. Explore his open-source work, Work Log, and writing.";
+const { description } = siteConfig;
+const title = `${siteConfig.author.name} — ${siteConfig.author.role}`;
 
 export const metadata: Metadata = {
   alternates: {
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
     description,
     images: [
       {
-        alt: "Sid Jain — Applied AI engineer",
+        alt: title,
         height: 630,
         url: "/opengraph-image",
         width: 1200,
@@ -33,25 +34,25 @@ export const metadata: Metadata = {
     ],
     locale: siteConfig.locale,
     siteName: siteConfig.name,
-    title: "Sid Jain — Applied AI engineer",
+    title,
     type: "website",
     url: publicUrl("/"),
   },
   title: {
-    absolute: "Sid Jain — Applied AI engineer",
+    absolute: title,
   },
   twitter: {
     card: "summary_large_image",
     description,
     images: [
       {
-        alt: "Sid Jain — Applied AI engineer",
+        alt: title,
         height: 630,
         url: "/opengraph-image",
         width: 1200,
       },
     ],
-    title: "Sid Jain — Applied AI engineer",
+    title,
   },
 };
 
@@ -86,19 +87,22 @@ export default async function Home() {
               className="max-w-[16ch] font-serif text-[2.5rem] font-bold leading-[1.08] tracking-[-0.035em] text-foreground sm:text-6xl sm:leading-[1.04]"
               id="home-title"
             >
-              Building AI products that hold up in the real world.
+              {resumeData.person.name}
             </h1>
+            <p className="mt-4 font-ui text-base text-muted-foreground sm:text-lg">
+              {resumeData.person.role} · {resumeData.person.location}
+            </p>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
-              I’m Sid Jain, an applied AI engineer. I take ambiguous problems
-              from discovery to production—shaping the product, designing the
-              system, and staying for the operational details.
+              At Namefi, I built an AI workflow that cuts buyer research from
+              days to about five minutes per domain. I also built Memorang’s CMS
+              and media recommender.
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 font-ui text-sm font-medium">
               <a
                 className="group inline-flex items-center gap-2 rounded-sm text-primary transition-colors hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                 href="#timeline"
               >
-                Follow the work
+                Work log
                 <ArrowDown
                   aria-hidden="true"
                   className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-y-0.5"
@@ -115,22 +119,26 @@ export default async function Home() {
                   className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                 />
               </Link>
+              <a
+                className="rounded-sm text-foreground transition-colors hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                href="https://namefi.io/r/en/blog/progressive-ai-buyer-discovery-method"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                How buyer discovery works
+              </a>
             </div>
           </div>
         </section>
 
-        <GitHubTimeline initialPage={activity} preview />
-
-        {codexStats === null ? null : <CodexStats stats={codexStats} />}
-
         <section
-          aria-label="Selected work and recent writing"
+          aria-label="Open source and recent writing"
           className="home-section grid gap-16 lg:grid-cols-2 lg:gap-16"
         >
           <div>
             <div className="flex items-baseline justify-between gap-4">
               <h2 className="font-serif text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                Selected work
+                Open source
               </h2>
               <a
                 className="shrink-0 rounded-sm font-ui text-sm text-muted-foreground transition-colors hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
@@ -227,6 +235,10 @@ export default async function Home() {
             </ol>
           </div>
         </section>
+
+        <GitHubTimeline initialPage={activity} preview />
+
+        {codexStats === null ? null : <CodexStats stats={codexStats} />}
       </main>
     </SiteShell>
   );

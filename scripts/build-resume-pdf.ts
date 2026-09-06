@@ -341,7 +341,7 @@ interface PdfSectionItem {
 
 const experienceItem = (item: ResumeExperience): PdfSectionItem => {
   const companyHeadingItems = [
-    text(item.company, {
+    text(item.displayName ?? item.company, {
       fill: "strong",
       font: "Literata",
       kerning: false,
@@ -425,7 +425,7 @@ const buildTypst = () => {
   return `#set document(
   title: ${quote(resumeData.pdf.title)},
   author: ${quote(resumeData.person.name)},
-  keywords: ("AI product engineer", "Applied AI lead", "staff full-stack engineer", "founding engineer", "TypeScript", "React Native", "Chromium", "DNS"),
+  keywords: (${[resumeData.person.role, ...resumeData.skills].map(quote).join(", ")}),
 )
 #set page(
   paper: "us-legal",

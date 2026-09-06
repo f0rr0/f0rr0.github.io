@@ -221,7 +221,7 @@ function ExperienceItem({ item }: Readonly<{ item: ResumeExperience }>) {
         <div className="col-start-2 min-w-0 sm:contents">
           <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
             <h3 className="font-serif font-bold text-foreground">
-              {item.company}
+              {item.displayName ?? item.company}
             </h3>
             {companyStage === undefined ? null : (
               <span

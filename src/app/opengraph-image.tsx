@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Sid Jain — Applied AI engineer";
+import { resumeData } from "@/content/resume";
+
+export const alt = `${resumeData.person.name} — ${resumeData.person.role}`;
 export const size = {
   height: 630,
   width: 1200,
@@ -32,7 +34,7 @@ export default function Image() {
           letterSpacing: "-0.02em",
         }}
       >
-        <span>Sid Jain</span>
+        <span>{resumeData.person.name}</span>
         <span style={{ color: "#78716c", fontSize: 18, fontWeight: 400 }}>
           f0rr0.dev
         </span>
@@ -49,7 +51,7 @@ export default function Image() {
             maxWidth: 900,
           }}
         >
-          Building AI products that hold up in the real world.
+          {resumeData.person.role}
         </div>
         <div
           style={{
@@ -98,7 +100,7 @@ export default function Image() {
         </div>
       </div>
       <div style={{ color: "#78716c", display: "flex", fontSize: 20 }}>
-        Applied AI · product systems · open source · writing
+        {resumeData.person.location}
       </div>
     </div>,
     size

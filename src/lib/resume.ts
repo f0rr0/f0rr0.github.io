@@ -1,5 +1,4 @@
 import {
-  formatResumeLocation,
   resumeCompanyStageLabels,
   resumeData,
   resumeRoleMarkerLabels,
@@ -205,7 +204,6 @@ export const buildJsonResume = () => ({
   meta: {
     canonical: publicUrl("/resume.json"),
     lastModified: resumeData.lastUpdated,
-    mobility: [...resumeData.person.mobility],
     schema: "https://jsonresume.org/schema/",
     source: publicUrl("/resume"),
   },
@@ -248,7 +246,7 @@ Last updated: ${resumeData.lastUpdated}
 
 Identity: ${resumeData.person.name} uses the public handles ${formatNaturalList([...resumeData.person.alternateNames])}.
 Current role: ${currentRole?.title ?? resumeData.person.role} at ${currentExperience?.company ?? "the current company"}.
-Location and mobility: ${formatResumeLocation(resumeData.person, "; ")}.
+Location: ${resumeData.person.location}.
 
 Reading notes:
 ${resumeData.machineReadable.agentNotes.map((note) => `- ${note}`).join("\n")}`;

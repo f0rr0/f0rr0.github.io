@@ -4,7 +4,6 @@ import { JsonLd } from "@/components/json-ld";
 import { SitePage } from "@/components/site-page";
 import { SiteShell } from "@/components/site-shell";
 import {
-  formatResumeLocation,
   resumeCompanyStageLabels,
   resumeData,
   resumeRoleMarkerLabels,
@@ -46,7 +45,7 @@ export const metadata: Metadata = {
   },
 };
 
-const { education, experience, links, person, summary } = resumeData;
+const { education, experience, links, skills, summary } = resumeData;
 const askAgents = buildAskAgentLinks();
 const profileJsonLd = buildProfilePageJsonLd();
 
@@ -256,9 +255,6 @@ export function ResumePageContent({
         <SitePage title="Résumé" action={<ResumeDownloadButton />}>
           <section>
             <p className={resumeBodyText}>{summary}</p>
-            <p className={`mt-3 ${resumeBodyText}`}>
-              {formatResumeLocation(person)}
-            </p>
             <div className="mt-4 flex flex-wrap gap-4 text-sm lg:text-base">
               {links.map((link) => (
                 <a
@@ -276,6 +272,11 @@ export function ResumePageContent({
                 </a>
               ))}
             </div>
+          </section>
+
+          <section className="mt-8">
+            <SectionTitle>Skills</SectionTitle>
+            <p className={`mt-3 ${resumeBodyText}`}>{skills.join(" · ")}</p>
           </section>
 
           <section className="mt-8">

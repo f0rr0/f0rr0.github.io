@@ -67,16 +67,6 @@ export interface PublicReference extends ResumeLink {
   note: string;
 }
 
-export interface ResumePersonLocation {
-  location: string;
-  mobility?: readonly string[];
-}
-
-export const formatResumeLocation = (
-  person: ResumePersonLocation,
-  separator = "\u2002•\u2002"
-) => [person.location, ...(person.mobility ?? [])].join(separator);
-
 interface DeepDiveSection {
   heading: string;
   bullets: string[];
@@ -202,7 +192,6 @@ export const resumeData = {
     email: "sid_26@outlook.com",
     image: "/resume/sid-jain-profile.png",
     location: "Based in Mumbai",
-    mobility: ["Available for India/APAC travel"],
     name: "Sid Jain",
     role: "Senior Full-Stack Engineer",
     targetPositioning:
@@ -219,21 +208,23 @@ export const resumeData = {
     { href: "https://github.com/f0rr0", label: "github.com/f0rr0" },
   ] satisfies ResumeLink[],
   summary:
-    "Senior full-stack engineer with 10+ years in web and mobile. Built Namefi’s AI buyer-research workflow, cutting days of manual work to about five minutes per domain. Built Memorang’s CMS and media recommender.",
+    "Senior full-stack engineer based in Mumbai with 10+ years in web and mobile. Built Namefi’s AI buyer-research workflow, cutting days of manual work to about five minutes per domain, and Memorang’s CMS backend and editing interface.",
   skills: [
     "TypeScript",
     "React",
-    "Next.js",
     "Node.js",
-    "Hono",
     "PostgreSQL",
+    "Next.js",
+    "Hono",
+    "Redis",
+    "AWS CDK",
     "React Native",
-    "Swift",
-    "Kotlin",
-    "AI SDK",
+    "Vercel AI SDK",
+    "Mastra",
+    "LangGraph",
     "LangChain",
-    "pgvector",
     "Temporal",
+    "Trigger.dev",
     "Chromium",
     "CI/CD",
   ],
@@ -251,11 +242,11 @@ export const resumeData = {
           location: "Mumbai / Remote",
           markers: ["hands-on"],
           bullets: [
-            "Built Namefi Outbound, cutting buyer research from days to about five minutes per domain: company research, buyer qualification, contact discovery, and outreach drafts. Informed by interviews with 40–50 domain sellers.",
-            "Led migration to a new monorepo; established developer tooling, a Next.js app with server-side rendering and static generation, and a Hono backend. Built UI and initial Privy and wallet authentication.",
-            "Integrated AI SDK tool calling with Exa; built an internal analytics agent with custom tools for Google Analytics, Twitter Analytics, and PostHog.",
-            "Built Namefi Studio’s multi-step logo and video generation workflows with Temporal, separating strategy from generation and reviewing outputs for domain-name accuracy.",
-            "Built domain registration, checkout, payment integrations, and listing ingestion; migrated Airflow orchestration to Temporal. Currently building AI usage metering.",
+            "Built Namefi Outbound, an AI tool that finds potential domain buyers and their contact details, then drafts outreach messages. Reduced this work from days to about five minutes per domain.",
+            "Led migration to a new monorepo with Next.js, Hono, and shared developer tooling. Built server-rendered and statically generated pages, Privy/wallet authentication, domain registration, checkout, and payment integrations.",
+            "Replaced Airflow with Temporal for domain operations; built Temporal workflows for listing ingestion and Namefi Studio’s logo and video generation.",
+            "Used traces and evals to reduce repeated buyer searches through progressive model escalation and shared evidence; reused completed model results on retry to avoid duplicate spend.",
+            "Built an internal analytics agent with Vercel AI SDK tools for Google Analytics, Twitter Analytics, and PostHog; integrated Exa search. Developed AI usage metering.",
           ],
         },
       ],
@@ -274,10 +265,11 @@ export const resumeData = {
           location: "Mumbai / Remote",
           markers: ["hands-on", "leadership"],
           bullets: [
-            "Built EdWrite’s CMS services and UI, including a TanStack Table data grid and shared component library developed with designers.",
+            "Built EdWrite’s CMS backend, TanStack Table data grid, and shared UI components with designers.",
+            "Versioned content schemas so exam formats could evolve without breaking client apps or services; defined TOEFL schemas with ETS subject-matter experts.",
             "Shipped a media recommender using embeddings and pgvector similarity search, with LangChain self-querying to generate metadata filters from natural-language queries.",
-            "Led two CMS engineers; planned scope and architecture with the CTO and weekly priorities with the CEO. Defined TOEFL content schemas with ETS subject-matter experts.",
-            "Built AI-assisted question, audio, and image generation with subject-matter-expert review and publishing approval; led a Flow-to-TypeScript migration using codemods and AI-assisted refactoring.",
+            "Built AI-assisted question, audio, and image generation with expert review and publishing approval.",
+            "Led two CMS engineers and a Flow-to-TypeScript migration using codemods and AI-assisted refactoring.",
           ],
         },
       ],
@@ -294,7 +286,7 @@ export const resumeData = {
           location: "Mumbai / Remote",
           markers: ["hands-on", "leadership"],
           summary:
-            "Hands-on full-stack and mobile engineering with client product teams, working directly with CTOs and engineering leads. Selected engagements:",
+            "Full-stack and mobile engineering with client product teams and their CTOs or engineering leads.",
           bullets: [
             {
               label: "Veera Browser",
@@ -372,7 +364,7 @@ export const resumeData = {
       logo: eightfitLogo,
       roles: [
         {
-          title: "Senior Technical Architect",
+          title: "Senior Software Engineer",
           dates: "Nov 2017 - Oct 2018",
           location: "Berlin",
           markers: ["hands-on"],
@@ -390,7 +382,7 @@ export const resumeData = {
       logo: housingLogo,
       roles: [
         {
-          title: "Team Lead",
+          title: "Software Development Engineer II",
           dates: "Oct 2016 - Oct 2017",
           location: "Mumbai",
           markers: ["hands-on"],
@@ -457,7 +449,7 @@ export const resumeData = {
     strengths: [
       "Full-stack: TypeScript, React, Next.js, Hono, Node.js, PostgreSQL, APIs, authentication, and release tooling.",
       "Frontend and mobile: CMS component systems, TanStack Table, React Native, Swift, Kotlin, and backend-driven mobile UI.",
-      "AI applications: AI SDK tool calling, LangChain self-querying, pgvector retrieval, multi-step generation, and model-judged evaluation.",
+      "AI applications: Vercel AI SDK tool calling, LangChain self-querying, pgvector retrieval, multi-step generation, and model-judged evaluation.",
       "Engineering leadership: led two CMS engineers at Memorang and 10 mobile engineers at Kult; worked directly with client CTOs and engineering leads during self-employed engagements.",
     ],
     deepDives: [
@@ -484,9 +476,9 @@ export const resumeData = {
             bullets: [
               "Led migration of existing products into a new monorepo and established developer tooling, a Next.js app using server-side rendering, static generation, and client-side rendering, and a Hono backend.",
               "Built frontend features and the initial Privy and wallet authentication implementation.",
-              "Established AI SDK integrations, including Exa tool calling.",
+              "Established Vercel AI SDK integrations, including Exa tool calling.",
               "Built an internal analytics agent with custom tools querying Google Analytics, Twitter Analytics, and PostHog.",
-              "Currently building AI usage metering.",
+              "Developed AI usage metering.",
               "Established repeatable documentation, static checks, and CI practices for AI-assisted development.",
             ],
           },
@@ -496,6 +488,8 @@ export const resumeData = {
               "Built Namefi Outbound to research potential domain buyers and prepare outreach, cutting buyer research from days to about five minutes per domain.",
               "Interviewed roughly 40–50 domain sellers about researching tens to hundreds of potential buyers per domain: identifying companies, assessing their ability to buy, finding contacts, and drafting outreach.",
               "Sid built model-judged evals for buyer fit, name and product similarity, and decision-maker contact quality, then validated outputs through seller reports covering hundreds of prospective buyers.",
+              "Used traces and evals to reduce repeated buyer searches through progressive model escalation and shared evidence.",
+              "Reused completed model results across retries to avoid duplicate spend.",
               "Its results remain transparent and editable so sellers retain control of the process.",
             ],
           },
@@ -799,6 +793,12 @@ export const resumeData = {
     ] satisfies PublicReference[],
   },
   openSource: [
+    {
+      href: "https://namefi.io/r/en/blog/progressive-ai-buyer-discovery-method",
+      label:
+        "How We Cut AI Buyer Discovery Cost by 85%: Start Lean, Escalate With Evidence",
+      note: "Progressive model escalation, evidence reuse, trace-driven evaluation, and a single-domain cost benchmark.",
+    },
     {
       href: "https://github.com/f0rr0/thrift-compact-protocol",
       label: "thrift-compact-protocol",

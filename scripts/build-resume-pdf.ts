@@ -3,7 +3,6 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import {
-  formatResumeLocation,
   resumeCompanyStageLabels,
   resumeData,
   resumeRoleMarkerLabels,
@@ -474,8 +473,9 @@ const buildTypst = () => {
 )
   #v(${spacing[1]})
   ${paragraph(resumeData.summary)}
-  #v(${spacing[1]})
-  ${paragraph(formatResumeLocation(resumeData.person))}
+
+  ${sectionTitle("Skills", { before: spacing[2], after: spacing[1] })}
+  ${paragraph(resumeData.skills.join(" · "))}
 
   ${sectionWithItems("Experience", experience, {
     before: spacing[2],

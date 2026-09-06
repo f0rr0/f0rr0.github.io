@@ -1,4 +1,5 @@
 import { expect, test } from "bun:test";
+import { readFileSync } from "node:fs";
 
 import { resumeData } from "../src/content/resume.ts";
 import {
@@ -14,13 +15,69 @@ test("profile exports share the full-stack identity, summary, and skills", () =>
   const person = buildProfilePageJsonLd().mainEntity;
 
   expect(resumeData.person.role).toBe("Senior Full-Stack Engineer");
+  expect(resumeData.summary).toContain("based in Mumbai");
   expect(json.basics.summary).toBe(resumeData.summary);
   expect(person.description).toBe(resumeData.summary);
   expect(siteConfig.description).toContain(resumeData.summary);
   expect(json.skills[0].keywords).toEqual(resumeData.skills);
+  expect(resumeData.skills).toEqual(
+    expect.arrayContaining([
+      "Vercel AI SDK",
+      "Mastra",
+      "LangGraph",
+      "Temporal",
+      "Trigger.dev",
+      "AWS CDK",
+      "Redis",
+    ])
+  );
+  expect(resumeData.skills).not.toContain("pgvector");
+  expect(resumeData.skills).not.toContain("Swift");
+  expect(resumeData.skills).not.toContain("Kotlin");
   expect(person.knowsAbout).toEqual(resumeData.skills);
   expect(json.basics.label).toBe("Senior Full Stack Engineer");
   expect(person.jobTitle).toBe(json.basics.label);
+});
+
+test("revised titles, engineering decisions, and visible skills survive the résumé exports", () => {
+  const json = buildJsonResume();
+  const context = buildLlmsFullTxt();
+  const typst = readFileSync(resumeData.pdf.generatedTypstPath, "utf-8");
+  const skillsSection = typst.slice(
+    typst.indexOf('"Skills"'),
+    typst.indexOf('"Experience"')
+  );
+
+  for (const [company, title] of [
+    ["Housing", "Software Development Engineer II"],
+    ["8fit", "Senior Software Engineer"],
+  ]) {
+    expect(json.work.find((item) => item.name === company).position).toBe(
+      title
+    );
+    expect(context).toContain(`Title: ${title}.`);
+    expect(typst).toContain(title);
+  }
+  for (const skill of resumeData.skills) {
+    expect(skillsSection).toContain(skill);
+  }
+  expect(typst).toContain('paper: "us-legal"');
+  expect(typst).toContain('fill: rgb("#1a1918")');
+  expect(typst.match(/based in Mumbai/gi)).toHaveLength(1);
+  expect(JSON.stringify({ json, context, typst })).not.toMatch(
+    /APAC|travel availability|Location and mobility|currently building|ongoing work|work in progress/i
+  );
+  expect(
+    json.work.find((item) => item.name === "Namefi").highlights.join(" ")
+  ).toContain("reused completed model results on retry");
+  expect(
+    json.work.find((item) => item.name === "Memorang").highlights.join(" ")
+  ).toContain("without breaking client apps or services");
+  expect(
+    json.publications.some((item) =>
+      item.url.includes("progressive-ai-buyer-discovery-method")
+    )
+  ).toBe(true);
 });
 
 test("engagement heading does not become a fictitious employer or founder claim", () => {
@@ -62,7 +119,7 @@ test("corrected team counts and technical scope survive the public exports", () 
   expect(publicCopy).not.toMatch(
     /Kotlin Multiplatform|GraphRAG|Neo4j|GraphJS|Applied AI Lead|Managed 3|three-person|semantic media search/i
   );
-  expect(context).toContain("Currently building AI usage metering");
+  expect(context).toContain("Developed AI usage metering");
 });
 
 test("LLM guidance adds useful context without leaking review history into the profile", () => {
@@ -106,7 +163,7 @@ test("LLM guidance adds useful context without leaking review history into the p
   expect(context).toContain(resumeData.summary);
   expect(context).toContain("about five minutes per domain");
   expect(context).toContain("Shipped a media recommender inside the CMS");
-  expect(context).toContain("Currently building AI usage metering.");
+  expect(context).toContain("Developed AI usage metering.");
   expect(context).toContain("Contracting company: Yuppies Tech.");
   expect(context).toContain("single-domain cost benchmark");
   expect(context).not.toContain("## Writing");

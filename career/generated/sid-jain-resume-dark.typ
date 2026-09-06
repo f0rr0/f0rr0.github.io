@@ -5,17 +5,19 @@
     "Senior Full-Stack Engineer",
     "TypeScript",
     "React",
-    "Next.js",
     "Node.js",
-    "Hono",
     "PostgreSQL",
+    "Next.js",
+    "Hono",
+    "Redis",
+    "AWS CDK",
     "React Native",
-    "Swift",
-    "Kotlin",
-    "AI SDK",
+    "Vercel AI SDK",
+    "Mastra",
+    "LangGraph",
     "LangChain",
-    "pgvector",
     "Temporal",
+    "Trigger.dev",
     "Chromium",
     "CI/CD",
   ),
@@ -128,7 +130,7 @@
   #block[
     #set par(leading: 0.625em)
     #t(
-      "Senior full-stack engineer with 10+ years in web and mobile. Built Namefi's AI buyer-research workflow, cutting days of manual work to about five minutes per domain. Built Memorang's CMS and media recommender.",
+      "Senior full-stack engineer based in Mumbai with 10+ years in web and mobile. Built Namefi's AI buyer-research workflow, cutting days of manual work to about five minutes per domain, and Memorang's CMS backend and editing interface.",
       fill: muted,
       font: "Source Sans 3",
       size: 10pt,
@@ -136,11 +138,23 @@
       style: "normal",
     )
   ]
+
+
+  #v(6pt)
+  #t(
+    "Skills",
+    fill: strong,
+    font: "Literata",
+    size: 15pt,
+    weight: "bold",
+    style: "normal",
+  )
   #v(3pt)
+
   #block[
     #set par(leading: 0.625em)
     #t(
-      "Based in Mumbai • Available for India/APAC travel",
+      "TypeScript · React · Node.js · PostgreSQL · Next.js · Hono · Redis · AWS CDK · React Native · Vercel AI SDK · Mastra · LangGraph · LangChain · Temporal · Trigger.dev · Chromium · CI/CD",
       fill: muted,
       font: "Source Sans 3",
       size: 10pt,
@@ -270,7 +284,7 @@
               style: "normal",
             )],
             [#t(
-              "Built Namefi Outbound, cutting buyer research from days to about five minutes per domain: company research, buyer qualification, contact discovery, and outreach drafts. Informed by interviews with 40-50 domain sellers.",
+              "Built Namefi Outbound, an AI tool that finds potential domain buyers and their contact details, then drafts outreach messages. Reduced this work from days to about five minutes per domain.",
               fill: muted,
               font: "Source Sans 3",
               size: 10pt,
@@ -293,7 +307,7 @@
               style: "normal",
             )],
             [#t(
-              "Led migration to a new monorepo; established developer tooling, a Next.js app with server-side rendering and static generation, and a Hono backend. Built UI and initial Privy and wallet authentication.",
+              "Led migration to a new monorepo with Next.js, Hono, and shared developer tooling. Built server-rendered and statically generated pages, Privy/wallet authentication, domain registration, checkout, and payment integrations.",
               fill: muted,
               font: "Source Sans 3",
               size: 10pt,
@@ -316,7 +330,7 @@
               style: "normal",
             )],
             [#t(
-              "Integrated AI SDK tool calling with Exa; built an internal analytics agent with custom tools for Google Analytics, Twitter Analytics, and PostHog.",
+              "Replaced Airflow with Temporal for domain operations; built Temporal workflows for listing ingestion and Namefi Studio's logo and video generation.",
               fill: muted,
               font: "Source Sans 3",
               size: 10pt,
@@ -339,7 +353,7 @@
               style: "normal",
             )],
             [#t(
-              "Built Namefi Studio's multi-step logo and video generation workflows with Temporal, separating strategy from generation and reviewing outputs for domain-name accuracy.",
+              "Used traces and evals to reduce repeated buyer searches through progressive model escalation and shared evidence; reused completed model results on retry to avoid duplicate spend.",
               fill: muted,
               font: "Source Sans 3",
               size: 10pt,
@@ -362,7 +376,7 @@
               style: "normal",
             )],
             [#t(
-              "Built domain registration, checkout, payment integrations, and listing ingestion; migrated Airflow orchestration to Temporal. Currently building AI usage metering.",
+              "Built an internal analytics agent with Vercel AI SDK tools for Google Analytics, Twitter Analytics, and PostHog; integrated Exa search. Developed AI usage metering.",
               fill: muted,
               font: "Source Sans 3",
               size: 10pt,
@@ -497,7 +511,30 @@
             style: "normal",
           )],
           [#t(
-            "Built EdWrite's CMS services and UI, including a TanStack Table data grid and shared component library developed with designers.",
+            "Built EdWrite's CMS backend, TanStack Table data grid, and shared UI components with designers.",
+            fill: muted,
+            font: "Source Sans 3",
+            size: 10pt,
+            weight: "regular",
+            style: "normal",
+          )],
+        )
+        #v(1.5pt)
+
+        #grid(
+          columns: (6pt, 1fr),
+          gutter: 6pt,
+          align: top,
+          [#t(
+            "·",
+            fill: accent,
+            font: "Source Sans 3",
+            size: 10pt,
+            weight: "bold",
+            style: "normal",
+          )],
+          [#t(
+            "Versioned content schemas so exam formats could evolve without breaking client apps or services; defined TOEFL schemas with ETS subject-matter experts.",
             fill: muted,
             font: "Source Sans 3",
             size: 10pt,
@@ -543,7 +580,7 @@
             style: "normal",
           )],
           [#t(
-            "Led two CMS engineers; planned scope and architecture with the CTO and weekly priorities with the CEO. Defined TOEFL content schemas with ETS subject-matter experts.",
+            "Built AI-assisted question, audio, and image generation with expert review and publishing approval.",
             fill: muted,
             font: "Source Sans 3",
             size: 10pt,
@@ -566,7 +603,7 @@
             style: "normal",
           )],
           [#t(
-            "Built AI-assisted question, audio, and image generation with subject-matter-expert review and publishing approval; led a Flow-to-TypeScript migration using codemods and AI-assisted refactoring.",
+            "Led two CMS engineers and a Flow-to-TypeScript migration using codemods and AI-assisted refactoring.",
             fill: muted,
             font: "Source Sans 3",
             size: 10pt,
@@ -673,7 +710,7 @@
         )
         #v(2.25pt)
         #t(
-          "Hands-on full-stack and mobile engineering with client product teams, working directly with CTOs and engineering leads. Selected engagements:",
+          "Full-stack and mobile engineering with client product teams and their CTOs or engineering leads.",
           fill: muted,
           font: "Source Sans 3",
           size: 10pt,
@@ -1234,7 +1271,7 @@
             gutter: 4pt,
             align: horizon,
             [#t(
-              "Senior Technical Architect",
+              "Senior Software Engineer",
               fill: strong,
               font: "Source Sans 3",
               size: 10pt,
@@ -1378,7 +1415,7 @@
             gutter: 4pt,
             align: horizon,
             [#t(
-              "Team Lead",
+              "Software Development Engineer II",
               fill: strong,
               font: "Source Sans 3",
               size: 10pt,

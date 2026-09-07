@@ -609,7 +609,7 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit projection store", () => {
     });
   });
 
-  test("reactivates an exact cached summary and revises the public head", async () => {
+  test("reuses unchanged outcomes across context changes without another request", async () => {
     const firstClaim = await claimGitHubWorkUnitSummary({
       now: new Date("2026-08-30T12:06:00.000Z"),
     });
@@ -631,13 +631,11 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit projection store", () => {
     const secondClaim = await claimGitHubWorkUnitSummary({
       now: new Date("2026-08-30T12:13:00.000Z"),
     });
-    expect(secondClaim).not.toBeNull();
-    assert.ok(secondClaim);
-    await completeGitHubWorkUnitSummary(
-      secondClaim,
-      summaryResult("Current outcome B."),
-      new Date("2026-08-30T12:13:01.000Z")
-    );
+    expect(secondClaim).toBeNull();
+    const [usage] = await database
+      .select()
+      .from(schema.githubWorkUnitSummaryDailyUsage);
+    expect(usage.startedRequests).toBe(1);
 
     await database
       .update(schema.githubRepositories)
@@ -657,13 +655,13 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit projection store", () => {
     const [publicUnit] = page.days[0].repositories[0].items;
 
     expect(reverted).toMatchObject({
-      feedRevisionChanged: true,
+      feedRevisionChanged: false,
       summaryAttemptsQueued: 0,
     });
     expect(revertedUnit.summaryInputDigest).toBe(inputA);
-    expect(afterReversion.feedRevision).toBe(beforeReversion.feedRevision + 1);
+    expect(afterReversion.feedRevision).toBe(beforeReversion.feedRevision);
     expect(afterReversion.headContentRevision).toBe(
-      beforeReversion.headContentRevision + 1
+      beforeReversion.headContentRevision
     );
     expect(publicUnit).toMatchObject({
       headline: "Cached outcome A.",
@@ -672,6 +670,7 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit projection store", () => {
   });
 
   test("reuses a superseded paid input without resetting its request budget", async () => {
+    await database.delete(schema.githubWorkUnitAcceptedSummaries);
     await database
       .update(schema.githubRepositories)
       .set({ description: "Retryable context C." })
@@ -713,6 +712,9 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit projection store", () => {
       state: "retryable",
     });
 
+    await database
+      .delete(schema.githubWorkUnits)
+      .where(eq(schema.githubWorkUnits.id, firstClaim.workUnitId));
     await database
       .update(schema.githubRepositories)
       .set({ description: "Retryable context C." })

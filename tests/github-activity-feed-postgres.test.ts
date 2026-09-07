@@ -260,7 +260,7 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit feed projection", () => {
       insert into github_work_unit_summary_attempts (
         accepted_at, attribution_mode, completed_at, debounce_until,
         outcome, outcome_digest, recipe, revision, state,
-        summary_input_digest, work_unit_id
+        summary_input_digest, work_unit_id, identity_key, repository_id
       ) values
         (
           '2026-08-30T12:02:00Z', 'tracked_authored_pr',
@@ -270,28 +270,28 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit feed projection", () => {
             summary: "The expanded summary explains the complete outcome.",
           })}, ${digest("a")},
           ${GITHUB_WORK_UNIT_SUMMARY_RECIPE}, 1, 'accepted', ${digest("1")},
-          '00000000-0000-4000-8000-000000000101'
+          '00000000-0000-4000-8000-000000000101', 'pr:PR_public_feed_1', '101'
         ),
         (
           '2026-08-30T12:03:00Z', 'tracked_authored_pr',
           '2026-08-30T12:03:00Z', '2026-08-30T12:00:00Z',
           'Earlier summary stays available.', ${digest("b")},
           ${GITHUB_WORK_UNIT_SUMMARY_RECIPE}, 2, 'accepted', ${digest("2")},
-          '00000000-0000-4000-8000-000000000101'
+          '00000000-0000-4000-8000-000000000101', 'pr:PR_public_feed_1', '101'
         ),
         (
           '2026-08-30T12:04:00Z', 'tracked_authored_pr',
           '2026-08-30T12:04:00Z', '2026-08-30T12:00:00Z',
           'Previous summary stays visible.', ${digest("a")},
           'github-work-unit-outcome-v1', 3, 'accepted', ${digest("3")},
-          '00000000-0000-4000-8000-000000000101'
+          '00000000-0000-4000-8000-000000000101', 'pr:PR_public_feed_1', '101'
         ),
         (
           '2026-08-30T12:05:00Z', 'branch_owned_composite',
           '2026-08-30T12:05:00Z', '2026-08-30T12:00:00Z',
           'Wrong attribution must remain hidden.', ${digest("a")},
           'corrupt-mode-test', 4, 'accepted', ${digest("1")},
-          '00000000-0000-4000-8000-000000000101'
+          '00000000-0000-4000-8000-000000000101', 'pr:PR_public_feed_1', '101'
         ),
         (
           '2026-08-30T12:06:00Z', 'branch_owned_composite',
@@ -302,7 +302,7 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit feed projection", () => {
               "The private work summary remains useful without exposing repository identity.",
           })}, ${digest("c")},
           ${GITHUB_WORK_UNIT_SUMMARY_RECIPE}, 1, 'accepted', ${digest("9")},
-          '00000000-0000-4000-8000-000000000105'
+          '00000000-0000-4000-8000-000000000105', 'branch:10000000-0000-4000-8000-000000000201', '201'
         )
     `;
     await admin`
@@ -423,6 +423,7 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit feed projection", () => {
   });
 
   test("reuses a stale summary while the current one is pending", async () => {
+    await admin`update github_public_feed_head set summarizing = true where id`;
     await admin`
       update github_work_units set
         summary_evaluated_digest = ${digest("4")},
@@ -433,11 +434,11 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit feed projection", () => {
     await admin`
       insert into github_work_unit_summary_attempts (
         attribution_mode, debounce_until, outcome_digest, recipe,
-        request_payload, revision, state, summary_input_digest, work_unit_id
+        request_payload, revision, state, summary_input_digest, work_unit_id, identity_key, repository_id
       ) values (
         'tracked_authored_pr', '2026-08-30T12:07:00Z', ${digest("a")},
         ${GITHUB_WORK_UNIT_SUMMARY_RECIPE}, '{}', 5, 'pending', ${digest("4")},
-        '00000000-0000-4000-8000-000000000101'
+        '00000000-0000-4000-8000-000000000101', 'pr:PR_public_feed_1', '101'
       )
     `;
 
@@ -450,6 +451,16 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit feed projection", () => {
       headline: "Previous summary stays visible.",
       summarizing: true,
       summary: null,
+    });
+    await admin`update github_public_feed_head set summarizing = false where id`;
+    const paused = await readPublicGitHubActivityPage(null, 2);
+    expect(
+      paused.days[0]?.repositories[0]?.items.find(
+        ({ kind }) => kind === "pull-request"
+      )
+    ).toMatchObject({
+      headline: "Previous summary stays visible.",
+      summarizing: false,
     });
   });
 

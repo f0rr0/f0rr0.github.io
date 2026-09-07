@@ -1329,6 +1329,8 @@ export const githubWorkUnitMemberships = pgTable(
 export const githubWorkUnitSummaryAttempts = pgTable(
   "github_work_unit_summary_attempts",
   {
+    identityKey: varchar("identity_key", { length: 180 }).notNull(),
+    repositoryId: varchar("repository_id", { length: 32 }).notNull(),
     errorCode: varchar("error_code", { length: 80 }),
     acceptedAt: timestamp("accepted_at", {
       mode: "date",
@@ -1350,6 +1352,15 @@ export const githubWorkUnitSummaryAttempts = pgTable(
       withTimezone: true,
     }).notNull(),
     inputTokens: integer("input_tokens"),
+    // At most two starts. A null entry marks an unknown pre-migration time.
+    requestStartedAt: timestamp("request_started_at", {
+      mode: "date",
+      withTimezone: true,
+    })
+      .array()
+      .$type<(Date | null)[]>()
+      .default(sql`ARRAY[]::timestamptz[]`)
+      .notNull(),
     lastStartedAt: timestamp("last_started_at", {
       mode: "date",
       withTimezone: true,
@@ -1389,11 +1400,8 @@ export const githubWorkUnitSummaryAttempts = pgTable(
       table.debounceUntil,
       table.createdAt
     ),
-    foreignKey({
-      columns: [table.workUnitId],
-      foreignColumns: [githubWorkUnits.id],
-      name: "gh_work_unit_summary_attempts_unit_fk",
-    }).onDelete("cascade"),
+    // Paid attempts outlive the current projection, including branch deletion.
+    index("gh_work_unit_summary_attempts_identity_idx").on(table.identityKey),
     check(
       "gh_work_unit_summary_state",
       sql`${table.state} IN ('pending', 'processing', 'retryable', 'accepted', 'terminal')`
@@ -1429,6 +1437,10 @@ export const githubWorkUnitSummaryAttempts = pgTable(
     check(
       "gh_work_unit_summary_request_cap",
       sql`${table.requestPayload} IS NULL OR octet_length(${table.requestPayload}) <= 393216`
+    ),
+    check(
+      "gh_work_unit_summary_request_times",
+      sql`cardinality(${table.requestStartedAt}) = ${table.startedRequests}`
     ),
     check(
       "gh_work_unit_summary_metrics",

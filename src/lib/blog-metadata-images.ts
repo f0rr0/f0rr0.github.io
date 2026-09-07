@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 
+import { renderBlogShareImage } from "@/lib/blog-share-image";
 import {
   findMetadataImageAsset,
   getBlogPost,
@@ -26,10 +27,12 @@ const getMetadataImageAssetForSlug = async (
     return null;
   }
 
-  const asset = await findMetadataImageAsset(post.importPath, kind);
-  if (!asset) {
-    return null;
-  }
+  const asset =
+    (await findMetadataImageAsset(post.importPath, kind)) ??
+    (await findMetadataImageAsset(
+      post.importPath,
+      kind === "opengraph" ? "twitter" : "opengraph"
+    ));
 
   return { asset, post };
 };
@@ -46,7 +49,7 @@ export const getMetadataImageRouteMetadata = async (
   return [
     {
       alt: result.post.metadata.title,
-      contentType: result.asset.contentType,
+      contentType: result.asset?.contentType ?? "image/png",
       id: kind,
     },
   ];
@@ -61,6 +64,10 @@ export const resolveMetadataImageResponse = async (
     return new Response("Not found", { status: 404 });
   }
   const { asset } = result;
+
+  if (!asset) {
+    return renderBlogShareImage(result.post.metadata);
+  }
 
   if (asset.type === "module") {
     const mod = await importMetadataImageModule<{ default?: ImageHandler }>(

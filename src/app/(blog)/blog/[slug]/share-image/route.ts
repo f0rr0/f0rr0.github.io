@@ -8,14 +8,5 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const opengraphResponse = await resolveMetadataImageResponse(
-    slug,
-    "opengraph"
-  );
-
-  if (opengraphResponse.ok) {
-    return opengraphResponse;
-  }
-
-  return await resolveMetadataImageResponse(slug, "twitter");
+  return await resolveMetadataImageResponse(slug, "opengraph");
 }

@@ -8,9 +8,10 @@ export const runtime = "nodejs";
 export async function generateImageMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  return await getMetadataImageRouteMetadata(params.slug, "twitter");
+  const { slug } = await params;
+  return await getMetadataImageRouteMetadata(slug, "twitter");
 }
 
 export default async function Image({

@@ -4,12 +4,12 @@ import {
 } from "@/components/github-activity-status";
 import { GitHubTimelinePager } from "@/components/github-timeline-pager";
 import { SiteSection } from "@/components/site-page";
-import { getInitialGitHubActivity } from "@/lib/github-activity-feed";
+import type { PublicGitHubActivityPage } from "@/lib/github-activity-types";
 
-export async function GitHubTimeline({
+export function GitHubTimeline({
+  initialPage,
   preview = false,
-}: Readonly<{ preview?: boolean }>) {
-  const initialPage = await getInitialGitHubActivity();
+}: Readonly<{ initialPage: PublicGitHubActivityPage; preview?: boolean }>) {
   return (
     <SiteSection
       className={preview ? "home-section" : ""}

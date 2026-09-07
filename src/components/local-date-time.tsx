@@ -3,14 +3,14 @@
 import { useSyncExternalStore } from "react";
 import type { ComponentProps } from "react";
 
-import { formatDate } from "@/lib/date";
+import { formatDate, WORK_LOG_TIME_ZONE } from "@/lib/date";
 import type { dateFormats } from "@/lib/date";
 
 const subscribe = () => () => {
   /* Read the browser timezone after hydration; no event subscription is needed. */
 };
 const getTimeZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
-const getServerTimeZone = () => "UTC";
+const getServerTimeZone = () => WORK_LOG_TIME_ZONE;
 
 export const useViewerTimeZone = () =>
   useSyncExternalStore(subscribe, getTimeZone, getServerTimeZone);

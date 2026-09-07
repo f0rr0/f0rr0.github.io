@@ -4,7 +4,7 @@ import { CircleDot, FolderGit2, LockKeyhole } from "lucide-react";
 import Image from "next/image";
 
 import { LanguageIcon } from "@/components/language-icon";
-import { LocalDateTime, useViewerTimeZone } from "@/components/local-date-time";
+import { LocalDateTime } from "@/components/local-date-time";
 import {
   Collapsible,
   CollapsibleContent,
@@ -16,7 +16,7 @@ import {
   TooltipGroup,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { dateKey, formatDate } from "@/lib/date";
+import { dateKey, formatDate, WORK_LOG_TIME_ZONE } from "@/lib/date";
 import {
   getVisibleGitHubActivityDays,
   localizeGitHubActivityDays,
@@ -289,6 +289,7 @@ function GitHubActivityDay({
           >
             {formatDate(day.day, "weekday")}
           </time>
+          <span title="Days are grouped in India Standard Time">IST</span>
         </h3>
         <dl
           aria-label={`Totals for ${day.day}`}
@@ -335,10 +336,8 @@ export function GitHubActivityDays({
   preview?: boolean;
   now: string;
 }>) {
-  const timeZone = useViewerTimeZone();
-  const localDays =
-    timeZone === "UTC" ? days : localizeGitHubActivityDays(days, timeZone);
-  const today = dateKey(now, timeZone);
+  const localDays = localizeGitHubActivityDays(days, WORK_LOG_TIME_ZONE);
+  const today = dateKey(now, WORK_LOG_TIME_ZONE);
   const activeDays = getVisibleGitHubActivityDays(localDays, today);
   const visibleDays = preview ? activeDays.slice(0, 1) : activeDays;
   return (

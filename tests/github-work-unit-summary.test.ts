@@ -369,7 +369,7 @@ describe("GitHub work-unit summary evidence", () => {
             mode: "net",
           },
         }),
-        "binary_evidence",
+        "patch_counter_mismatch",
       ],
       [
         candidate({

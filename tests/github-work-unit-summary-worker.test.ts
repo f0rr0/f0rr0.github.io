@@ -141,29 +141,31 @@ describe("GitHub work-unit summary worker", () => {
     });
   });
 
-  test("settles invalid provider output as facts-only", async () => {
-    let terminalized = 0;
+  test("retries invalid provider output and preserves its rejection reason", async () => {
+    let deferred = 0;
     const result = await runGitHubWorkUnitSummaryWorker(
       58_000,
       dependenciesFrom({
         generate: async () => {
           throw new GitHubWorkUnitSummaryInvalidOutputError("url");
         },
-        terminal: async (terminalClaim, terminalAt) => {
-          terminalized += 1;
-          expect(terminalClaim).toBe(claim);
-          expect(terminalAt).toEqual(now);
-          return true;
+        defer: async (deferredClaim, retryAt, deferredAt, errorCode) => {
+          deferred += 1;
+          expect(deferredClaim).toBe(claim);
+          expect(deferredAt).toEqual(now);
+          expect(retryAt.getTime()).toBe(now.getTime() + 15 * 60_000);
+          expect(errorCode).toBe("output_url");
+          return "deferred";
         },
       })
     );
 
-    expect(terminalized).toBe(1);
+    expect(deferred).toBe(1);
     expect(result).toMatchObject({
       claimed: 1,
-      deferred: 0,
+      deferred: 1,
       failed: 0,
-      unavailable: 1,
+      unavailable: 0,
     });
   });
 });

@@ -925,10 +925,13 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit summary store", () => {
     const invalidClaim = await claimGitHubWorkUnitSummary({ now });
     expect(invalidClaim).toMatchObject({ workUnitId: invalid.workUnitId });
     assert.ok(invalidClaim);
-    expect(await terminalGitHubWorkUnitSummary(invalidClaim, now)).toBe(true);
+    expect(
+      await terminalGitHubWorkUnitSummary(invalidClaim, now, "input_invalid")
+    ).toBe(true);
     expect(await terminalGitHubWorkUnitSummary(invalidClaim, now)).toBe(false);
     const invalidAttempt = await readAttempt(invalid);
     expect(invalidAttempt).toMatchObject({
+      error_code: "input_invalid",
       outcome: null,
       request_payload: null,
       state: "terminal",

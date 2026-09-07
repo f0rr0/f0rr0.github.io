@@ -497,7 +497,12 @@ const reconcilePullRequest = async (
   }
   if (stored.diffRefreshRequired && stored.expectedChangedFiles !== null) {
     const diff = await fetchGitHubPullRequestDiff(
-      { ...reference, expectedChangedFiles: stored.expectedChangedFiles },
+      {
+        ...reference,
+        baseSha: snapshot.pullRequest.baseSha,
+        headSha: snapshot.pullRequest.headSha,
+        expectedChangedFiles: stored.expectedChangedFiles,
+      },
       { deadlineAt: context.deadlineAt }
     );
     if (

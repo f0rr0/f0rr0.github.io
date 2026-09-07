@@ -1329,6 +1329,7 @@ export const githubWorkUnitMemberships = pgTable(
 export const githubWorkUnitSummaryAttempts = pgTable(
   "github_work_unit_summary_attempts",
   {
+    errorCode: varchar("error_code", { length: 80 }),
     acceptedAt: timestamp("accepted_at", {
       mode: "date",
       withTimezone: true,

@@ -93,7 +93,7 @@ describe("GitHub activity commit acquisition", () => {
           additions: 1,
           deletions: 0,
           filename,
-          patch: "+change",
+          patch: "@@ -0,0 +1 @@\n+change",
           status: "modified",
         })),
         parents: [{ sha: parentSha }],

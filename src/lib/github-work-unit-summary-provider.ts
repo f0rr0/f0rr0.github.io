@@ -56,7 +56,7 @@ export class GitHubWorkUnitSummaryInvalidInputError extends Error {
 // oxlint-disable-next-line max-classes-per-file -- Input and output failures have different terminal meanings at the worker boundary.
 export class GitHubWorkUnitSummaryInvalidOutputError extends Error {
   readonly reason: GitHubWorkUnitSummaryOutputRejectionReason;
-  readonly retryable = false;
+  readonly retryable = true;
 
   constructor(
     reason: GitHubWorkUnitSummaryOutputRejectionReason,

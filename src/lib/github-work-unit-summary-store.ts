@@ -595,12 +595,14 @@ const leaseMatchesClaim = (
 const terminalizeLockedAttempt = async (
   transaction: SummaryTransaction,
   claim: GitHubWorkUnitSummaryClaim,
-  now: Date
+  now: Date,
+  errorCode: string | null = null
 ) => {
   const [updated] = await transaction
     .update(githubWorkUnitSummaryAttempts)
     .set({
       acceptedAt: null,
+      errorCode,
       completedAt: now,
       leaseToken: null,
       leaseUntil: null,
@@ -925,7 +927,8 @@ export const completeGitHubWorkUnitSummary = async (
 export const deferGitHubWorkUnitSummary = async (
   uncheckedClaim: GitHubWorkUnitSummaryClaim,
   retryAt: Date,
-  deferredAt = new Date()
+  deferredAt = new Date(),
+  errorCode: string | null = null
 ): Promise<GitHubWorkUnitSummaryDeferResult> => {
   const claim = checkedClaim(uncheckedClaim);
   const now = checkedDate(deferredAt, "defer timestamp");
@@ -956,7 +959,7 @@ export const deferGitHubWorkUnitSummary = async (
       return "stale";
     }
     if (attempt.startedRequests >= MAXIMUM_STARTED_REQUESTS) {
-      await terminalizeLockedAttempt(transaction, claim, now);
+      await terminalizeLockedAttempt(transaction, claim, now, errorCode);
       await settleHead();
       return "terminal";
     }
@@ -965,6 +968,7 @@ export const deferGitHubWorkUnitSummary = async (
       .update(githubWorkUnitSummaryAttempts)
       .set({
         debounceUntil: retry,
+        errorCode,
         leaseToken: null,
         leaseUntil: null,
         requestPayload: remainsCurrent ? attempt.requestPayload : null,
@@ -984,10 +988,11 @@ export const deferGitHubWorkUnitSummary = async (
   });
 };
 
-/** Settles deterministic invalid input or output as facts-only. */
+/** Invalid persisted input cannot improve by repeating a provider request. */
 export const terminalGitHubWorkUnitSummary = async (
   uncheckedClaim: GitHubWorkUnitSummaryClaim,
-  terminalAt = new Date()
+  terminalAt = new Date(),
+  errorCode: string | null = null
 ): Promise<boolean> => {
   const claim = checkedClaim(uncheckedClaim);
   const now = checkedDate(terminalAt, "terminal timestamp");
@@ -1002,7 +1007,7 @@ export const terminalGitHubWorkUnitSummary = async (
     );
     const terminalized =
       attempt !== null && leaseMatchesClaim(attempt, claim)
-        ? await terminalizeLockedAttempt(transaction, claim, now)
+        ? await terminalizeLockedAttempt(transaction, claim, now, errorCode)
         : false;
     await revisePublicSummaryHead(transaction, now, initialPageDays);
     return terminalized;

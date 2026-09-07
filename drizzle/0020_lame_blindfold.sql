@@ -1,0 +1,1 @@
+ALTER TABLE "github_work_unit_summary_attempts" ADD COLUMN "error_code" varchar(80);

@@ -1,9 +1,10 @@
 export const metadata = {
-  title: "I Let an AI Agent Take Over My Hinge",
+  title: "I Wanted a Queue, So I Took Hinge Apart",
   date: "2026-08-27",
   author: "Sid Jain",
+  updated: "2026-09-07",
   summary:
-    "I built a local Hinge queue and protocol client, then separately tested an AI drafting layer that never chose likes or sent messages.",
+    "A Saturday experiment with Hinge became a Rust protocol client, then a place to try AI-written opening lines. The interesting part was getting the context right.",
   tags: [
     "applied-ai",
     "rust",
@@ -14,19 +15,15 @@ export const metadata = {
   draft: false,
 };
 
-The title overstates it. The agent never chose whom I liked and never sent a message. It drafted text in a later experiment, after I had already built the queue and protocol client. Apparently “I Let an AI Agent Fill a Text Box Whilst I Hovered Nervously Nearby” wasn't going to survive the headline meeting.
-
-There is a more important qualification. Hinge's current [policy on third-party automated tools](https://help.hinge.co/hc/en-us/articles/49657802257683-Note-on-Third-Party-Automated-Tools) says that third-party automation violates its terms and can lead to an account ban. A human pressing the final button doesn't make the tool permitted. This is a retrospective on an unofficial personal experiment, not a recommendation or a usage guide.
-
-## First, I only wanted the queue
-
 One Saturday in 2025, Hinge was showing me one profile at a time. I wanted to see the available recommendations as a list, leave, and return later without making a decision merely to reveal the next card. I stopped seeing a dating app and started seeing a badly paginated API. Four hours later I had the first rough client, which is a fairly normal way to spend a Saturday if you don't inspect it too closely.
 
-That first phase was intentionally mechanical. It authenticated my own account, fetched recommendation feeds, joined their subjects to profiles and media, and preserved the metadata needed for a later human action. It didn't rank people, or generate replies. The early protocol probe eventually proved one explicit, human-triggered skip, but the queue itself made no choice and there was never an autoswiper. Those omissions were part of the design, not missing weekend scope.
+The first client fetched the recommendation feeds, joined them to profiles and media, and saved the information needed to act later. It gave me the queue I wanted: I could look without making a choice just to move the interface along.
+
+## A card is a join
 
 A recommendation card wasn't a card on the wire. The feed carried a subject identifier, an origin, and a rating token needed for a later like or skip. Profile details and media came from separate requests. Chat crossed into Sendbird, with its own credentials, REST resources, and WebSocket session. Mixing up any of those joins could show the right photo beside the wrong action token, which is the sort of bug one notices rather quickly.
 
-The reusable piece became [hinge-rs](https://github.com/f0rr0/hinge-rs), a public, unofficial Rust client for Hinge and its Sendbird transport. The recommendation join in the public API is deliberately boring:
+The reusable piece became [hinge-rs](https://github.com/f0rr0/hinge-rs), a public, unofficial Rust client for Hinge and its Sendbird transport. Getting a recommendation into a readable queue starts with a join:
 
 ```rust
 let recs = client.recommendations().get().await?;
@@ -41,22 +38,37 @@ let subject_ids = recs
 let profiles = client.profiles().public(subject_ids).await?;
 ```
 
-The early Python probe was quickest for learning the protocol. Rust became useful later because the client had a growing set of typed response states, a session identity that had to remain coherent, an undocumented WebSocket protocol that would drift, and a distributable binary. Rust did not magically provide persistence; the application still needed an explicit session store and careful restore path. What it did provide was a good place to make muddled states difficult to construct. Known frames stayed typed, while unfamiliar ones could remain raw rather than bringing down the connection.
+https://github.com/f0rr0/hinge-rs
+
+Python had been quickest for the first probe. As the protocol client grew, Rust gave me a useful way to describe its response states and keep the session identity together. Known WebSocket frames could have types; unfamiliar ones could stay raw until I understood them. A new event from an undocumented service didn't have to bring down the connection.
+
+```mermaid
+flowchart TB
+  accTitle: Assembling a recommendation
+  accDescr: Feed subjects carry identity and action metadata. Profile and media requests supply the visible content. Joining them by subject identity produces the queue card used for later human decisions.
+  Feed["Recommendation feed"] --> Subject["Subject ID · origin · rating token"]
+  Subject --> Profiles["Fetch profile and media"]
+  Subject --> Card["Queue card"]
+  Profiles --> Card
+  Card --> Choice["My choice, later"]
+```
+
+The work was increasingly about keeping the right things together: a profile with its media, a recommendation with its action token, an HTTPS session with its live chat connection. Once that held, I had something more useful than a collection of endpoints.
 
 ## Then I tried the drafting layer
 
-The AI experiment came later and sat on top of that queue. Its orchestration and client ran locally. That word needs care: it doesn't prove that inference ran on the device. If a hosted vision or language provider is used, profile photos, prompts, or conversation excerpts leave the machine. A local provider changes that boundary; a local command line does not.
+With the queue in place, I tried a separate experiment: use the profile context to draft an opening line. The output stayed in a text box for me to edit, use or delete.
 
 For a new profile, the experiment assembled written prompts, profile details, and a short description of visible photo content, then proposed an opening. Generic charm is cheap. A draft was only interesting if it referred to a particular prompt or something actually visible in the profile. I still chose, edited, or ignored it.
 
-Replies used a different context window. The client retrieved the recent Sendbird exchange and combined it with the original profile context so the model didn't cheerfully ask a question that had been answered three messages earlier. Again, the output stopped at a draft. There was no automatic send path and no unattended conversation.
+Replies used a different context window. The client retrieved the recent Sendbird exchange and combined it with the original profile context so the model didn't cheerfully ask a question that had been answered three messages earlier. An opening and a reply needed different context, even if both eventually produced a few words in the same text box.
 
 The separation made failures easier to inspect. If a draft was poor, I could look at the exact context supplied to the model. If the context was wrong, prompting wasn't going to repair a broken join or a stale session. Sometimes the correct diagnosis was simply that the model had written a line no human being should send. Delete remains an excellent feature.
 
-## Other people's data is not test fixture
+The protocol layer became the reusable piece. `hinge-rs` exposes authentication, recommendations, profiles and chat, while the drafting experiment sits above it. That division helped me work out whether a bad suggestion came from bad writing or bad input. Those are very different problems to fix.
 
-A dating profile, photo, or private conversation belongs to another person as well as appearing in my account. Treating it as convenient model input would be a serious consent and security choice. Published examples should therefore be synthetic or used with explicit consent, and logs, caches, model-provider retention, and deletion need to be considered before any real data crosses that boundary.
+This was an unofficial personal experiment. [Hinge prohibits third-party automation](https://help.hinge.co/hc/en-us/articles/49657802257683-Note-on-Third-Party-Automated-Tools), and a locally running client can still send profile or conversation data to a hosted model. Other people's private material needs their consent before being used that way.
 
-The public crate doesn't contain my taste or an AI matchmaker. It exposes the typed protocol layer: authentication, recommendations, profiles, ratings, connections, message history, and live chat events, with raw escape hatches for an API that will inevitably change. That extraction is early software, and using it against Hinge remains contrary to Hinge's current policy even if every like and message stays human-controlled.
+What I wanted at the start was a little room to look and come back later. The queue gave me that. The drafting layer added a different kind of starting point: some words to react to, including words worth deleting.
 
-So no, the agent didn't really take over my Hinge. It gathered a queue and, in a separate experiment, got some first words onto the screen. Chemistry, mercifully, still doesn't implement `serde::Deserialize`.
+Chemistry, mercifully, still doesn't implement `serde::Deserialize`.

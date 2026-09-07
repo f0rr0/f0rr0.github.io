@@ -1,8 +1,24 @@
 import { describe, expect, test } from "bun:test";
 
-import { buildBlogPostMarkdown } from "../src/lib/blog-markdown.ts";
+import {
+  buildBlogPostMarkdown,
+  resolveBlogMarkdownImages,
+} from "../src/lib/blog-markdown.ts";
 
 describe("blog Markdown", () => {
+  test("resolves authored image assets without rewriting fenced examples", () => {
+    const body =
+      '![A chart](./chart.svg)\n<Image\n  src="./screen.png"\n/>\n```md\n![Example](./example.png)\n```\n~~~~md\n![Another](./example.png)\n~~~~\n![Remote](https://example.com/image.png)';
+    const output = resolveBlogMarkdownImages(body, "a-post/page.mdx");
+    const base =
+      "https://raw.githubusercontent.com/f0rr0/f0rr0.dev/next/src/content/blog/a-post/";
+    expect(output).toContain(`![A chart](${base}chart.svg)`);
+    expect(output).toContain(`src="${base}screen.png"`);
+    expect(output).toContain("```md\n![Example](./example.png)\n```");
+    expect(output).toContain("~~~~md\n![Another](./example.png)\n~~~~");
+    expect(output).toContain("![Remote](https://example.com/image.png)");
+  });
+
   test("adds article context once before the authored body", () => {
     const markdown = buildBlogPostMarkdown({
       body: "First paragraph.\n\n## Detail",

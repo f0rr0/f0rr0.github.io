@@ -12,10 +12,6 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         userAgent: "*",
       },
-      {
-        allow: "/",
-        userAgent: ["GPTBot", "ChatGPT-User", "ClaudeBot", "Anthropic-ai"],
-      },
     ],
     sitemap: publicUrl("/sitemap.xml"),
   };

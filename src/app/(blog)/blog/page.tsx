@@ -19,6 +19,7 @@ export const metadata: Metadata = {
   description,
   openGraph: {
     description,
+    images: [siteConfig.author.image],
     locale: siteConfig.locale,
     siteName: siteConfig.name,
     title: "Sid Jain Blog",
@@ -29,6 +30,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     description,
+    images: [siteConfig.author.image],
     title: "Sid Jain Blog",
   },
 };

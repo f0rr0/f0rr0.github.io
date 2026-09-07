@@ -1,8 +1,18 @@
-import "./src/env";
 import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
 
+import { env } from "./src/env";
+
 const nextConfig: NextConfig = {
+  headers: async () =>
+    env.VERCEL_ENV === "preview"
+      ? [
+          {
+            source: "/:path*",
+            headers: [{ key: "X-Robots-Tag", value: "noindex" }],
+          },
+        ]
+      : [],
   experimental: {
     useTypeScriptCli: true,
   },

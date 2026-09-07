@@ -8,9 +8,10 @@ export const runtime = "nodejs";
 export async function generateImageMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  return await getMetadataImageRouteMetadata(params.slug, "opengraph");
+  const { slug } = await params;
+  return await getMetadataImageRouteMetadata(slug, "opengraph");
 }
 
 export default async function Image({

@@ -2,10 +2,11 @@ export const metadata = {
   title: "Reverse Engineering Meta’s Messaging Protocol",
   date: "2026-07-23",
   author: "Sid Jain",
+  updated: "2026-09-07",
   summary:
     "A 2021 Facebook Messenger transport investigation that began with a backwards MQTT keepalive and became part of the production Messenger channel in Texts.",
   tags: ["reverse-engineering", "facebook", "mqtt", "thrift", "typescript"],
-  draft: true,
+  draft: false,
 };
 
 One of the most useful packets in this project contained no payload:
@@ -18,13 +19,11 @@ Those two bytes are an MQTT `PINGREQ`. According to the [MQTT 3.1.1 specificatio
 
 This happened in 2021, while I was building a client that could load my own Facebook Messenger conversations and follow new messages without the official mobile app. What began as protocol research became the foundation of the production Messenger channel I shipped for [Texts](https://texts.com/), its all-in-one desktop messaging client.
 
-The date matters. This is an account of Facebook Messenger's 2021 mobile transport dialect, not documentation for Meta's current endpoints or today's [end-to-end-encrypted Messenger clients](https://engineering.fb.com/2023/12/06/security/building-end-to-end-security-for-messenger/). Those systems have moved on. The useful part is how I separated what the bytes proved from what I merely suspected.
-
 ## A small packet, backwards
 
 My first hypothesis was that MQTT was a misleading surface and the parser underneath it needed replacing. It was also the expensive hypothesis, which should have made me suspicious sooner. Packet framing, QoS acknowledgements, subscriptions, reconnection and ordinary publications all matched MQTT 3.1.1. Only this keepalive did not.
 
-So I made the smallest deviation the evidence required: accept an incoming `PINGREQ`, answer with `PINGRESP`, and leave the rest of the state machine alone. The connection stayed up.
+I tried answering it: accept an incoming `PINGREQ`, answer with `PINGRESP`, and leave the rest of the state machine alone. The connection stayed up.
 
 ```ts
 // Messenger's 2021 dialect, pared down to the behavioural exception.
@@ -35,7 +34,7 @@ client.on(PacketType.PingReq, () => {
 
 That looks laughably small after an evening spent doubting the transport. It also set the method for everything that followed: start with the public standard, keep what matches, and put each private variation behind a narrow seam.
 
-I did the research against accounts and devices I controlled. I used Ghidra for native code paths, Burp Suite and Frida for runtime inspection, and certificate unpinning on my test device to compare app behaviour with captured traffic. Credentials, personal message bodies, live private endpoints and other people's data don't belong in a retrospective, so they aren't here. Facebook's white-hat programme provided the research and reporting boundary; “reverse engineering” was not a decorative way of saying “anything goes”.
+I worked with my own accounts and test devices, using Ghidra to follow native code and Burp Suite and Frida to compare what the app did with what went over the wire. Each small experiment gave me another piece of the conversation.
 
 ## One identity across two transports
 
@@ -47,6 +46,8 @@ I moved the authenticated device and session context into one shared model:
 
 ```mermaid
 flowchart LR
+  accTitle: A Messenger session across two transports
+  accDescr: HTTPS login creates shared session state. An initial snapshot supplies the sequence cursor that the realtime connection uses to receive subsequent deltas.
   Login["HTTPS login"] --> State["Shared device + session state"]
   State --> Snapshot["Snapshot + sequence cursor"]
   State --> Realtime["Realtime connection"]
@@ -54,13 +55,13 @@ flowchart LR
   Realtime --> Deltas["Ordered deltas"]
 ```
 
-Authentication made the snapshot possible; the snapshot made the stream meaningful. A green connection icon was not proof of either. I learnt to distrust green icons quite early in this project.
+Authentication made the snapshot possible; the snapshot made the stream meaningful. Once both sides shared that starting point, a healthy connection could do something useful.
 
 ## MQTT outside, MQTToT inside
 
 The realtime handshake made the layering visible. Facebook's dialect, usually called MQTToT, reused MQTT's fixed header and remaining-length framing but did not send an ordinary MQTT `CONNECT`. Inside that envelope sat an MQTToT header and a compressed Thrift connection object.
 
-The secret-free part of the connection writer was roughly this:
+The connection writer, with the payload details left out, looked roughly like this:
 
 ```ts
 const PROTOCOL_LEVEL = 3;
@@ -74,7 +75,7 @@ stream
   .write(compressedThriftPayload);
 ```
 
-The payload contained session and device context, which is precisely the part not reproduced here. The important implementation choice was the boundary: replace the connection writer and acknowledgement reader, while the MQTT client continued to own TLS transport, buffering, QoS, publications, keepalives and reconnects.
+The compressed payload carried the session and device context. I replaced the connection writer and acknowledgement reader, and kept the MQTT client responsible for buffering, QoS, publications, keepalives and reconnects. Each new discovery needed a small place to go.
 
 A command therefore crossed a stack of ordinary-looking layers:
 
@@ -92,14 +93,22 @@ Keeping those layers separate saved a lot of theatrical debugging. A framing fai
 
 Thrift Compact supplied field numbers, wire types and container boundaries, but not domain names. The [Compact Protocol specification](https://github.com/apache/thrift/blob/master/doc/specs/thrift-compact-protocol.md) could tell me that a field was an `i64` or a list of structs. It could not tell me whether that `i64` represented a user, a thread, or a timestamp.
 
-I first wrote a schema-free structural reader. It printed numbered fields and nesting without pretending to know what they meant. Then I made controlled changes in the app—send a message, add a reaction, mark a thread read—and compared captures. A field earned a name only when its value changed consistently with the visible action. Some never did, and stayed unknown. That is less satisfying than naming everything, but considerably more honest.
+I first wrote a schema-free structural reader. It printed numbered fields and nesting without pretending to know what they meant. Then I made controlled changes in the app—send a message, add a reaction, mark a thread read—and compared captures. A field earned a name only when its value changed consistently with the visible action. Others stayed numbered until I had a reason to name them. The structural reader let me keep working while the vocabulary grew.
 
 Repeated observations became runtime schemas in TypeScript. Each schema kept the wire number, expected type, optionality and TypeScript representation together. Unknown fields were skipped recursively, while a known field changing wire type failed at that field. Sixty-four-bit identifiers remained `bigint`; passing them through JavaScript's `number` would make two different accounts look the same eventually, which is a rather dramatic typing bug.
 
-I published the reusable, non-Messenger-specific parts as [`@f0rr0/thrift-compact-protocol`](https://github.com/f0rr0/thrift-compact-protocol). The extensible MQTT 3.1.1 state machine is also visible in my public [`mqtts` fork](https://github.com/f0rr0/mqtts). The product adapter, captured payloads and live operations remained private.
+I published the reusable, non-Messenger-specific parts as [`@f0rr0/thrift-compact-protocol`](https://github.com/f0rr0/thrift-compact-protocol). The extensible MQTT 3.1.1 state machine is also visible in my public [`mqtts` fork](https://github.com/f0rr0/mqtts).
+
+<div className="github-embed-grid grid gap-4 [margin:2rem_0] sm:[grid-template-columns:repeat(2,_minmax(0,_1fr))]">
+
+https://github.com/f0rr0/thrift-compact-protocol
+
+https://github.com/f0rr0/mqtts
+
+</div>
 
 ## From packet archaeology to a product
 
 Decoding one event is a demo. A messaging channel has to keep doing it after sleep, reconnect, cursor advancement, an attachment upload, and a remote schema change. The research client grew into the Messenger integration in Texts: message synchronisation and encrypted payload handling, sending and receiving, threads and groups, photos, videos and files, reactions, read receipts, typing indicators, and presence.
 
-Not every field acquired a name, and no map of an undocumented service stays complete. The endpoints and operations from this work have long since changed. What survived in my own work was the habit that began with `C0 00`: don't rewrite the standard because one packet is odd; make the odd packet explain itself first.
+The little backwards ping had sent me into the project expecting to replace a transport. By the end, I had kept most of it and learnt to read the conversation inside it. `C0 00` was still only two bytes. It had been a very useful place to start.

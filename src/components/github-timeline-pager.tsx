@@ -96,7 +96,7 @@ export function GitHubTimelinePager({
         <div className="flex flex-col items-start gap-3">
           <button
             aria-controls="github-activity-paginated-days"
-            className="site-text-link"
+            className="site-text-link inline-flex min-h-11 items-center gap-1.5 rounded-sm text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
             disabled={isPending}
             onClick={loadMore}
             type="button"

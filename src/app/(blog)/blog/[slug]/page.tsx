@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ComponentType } from "react";
 
+import { ArticleProse } from "@/components/blog/article-prose";
 import { BlogPostActions } from "@/components/blog/blog-post-actions";
 import { JsonLd } from "@/components/json-ld";
 import { LocalDateTime } from "@/components/local-date-time";
@@ -130,7 +131,9 @@ export default async function BlogPostPage({ params }: { params: PageParams }) {
       <JsonLd data={jsonLd} />
       <article className="flex flex-col gap-8">
         <header className="flex flex-col">
-          <h1 className="section-title text-balance">{metadata.title}</h1>
+          <h1 className="section-title mb-4 font-serif text-2xl font-normal text-foreground text-balance">
+            {metadata.title}
+          </h1>
           <div
             className="grid border-y border-border sm:grid-cols-[1fr_auto]"
             data-slot="blog-post-rail"
@@ -147,9 +150,9 @@ export default async function BlogPostPage({ params }: { params: PageParams }) {
             />
           </div>
         </header>
-        <div className="prose min-w-0 w-full">
+        <ArticleProse>
           <Content components={mdxComponents} />
-        </div>
+        </ArticleProse>
       </article>
     </SiteMain>
   );

@@ -111,7 +111,7 @@ function WorkUnitFacts({
   const commits = `${countFormatter.format(facts.ownedCommitCount)} ${facts.ownedCommitCount === 1 ? "commit" : "commits"}`;
   const files = `${countFormatter.format(facts.uniqueFileCount)} ${facts.uniqueFileCount === 1 ? "file" : "files"}`;
   return (
-    <div className="site-row-meta flex-wrap justify-start">
+    <div className="site-row-meta flex min-h-6 shrink-0 items-center gap-2 text-xs text-muted-foreground tabular-nums flex-wrap justify-start">
       <span>
         {commits} · {files}
       </span>
@@ -145,11 +145,13 @@ function WorkUnitRow({
           </TooltipContent>
         }
         render={
-          <CollapsibleTrigger className="site-row group cursor-pointer" />
+          <CollapsibleTrigger className="site-row grid min-h-11 w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 rounded-sm py-2.5 text-start text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring group cursor-pointer" />
         }
       >
-        <span className="site-row-title group-hover:underline">{headline}</span>
-        <span className="site-row-meta">
+        <span className="site-row-title min-w-0 truncate font-light [.site-row[aria-expanded]_&]:[interpolate-size:allow-keywords] [.site-row[aria-expanded]_&]:[block-size:1lh] [.site-row[aria-expanded]_&]:[transition:block-size_240ms_var(--ease-settle)] [.site-row[aria-expanded='true']_&]:wrap-anywhere [.site-row[aria-expanded='true']_&]:whitespace-normal [.site-row[aria-expanded='true']_&]:[block-size:auto] motion-reduce:[.site-row[aria-expanded]_&]:transition-none group-hover:underline">
+          {headline}
+        </span>
+        <span className="site-row-meta flex min-h-6 shrink-0 items-center justify-end gap-2 text-xs text-muted-foreground tabular-nums">
           <DiffCounters facts={item.facts} />
           <LocalDateTime
             className="whitespace-nowrap"
@@ -180,16 +182,16 @@ function IssueRow({
   return (
     <li>
       <Row
-        className="site-row group"
+        className="site-row grid min-h-11 w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 rounded-sm py-2.5 text-start text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring group"
         href={item.destination?.url}
         rel={item.destination === null ? undefined : "noopener noreferrer"}
         target={item.destination === null ? undefined : "_blank"}
         title={item.title}
       >
-        <span className="site-row-title group-hover:underline">
+        <span className="site-row-title min-w-0 truncate font-light [.site-row[aria-expanded]_&]:[interpolate-size:allow-keywords] [.site-row[aria-expanded]_&]:[block-size:1lh] [.site-row[aria-expanded]_&]:[transition:block-size_240ms_var(--ease-settle)] [.site-row[aria-expanded='true']_&]:wrap-anywhere [.site-row[aria-expanded='true']_&]:whitespace-normal [.site-row[aria-expanded='true']_&]:[block-size:auto] motion-reduce:[.site-row[aria-expanded]_&]:transition-none group-hover:underline">
           {item.title}
         </span>
-        <span className="site-row-meta">
+        <span className="site-row-meta flex min-h-6 shrink-0 items-center justify-end gap-2 text-xs text-muted-foreground tabular-nums">
           <LocalDateTime
             className="whitespace-nowrap"
             dateTime={item.activityAt}
@@ -222,10 +224,10 @@ function RepositoryGroup({
   const hiddenItems = group.items.slice(visibleItems.length);
   return (
     <li className="pt-4">
-      <h4 className="site-row">
+      <h4 className="site-row grid min-h-11 w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 rounded-sm py-2.5 text-start text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
         <RepositoryIdentity repository={group.repository} />
       </h4>
-      <ol className="site-list">
+      <ol className="site-list divide-y divide-border">
         {visibleItems.map((item) => (
           <ActivityItem item={item} key={item.id} />
         ))}
@@ -233,14 +235,14 @@ function RepositoryGroup({
       {hiddenItems.length === 0 ? null : (
         <Collapsible>
           <CollapsibleContent>
-            <ol className="site-list border-t border-border">
+            <ol className="site-list divide-y divide-border border-t border-border">
               {hiddenItems.map((item) => (
                 <ActivityItem item={item} key={item.id} />
               ))}
             </ol>
           </CollapsibleContent>
-          <CollapsibleTrigger className="site-row group/more cursor-pointer pt-0">
-            <span className="site-row-title text-muted-foreground">
+          <CollapsibleTrigger className="site-row grid min-h-11 w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 rounded-sm py-2.5 text-start text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring group/more cursor-pointer pt-0">
+            <span className="site-row-title min-w-0 truncate font-light [.site-row[aria-expanded]_&]:[interpolate-size:allow-keywords] [.site-row[aria-expanded]_&]:[block-size:1lh] [.site-row[aria-expanded]_&]:[transition:block-size_240ms_var(--ease-settle)] [.site-row[aria-expanded='true']_&]:wrap-anywhere [.site-row[aria-expanded='true']_&]:whitespace-normal [.site-row[aria-expanded='true']_&]:[block-size:auto] motion-reduce:[.site-row[aria-expanded]_&]:transition-none text-muted-foreground">
               <span className="group-data-panel-open/more:hidden">
                 Show {countFormatter.format(hiddenItems.length)} more
               </span>
@@ -248,7 +250,7 @@ function RepositoryGroup({
                 Show less
               </span>
             </span>
-            <span className="site-row-meta">
+            <span className="site-row-meta flex min-h-6 shrink-0 items-center justify-end gap-2 text-xs text-muted-foreground tabular-nums">
               <DisclosureChevron />
             </span>
           </CollapsibleTrigger>
@@ -280,10 +282,10 @@ function GitHubActivityDay({
   );
   return (
     <section aria-labelledby={`activity-day-${day.day}`}>
-      <header className="site-row work-log-day-header flex flex-wrap rounded-none border-y border-border py-2">
-        <h3 className="site-row-meta justify-start font-medium">
+      <header className="site-row min-h-11 w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 text-start text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring work-log-day-header flex flex-wrap rounded-none border-y border-border py-2">
+        <h3 className="site-row-meta flex min-h-6 shrink-0 items-center gap-2 text-xs text-muted-foreground tabular-nums justify-start font-medium">
           <time
-            className="work-log-date"
+            className="work-log-date font-mono font-normal uppercase tracking-wider"
             dateTime={day.day}
             id={`activity-day-${day.day}`}
           >
@@ -293,7 +295,7 @@ function GitHubActivityDay({
         </h3>
         <dl
           aria-label={`Totals for ${day.day}`}
-          className="site-row-meta ms-auto whitespace-nowrap"
+          className="site-row-meta flex min-h-6 shrink-0 items-center justify-end gap-2 text-xs text-muted-foreground tabular-nums ms-auto whitespace-nowrap"
         >
           <div>
             <dt className="sr-only">Commits across repositories</dt>

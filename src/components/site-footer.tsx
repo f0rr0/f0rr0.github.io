@@ -9,12 +9,12 @@ const { actions } = buildAskAgentLinks();
 
 export function SiteFooter() {
   return (
-    <footer className="site-container pb-8 print:hidden">
+    <footer className="site-container mx-auto w-full max-w-192 px-4 sm:px-8 lg:px-12 pb-8 print:hidden">
       <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-border pt-4">
         <nav aria-label="Contact and feed" className="flex items-center gap-6">
           <CopyEmailButton email={resumeData.person.email} />
           <a
-            className="site-text-link"
+            className="site-text-link inline-flex min-h-11 items-center gap-1.5 rounded-sm text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
             href="https://linkedin.com/in/f0rr0"
             target="_blank"
             rel="noopener noreferrer"
@@ -22,7 +22,7 @@ export function SiteFooter() {
             LinkedIn
           </a>
           <a
-            className="site-text-link"
+            className="site-text-link inline-flex min-h-11 items-center gap-1.5 rounded-sm text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
             href={publicUrl("/rss.xml")}
             type="application/rss+xml"
             rel="alternate"
@@ -36,7 +36,7 @@ export function SiteFooter() {
             <span key={action.label} className="inline-flex items-center gap-2">
               {index === 0 ? null : <span>or</span>}
               <a
-                className="site-text-link"
+                className="site-text-link inline-flex min-h-11 items-center gap-1.5 rounded-sm text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
                 href={action.href}
                 target="_blank"
                 rel="noopener noreferrer"

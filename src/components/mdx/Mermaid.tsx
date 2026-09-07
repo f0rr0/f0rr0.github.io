@@ -426,7 +426,10 @@ export default function Mermaid({ chart, className }: Readonly<MermaidProps>) {
   return (
     <figure
       aria-busy={status === "loading"}
-      className={cn("mermaid-block", className)}
+      className={cn(
+        "mermaid-block min-w-0 overflow-hidden [border:1px_solid_color-mix(in_oklab,_var(--border)_88%,_var(--foreground))] [border-radius:0.875rem] [background:color-mix(in_oklab,_var(--card)_94%,_var(--muted))] [box-shadow:0_1px_2px_rgb(41_37_36_/_8%),_0_18px_42px_-34px_rgb(41_37_36_/_34%)] dark:[box-shadow:0_1px_2px_rgb(0_0_0_/_30%),_0_18px_42px_-30px_rgb(0_0_0_/_80%)] [&:fullscreen]:flex [&:fullscreen]:[width:100vw] [&:fullscreen]:[height:100vh] [&:fullscreen]:[margin:0] [&:fullscreen]:flex-col [&:fullscreen]:border-0 [&:fullscreen]:rounded-none [&:fullscreen]:bg-background print:break-inside-avoid print:shadow-none",
+        className
+      )}
       data-error={status === "error" ? errorMessage : null}
       data-rendering={
         status === "loading" && diagram !== null ? "true" : "false"
@@ -437,36 +440,48 @@ export default function Mermaid({ chart, className }: Readonly<MermaidProps>) {
     >
       <div
         aria-label={`${diagramType}. Scroll horizontally to inspect larger diagrams.`}
-        className="mermaid-viewport"
+        className="mermaid-viewport relative min-h-44 overflow-x-auto [overscroll-behavior-inline:contain] [background-color:color-mix(in_oklab,_var(--card)_94%,_var(--background))] [background-image:radial-gradient(_circle,_color-mix(in_oklab,_var(--muted-foreground)_19%,_transparent)_0.75px,_transparent_0.8px_)] [background-position:0.25rem_0.25rem] [background-size:1rem_1rem] p-7 [scrollbar-color:color-mix(in_oklab,_var(--muted-foreground)_52%,_transparent)_color-mix(in_oklab,_var(--muted)_58%,_transparent)] [scrollbar-width:thin] [&:focus-visible]:[outline:2px_solid_var(--ring)] [&:focus-visible]:[outline-offset:-2px] [&::-webkit-scrollbar]:h-3 [&::-webkit-scrollbar-track]:[border-top:1px_solid_color-mix(in_oklab,_var(--border)_72%,_transparent)] [&::-webkit-scrollbar-track]:[background:color-mix(in_oklab,_var(--muted)_58%,_transparent)] [&::-webkit-scrollbar-thumb]:[border:0.2rem_solid_transparent] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:[background:color-mix(in_oklab,_var(--muted-foreground)_52%,_transparent)] [&::-webkit-scrollbar-thumb]:[background-clip:padding-box] [.mermaid-block:fullscreen_&]:flex [.mermaid-block:fullscreen_&]:[min-height:0] [.mermaid-block:fullscreen_&]:flex-1 [.mermaid-block:fullscreen_&]:items-center [.mermaid-block:fullscreen_&]:[padding:clamp(1rem,_4vw,_4rem)] max-sm:min-h-38 max-sm:[padding:1.25rem_1rem] print:[min-height:0] print:overflow-visible print:[background:transparent] print:p-3"
         tabIndex={diagram === null ? -1 : 0}
       >
         {diagram === null ? null : (
           <div
-            className="mermaid-canvas"
+            className="mermaid-canvas flex w-max min-w-full items-start justify-center [transition:opacity_180ms_ease] [&_.mermaid-svg]:block [&_.mermaid-svg]:[width:var(--mermaid-render-width)] [&_.mermaid-svg]:max-w-none [&_.mermaid-svg]:h-auto [&_.mermaid-svg]:flex-none [&_.mermaid-svg]:overflow-visible [&_.mermaid-svg]:bg-transparent [.mermaid-block[data-rendering='true']_&]:[opacity:0.58] [.mermaid-block:fullscreen_&]:items-center print:w-full print:[&_.mermaid-svg]:w-full print:[&_.mermaid-svg]:[max-width:100%]"
             dangerouslySetInnerHTML={{ __html: diagram.svg }}
             ref={canvasRef}
             style={diagramStyle}
           />
         )}
         {status === "loading" && diagram === null ? (
-          <div aria-live="polite" className="mermaid-placeholder" role="status">
-            <span aria-hidden="true" className="mermaid-placeholder-mark" />
+          <div
+            aria-live="polite"
+            className="mermaid-placeholder flex min-h-30 items-center justify-center gap-3 text-muted-foreground font-sans [font-size:0.875rem]"
+            role="status"
+          >
+            <span
+              aria-hidden="true"
+              className="mermaid-placeholder-mark motion-reduce:[animation:none] w-9 [height:1.4rem] [border:2px_solid_color-mix(in_oklab,_var(--primary)_72%,_transparent)] [border-radius:48%_54%_46%_52%] animate-mermaid-sketch-pulse [transform:rotate(-3deg)]"
+            />
             <span>Drawing diagram…</span>
           </div>
         ) : null}
         {status === "error" ? (
-          <div className="mermaid-error" role="alert">
+          <div
+            className="mermaid-error flex min-h-30 items-center justify-center gap-3 text-muted-foreground font-sans [font-size:0.875rem] flex-col [gap:0.2rem] text-center [&_strong]:text-foreground [&_strong]:[font-size:0.875rem] [&_strong]:[font-weight:650] [&_span]:[font-size:0.75rem]"
+            role="alert"
+          >
             <strong>Diagram unavailable</strong>
             <span>The Mermaid source could not be rendered.</span>
           </div>
         ) : null}
       </div>
-      <div className="mermaid-toolbar">
-        <span className="mermaid-diagram-type">{diagramType}</span>
-        <div className="mermaid-toolbar-actions">
+      <div className="mermaid-toolbar flex min-h-11 items-center justify-between gap-3 [border-top:1px_solid_color-mix(in_oklab,_var(--border)_88%,_transparent)] [background:color-mix(in_oklab,_var(--muted)_72%,_var(--card))] [padding:0.35rem_0.5rem_0.35rem_1rem] font-sans max-sm:min-h-10.5 max-sm:pl-3 print:hidden">
+        <span className="mermaid-diagram-type overflow-hidden [color:color-mix(in_oklab,_var(--foreground)_88%,_var(--muted-foreground))] [font-size:0.75rem] [font-weight:650] [line-height:1] text-ellipsis whitespace-nowrap">
+          {diagramType}
+        </span>
+        <div className="mermaid-toolbar-actions flex shrink-0 items-center [gap:0.2rem]">
           <button
             aria-label="Zoom diagram out"
-            className="mermaid-control"
+            className="mermaid-control inline-flex h-7.5 min-w-7.5 items-center justify-center gap-1.5 [border:1px_solid_transparent] [border-radius:0.5rem] [padding:0_0.5rem] text-muted-foreground cursor-pointer [font-size:0.75rem] font-normal [line-height:1] [transition:background-color_150ms_ease,_border-color_150ms_ease,_color_150ms_ease] [&:hover:not(:disabled)]:[border-color:color-mix(in_oklab,_var(--border)_86%,_var(--foreground))] [&:hover:not(:disabled)]:[background:color-mix(in_oklab,_var(--card)_75%,_transparent)] [&:hover:not(:disabled)]:text-foreground [&:focus-visible]:border-ring [&:focus-visible]:[outline:2px_solid_color-mix(in_oklab,_var(--ring)_38%,_transparent)] [&:focus-visible]:outline-offset-1 [&_svg]:w-4 [&_svg]:h-4 motion-reduce:transition-none [&:disabled]:cursor-default [&:disabled]:[opacity:0.35] max-sm:[padding-inline:0.35rem]"
             disabled={zoom <= MIN_ZOOM || diagram === null}
             onClick={() => {
               changeZoom(-ZOOM_STEP);
@@ -478,7 +493,7 @@ export default function Mermaid({ chart, className }: Readonly<MermaidProps>) {
           </button>
           <button
             aria-label="Reset diagram zoom"
-            className="mermaid-control mermaid-zoom-reset"
+            className="mermaid-control inline-flex h-7.5 min-w-7.5 items-center justify-center gap-1.5 [border:1px_solid_transparent] [border-radius:0.5rem] [padding:0_0.5rem] text-muted-foreground cursor-pointer [font-size:0.75rem] font-normal [line-height:1] [transition:background-color_150ms_ease,_border-color_150ms_ease,_color_150ms_ease] [&:hover:not(:disabled)]:[border-color:color-mix(in_oklab,_var(--border)_86%,_var(--foreground))] [&:hover:not(:disabled)]:[background:color-mix(in_oklab,_var(--card)_75%,_transparent)] [&:hover:not(:disabled)]:text-foreground [&:focus-visible]:border-ring [&:focus-visible]:[outline:2px_solid_color-mix(in_oklab,_var(--ring)_38%,_transparent)] [&:focus-visible]:outline-offset-1 [&_svg]:w-4 [&_svg]:h-4 motion-reduce:transition-none [&:disabled]:cursor-default [&:disabled]:[opacity:0.35] max-sm:[padding-inline:0.35rem] mermaid-zoom-reset [min-width:3.9rem] max-sm:min-w-7.5 max-sm:[&_span]:hidden"
             disabled={zoom === 1 || diagram === null}
             onClick={() => {
               setZoom(1);
@@ -491,7 +506,7 @@ export default function Mermaid({ chart, className }: Readonly<MermaidProps>) {
           </button>
           <button
             aria-label="Zoom diagram in"
-            className="mermaid-control"
+            className="mermaid-control inline-flex h-7.5 min-w-7.5 items-center justify-center gap-1.5 [border:1px_solid_transparent] [border-radius:0.5rem] [padding:0_0.5rem] text-muted-foreground cursor-pointer [font-size:0.75rem] font-normal [line-height:1] [transition:background-color_150ms_ease,_border-color_150ms_ease,_color_150ms_ease] [&:hover:not(:disabled)]:[border-color:color-mix(in_oklab,_var(--border)_86%,_var(--foreground))] [&:hover:not(:disabled)]:[background:color-mix(in_oklab,_var(--card)_75%,_transparent)] [&:hover:not(:disabled)]:text-foreground [&:focus-visible]:border-ring [&:focus-visible]:[outline:2px_solid_color-mix(in_oklab,_var(--ring)_38%,_transparent)] [&:focus-visible]:outline-offset-1 [&_svg]:w-4 [&_svg]:h-4 motion-reduce:transition-none [&:disabled]:cursor-default [&:disabled]:[opacity:0.35] max-sm:[padding-inline:0.35rem]"
             disabled={zoom >= MAX_ZOOM || diagram === null}
             onClick={() => {
               changeZoom(ZOOM_STEP);
@@ -507,7 +522,7 @@ export default function Mermaid({ chart, className }: Readonly<MermaidProps>) {
                 ? "Exit full screen diagram"
                 : "View diagram full screen"
             }
-            className="mermaid-control"
+            className="mermaid-control inline-flex h-7.5 min-w-7.5 items-center justify-center gap-1.5 [border:1px_solid_transparent] [border-radius:0.5rem] [padding:0_0.5rem] text-muted-foreground cursor-pointer [font-size:0.75rem] font-normal [line-height:1] [transition:background-color_150ms_ease,_border-color_150ms_ease,_color_150ms_ease] [&:hover:not(:disabled)]:[border-color:color-mix(in_oklab,_var(--border)_86%,_var(--foreground))] [&:hover:not(:disabled)]:[background:color-mix(in_oklab,_var(--card)_75%,_transparent)] [&:hover:not(:disabled)]:text-foreground [&:focus-visible]:border-ring [&:focus-visible]:[outline:2px_solid_color-mix(in_oklab,_var(--ring)_38%,_transparent)] [&:focus-visible]:outline-offset-1 [&_svg]:w-4 [&_svg]:h-4 motion-reduce:transition-none [&:disabled]:cursor-default [&:disabled]:[opacity:0.35] max-sm:[padding-inline:0.35rem]"
             disabled={diagram === null}
             onClick={() => {
               void toggleFullscreen();
@@ -521,7 +536,9 @@ export default function Mermaid({ chart, className }: Readonly<MermaidProps>) {
               <Maximize2 aria-hidden="true" />
             )}
           </button>
-          <span className="mermaid-language">Mermaid</span>
+          <span className="mermaid-language [color:color-mix(in_oklab,_var(--muted-foreground)_88%,_var(--foreground))] [font-size:0.75rem] font-semibold [letter-spacing:0.075em] [line-height:1] uppercase [margin-inline:0.35rem_0.25rem] max-sm:[margin-inline:0.25rem_0.125rem]">
+            Mermaid
+          </span>
         </div>
       </div>
     </figure>

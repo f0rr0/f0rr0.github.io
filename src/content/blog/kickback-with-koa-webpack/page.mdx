@@ -3,7 +3,7 @@ export const metadata = {
   date: "2016-06-28",
   author: "Sid Jain",
   summary:
-    "Build a KoaJS server with ES7 async/await. Hot patch it without restarting via Webpack Hot Module Replacement. Achieve DX nirvana.",
+    "A 2016 experiment with Koa, async/await and Webpack: change a running server without starting it over.",
   tags: ["javascript", "koa", "webpack"],
 };
 
@@ -11,93 +11,18 @@ export const metadata = {
 
 Written at Kerckhoff Coffee House ~ LA Westside
 
-#### Yet Another JavaScript Framework?
+I wanted to change a server and see the result without starting it over. Webpack's hot module replacement was already useful in the browser. A small Koa server seemed like a good place to find out what that loop could feel like on the other side of the request.
 
-[Node.js](https://nodejs.org/en/about/) itself offers a
-[http](https://nodejs.org/docs/latest/doc/api/http.html#http_http) module which
-exposes methods that facilitate creating HTTP clients and servers. However, in
-order to support the full spectrum of possible HTTP applications, Node.js’ HTTP
-API is very low-level. This is where frameworks like
-[Express](http://expressjs.com/), [Hapi](http://hapijs.com/),
-[Restify](http://restify.com/), and [Koa](http://koajs.com/) come in.
+This was June 2016: Node 6.2.2, Webpack 2 in beta, and Koa 2 moving toward `async` functions. Babel supplied the syntax Node couldn't run yet. The experiment grew into this little Pokémon server:
 
-#### Quick Word on Express
+https://github.com/f0rr0/koa-webpack-boilerplate
 
-Express is undoubtedly the most popular Node.js application framework in use
-today. A quick check reveals that 10434 packages on
-[npm](https://www.npmjs.com/) list Express as a dependency. This number probably
-increases by the day. The initial commit for Express was made in 2009 by [TJ
-Holowaychuk](https://medium.com/u/bbb3c7ccb0a0) and 660 commits later, version
-0.0.1 was released. Express ownership was transferred to StrongLoop, in 2014,
-which eventually got acquired by IBM. The current lead maintainer of the project
-[did not have many nice things to
-say](https://github.com/expressjs/express/issues/2844#issuecomment-173758490)
-about StrongLoop/IBM.
-
-#### Aloha Koa
-
-The initial commit for Koa was 3 years ago, by none other than the man himself —
-[TJ Holowaychuk](https://medium.com/u/bbb3c7ccb0a0). He described it back then
-as:
-
-> “Expressive middleware for node.js using generators via
-> [co](https://github.com/tj/co) to make writing web applications and REST APIs
-> more enjoyable to write”.
-
-Basically, Koa allows you to do away with the callback pattern and makes
-error-handling more efficient. Everything in Koa is middleware which makes
-writing code more intuitive and easy (at least for me). Koa accomplished this
-with [generators](https://davidwalsh.name/es6-generators) which were
-introduced in [ES2015 (ES6)](http://www.ecma-international.org/ecma-262/6.0/).
-This can be run natively in Node.js version 0.11+ (with the `--harmony` flag).
-As of [version
-2.0.0-alpha.1](https://github.com/koajs/koa/blob/v2.x/History.md#200-alpha1--2015-10-22),
-however, the codebase was refactored to [async
-functions](https://tc39.github.io/ecmascript-asyncawait/) ([ES2016 or
-ES7](https://tc39.github.io/ecma262/2016/)) in favor of generators.
-Unfortunately, these are [not
-supported](https://bugs.chromium.org/p/v8/issues/detail?id=4483) natively in
-[V8](https://developers.google.com/v8/) (underlying engine behind the Node.js
-runtime) yet.
-
-#### Tools of the Trade
-
-Since Node.js (V8) does not support `async` functions natively, we will use
-[Babel](https://babeljs.io/) to transpile them. JavaScript, as a language, is
-constantly evolving with new specs and proposals coming out all the time. Babel
-allows us to use these features years before they are available everywhere.
-
-> Babel does this by compiling down JavaScript code written with the latest
-> standards into a version that will work in today’s environments. This process is
-> known as source-to-source compiling aka transpiling.
-
-To build our application, we will use the [Webpack](https://webpack.github.io/)
-module bundler which provides an infrastructure for building and transforming
-modules. It is discussed in detail in the subsequent sections.
-
-#### Talk is Cheap. Show Me the Code.
-
-The final GitHub repository is linked [here](https://github.com/f0rr0/koa-webpack-boilerplate). Before you begin hacking, make sure you have the latest version of Node.js
-[installed](https://nodejs.org/en/). I prefer to use
-[n](https://github.com/tj/n) to interactively manage Node.js versions. (While
-writing this, I discovered that the author of ’n’ is [TJ
-Holowaychuk](https://medium.com/u/bbb3c7ccb0a0) yet again.)
-
-```bash
-sudo npm cache clean -f
-sudo npm install -g n
-sudo n latest
-```
-
-To use some npm commands without `sudo` you might have to [fix
-permissions](https://docs.npmjs.com/getting-started/fixing-npm-permissions).
-
-#### Boilerplate for Boilerplate
+## Get the server running
 
 We need to set up a minimal NPM package with a `package.json` file, a directory
 for source, and certain essential files for our development tools.
 
-![](./dirstructure.png)
+![Source and build configuration files for the Koa experiment](./dirstructure.png)
 
 Go ahead and clone the final repository to your machine to build the minimal
 server from source.
@@ -152,13 +77,6 @@ require('style!css!sass!./styles/main.sass');
 This one-liner appropriately parses the SASS file to CSS and injects it into the DOM in a style tag. To learn more about webpack, read [Pete Hunt](https://medium.com/u/3b799f227b58)’s [webpack-howto](https://github.com/petehunt/webpack-howto).
 
 When used from the CLI, webpack looks for a configuration file named `webpack.config.js` in the directory from where webpack was invoked. You can also supply your config file using the `--config` option from the CLI. So let’s install webpack and set up the config file for our repository.
-
-Note — You can view and install specific `dist-tags` for a package on `npm` like so:
-
-```bash
-npm view <package-name> dist-tags
-npm install <package-name>@<dist-tag>
-```
 
 In the root directory of your repository:
 
@@ -232,17 +150,13 @@ process.binding("natives");
 
 This returns an object with all the native modules like `dns`, `domain`, `events`, `fs`, `http` etc.
 
-#### Dabble in Babel
+## Let asynchronous code read in order
 
-Babel is used in the [wild](https://babeljs.io/users/) by the likes of Facebook, Netflix, Airbnb and Yahoo. As mentioned earlier, we will use Babel to transpile our ES6/7 code. This is accomplished from within webpack via the `babel-loader`. Our config looks for files ending in `.js` in the `./src` directory and loads them with `babel-loader`. Before you can use it though, you need to install it:
+Webpack handled modules, but Node 6 still needed help with `async` functions. I used Babel through `babel-loader` to turn them into generators. That let the application use `await` without making every reader follow a chain of callbacks.
 
 ```bash
 npm install -D babel-loader babel-core
 ```
-
-This installs `babel-loader`, again, as a **development dependency**. `babel-loader` in turn lists `babel-core` as its peer dependency which needs to be installed. This is the babel compiler core which exposes the Node.js API. At a high level, Babel runs in three stages: parsing, transforming, and generation. Out of the box, Babel does not transform anything. It just parses code and spits it out exactly the same. To make Babel transform code, we need to (you guessed it!) install plugins.
-
-If you updated your Node.js installation to the latest version, as mentioned earlier, you’d have probably ended up with 6.2.2+ which supports [96%](http://node.green/) of the ES2015(ES6) features. V8 hasn’t landed [support](https://bugs.chromium.org/p/v8/issues/detail?id=1569) for ES6 native modules yet but Webpack 2+ takes care of that for us. It understands native ES6 modules which are statically analyzable. This helps in getting rid of extraneous exports from our build aka dead code elimination. Webpack accomplishes this with [tree-shaking](http://www.2ality.com/2015/12/webpack-tree-shaking.html). Sweet! So we just need to worry about those _async_ functions that Node.js 6.2.2 doesn’t understand.
 
 The plugin we need is [babel-plugin-transform-async-to-generator](http://babeljs.io/docs/plugins/transform-async-to-generator/). The name is more than self-explanatory. Babel can be configured to use these plugins via the `.babelrc` file which lives in the root of our repository. Our tiny `.babelrc` file looks like so:
 
@@ -259,7 +173,7 @@ can use it:
 npm install -D babel-plugin-transform-async-to-generator
 ```
 
-#### Catch ’em All With Koa
+## Catch ’em All With Koa
 
 With our build tools in place, we can start writing the server finally. As mentioned earlier, Koa is a very minimal framework and does not offer much out of the box. Everything in Koa is middleware and there are quite a few of them. We will be using Koa 2 which can be installed with the `next` dist-tag. Go ahead and install Koa and a couple of middleware like so:
 
@@ -267,7 +181,7 @@ With our build tools in place, we can start writing the server finally. As menti
 npm install -S koa@next koa-route@next koa-logger@next
 ```
 
-For the purpose of this article, we will be mocking a database with the [Pokeapi](https://pokeapi.co/). Since Koa expects `xyz` to return a Promise in all `await xyz` expressions, we will make use of [pokedex-promise-v2](https://github.com/PokeAPI/pokedex-promise-v2) which is simply a Promise based wrapper for the Pokeapi. Install it like so:
+For the purpose of this article, we will be mocking a database with the [Pokeapi](https://pokeapi.co/). To await the API response, I used [pokedex-promise-v2](https://github.com/PokeAPI/pokedex-promise-v2) which is simply a Promise based wrapper for the Pokeapi. Install it like so:
 
 ```bash
 npm install -S pokedex-promise-v2
@@ -336,12 +250,7 @@ app.use(logger())
 console.log('Listening on Port 8000');
 ```
 
-The main point of interest here is the asynchronous `getPokemonFromAPI`
-function. If you have done asynchronous programming in JavaScript before, you
-must be aware of the [callback pattern and the problems it
-brings](http://callbackhell.com/). If that is indeed the case, this function
-should make you shed tears of joy. Note how this idiom lets us handle errors
-gracefully in a try-catch block.
+The part I liked was `getPokemonFromAPI`: fetch the Pokémon, format the result, assign the body. It reads in the order the work happens, and errors arrive in the same `try`/`catch`. There was surprisingly little left to the request handler.
 
 We will be using some neat npm run scripts to build and start our server.
 
@@ -375,7 +284,7 @@ This is understandable since we don’t have a route handler attached to our bas
 URL: `‘/’`. This prompts Koa to return it’s default 404 message. Go ahead and
 fix this by adding that route-handler to our `index.js` file.
 
-![](./routehandler.png)
+![Adding the root route to the Koa server](./routehandler.png)
 
 Before you can see these changes reflected, you need to build the bundle again.
 This is a bummer. We want our bundle to be regenerated every time we make
@@ -404,47 +313,56 @@ Error: listen EADDRINUSE :::8000
 Make sure you exit all currently running servers (Ctrl+C) before starting a
 new one. Refresh your browser and you should see:
 
-![](./catchemall.png)
+![The Koa server responding at its root route](./catchemall.png)
 
 We can get stats for any Pokemon by pointing our browser to the respective name
 like so:
 
-![](./stats.png)
+![Pokémon stats returned by the name route](./stats.png)
 
-#### Do You Even HMR?
+## A new bundle isn't a new running server
 
-If you play around with what we have so far, you’ll tend to notice that our workflow is still a little complicated. We need to manually restart our server whenever we make changes since a new bundle is generated. To get past that we may use a process manager ([pm2](http://pm2.keymetrics.io/), [nodemon](http://nodemon.io/), [StrongLoopPM](http://strong-pm.io/)) to watch our files and trigger a webpack build before restarting our server. This definitely removes the hassle of doing it manually. However, it works well if we are not doing anything stateful or don’t care about losing state in our server code. Go ahead and take a look at [Dan Abramov](https://medium.com/u/a3a8af6addc1)’s [react-hot-loader](https://gaearon.github.io/react-hot-loader/) if this doesn’t make sense. Let us leverage Webpack’s [Hot Module Replacement](https://webpack.github.io/docs/hot-module-replacement.html) API to hot patch our server side code. For now, we will restrict ourselves to the development environment.
+Watch mode solved half the problem. Saving a file rebuilt the bundle, but the running Node process still had the old code. I could restart it manually or use a process watcher. Either way, restarting threw away the process's state.
 
-Note that we are currently using [webpack/hot/poll](https://github.com/webpack/webpack/blob/master/hot/poll.js) which polls the Node.js filestream (`fs`) every 1000 ms. In production we might want to use the more efficient [webpack/hot/signal](https://github.com/webpack/webpack/blob/master/hot/signal.js) which listens on process events to check for updates. Creating a separate directory for the records Webpack will generate should also be a good idea.
+Webpack's [Hot Module Replacement API](https://webpack.github.io/docs/hot-module-replacement.html) offered a smaller unit of change. If the running module could accept an updated dependency, it could keep going with the replacement.
+
+The development entry used `webpack/hot/poll?1000` to look for updates once a second. The remaining piece was to tell Webpack which update the server knew how to accept.
 
 The watch script needs to be modified to enable HMR. This can also be done by
 using the `HotModuleReplacementPlugin` but don’t use both.
 
 ```js
-'watch': 'npm run clean && `npm bin`/webpack --env.dev --watch -- verbose --hot'
+'watch': 'npm run clean && `npm bin`/webpack --env.dev --watch --verbose --hot'
 ```
 
-We don’t need to do much to handle the updated dependencies in our main
-`index.js` file since we are using ES6 modules which are static in nature. The
-following would suffice:
+The acceptance boundary in `index.js` was small:
 
-![](./hmr.png)
+```js
+if (module.hot) {
+  module.hot.accept('./stats', () => {});
+}
+```
+
+`stats` formats the response, so it was a useful dependency to replace while leaving the server listening. An edit to that module could travel through the build and into the running application:
+
+```mermaid
+flowchart LR
+  accTitle: Updating a running server
+  accDescr: Editing the stats module makes Webpack build an update. The running server's hot module runtime accepts that dependency, so the next request uses the new formatter while the server keeps listening.
+  Edit["Edit stats.js"] --> Build["Webpack builds update"]
+  Build --> Accept["Running module accepts stats"]
+  Accept --> Response["Next request uses new formatter"]
+```
 
 Go ahead and run the `watch` script followed by the `start` script in another
 tab as before. Make changes to the `stats.js` module and refresh your browser to
 see them live **without restarting the server**. The GIF below illustrates this
 in the terminal:
 
-![](./final.gif)
+![Editing the stats formatter and seeing the running server use the update](./final.gif)
 
-#### Fin?
+Changing a formatter and seeing the next response use it was the moment the experiment clicked. The socket stayed open; the code behind the response changed.
 
-HMR is theoretically possible in production but has not been tested enough. It
-is better to stick to a process manager when in production. On the development
-end too however, we can take it one step further by handling the case where a
-hot update fails or aborts. The server should appropriately restart in that
-instance. Koa apps can be tested fluently with
-[supertest](https://github.com/visionmedia/supertest) which this repository will
-implement soon.
+I kept this in development, with ordinary process restarts for production. For the work I was doing at the keyboard, though, the loop had become what I wanted: edit, save, refresh. The server could stay where it was.
 
 Originally 📝 on [Medium](https://medium.com/@f0rr0/kickback-with-koa-webpack-a51d7e5d7911).

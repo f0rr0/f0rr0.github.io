@@ -1,6 +1,8 @@
 # Blog Notes
 
-Short guide to writing posts and avoiding common pitfalls.
+For voice, storytelling, and editorial review, use the
+[blog-writing skill](.rulesync/skills/blog-writing/SKILL.md).
+This guide covers the site's MDX and publishing mechanics.
 
 ## Content structure
 
@@ -61,6 +63,10 @@ Gotchas:
 
 ## Markdown features
 
+- A public GitHub repository, PR, or pinned code URL on its own line becomes
+  an embed. Put it where the project or change enters the story. Ordinary inline
+  links remain links. Use a direct link for unsupported embeds.
+
 - GFM tables and footnotes are enabled.
 - Syntax highlighting uses Shiki via `rehype-pretty-code`.
 - Code blocks show their language and include a copy control. Long lines scroll
@@ -102,3 +108,6 @@ Canonical URLs are derived from Vercel system environment variables when deploye
 3. (Optional) add `opengraph-image.png` and/or `twitter-image.png` next to the post.
 4. Reference images with `./` paths (Markdown) or `src="./..."` (JSX).
 5. Keep `draft: true` until ready to publish.
+6. Publishing an article means setting `draft: false` and deploying the change
+   through the existing Vercel project. Keep the MDX Kitchen Sink as a draft;
+   it exercises rendering features and is not an article.

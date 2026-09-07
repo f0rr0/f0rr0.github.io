@@ -3,38 +3,26 @@ export const metadata = {
   date: "2026-09-03",
   author: "Sid Jain",
   summary:
-    "Pronto’s best House Help slots appeared while I was away, so I asked an AI agent to keep looking and come back when it found one I could actually use.",
+    "Pronto's useful House Help slots kept appearing while I was away. I built Tranquilo to keep looking and bring the choice back to me.",
   tags: ["typescript", "mcp", "ai-agents", "automation", "distributed-systems"],
   draft: false,
 };
 
-Pronto's House Help appointments had become a queue I could only join by repeatedly opening the app. For several evenings I checked after work, found nothing useful, closed it, and tried again later. Every so often a decent slot would appear and disappear before I could act. The supply existed; my timing was rubbish.
+For several evenings, I had the same unproductive conversation with Pronto's House Help screen. Open the app after work. Find nothing useful. Close it. Try again later. Every so often, a decent appointment would appear and disappear before I could act. The supply existed; my timing was rubbish.
 
-Checking every few minutes would probably have worked. I didn't want to donate my evenings to a refresh button, so I built [Tranquilo](https://github.com/f0rr0/tranquilo) and gave an agent a fairly ordinary instruction:
+Checking every few minutes would probably have worked. I didn't want to donate my evenings to a refresh button, so I built Tranquilo and gave an agent a fairly ordinary instruction:
 
 > Find an hour tomorrow after six. If there is nothing, keep looking.
 
-“The agent waited in line” is a convenient description, but it collapses three different bits of software. The model translated my sentence into structured intent. Ordinary TypeScript ranked and revalidated slots. An operating-system scheduler did the waiting. Keeping those jobs separate turned out to matter more than making the agent sound clever.
+https://github.com/f0rr0/tranquilo
 
-## First, make “after six” boring
+There were two parts to that request. “An hour tomorrow after six” needed interpretation. “Keep looking” needed something that would still remember the request after I'd closed the conversation. The second part turned out to be the more interesting one.
 
-An availability response is an observation, not a reservation. By the time I read it, the remote state may already have changed. Tranquilo therefore normalises the response at the edge and carries one small slot model through the rest of the program:
+## After six means after six
 
-```ts
-type SlotObservation = {
-  startTime: string;
-  durationMinutes: number;
-  listingId: string;
-  listingItemId: string;
-  slotsLeft?: number;
-  isFull: boolean;
-  observedAt: Temporal.Instant;
-};
-```
+I began with finding a useful appointment. My preferences had an order: an evening slot mattered more than a slightly better duration, and tomorrow mattered more than an attractive time three days away.
 
-That also avoids hard-coding “60 minutes” to one product identifier. The listing depends on the selected address and live catalogue, so search resolves the service first and carries the identifiers forward.
-
-My preferences weren't interchangeable. After work mattered more than whether the appointment began twenty minutes earlier; tomorrow mattered more than a slightly better duration three days later. The interactive `find` command uses separate score bands to preserve that order:
+The interactive search used separate score bands to keep that order intact:
 
 ```ts
 const rank =
@@ -45,15 +33,17 @@ const rank =
   minute / 30;
 ```
 
-It is a lexicographic sort wearing a numerical moustache. A lower-priority preference can't accumulate enough points to defeat a higher-priority one.
+Lower scores win. Within the bounded search range, each band leaves enough room for the preferences below it. A collection of small conveniences can't outvote the fact that I'll be at work.
 
-The watch path is deliberately simpler: it checks the concrete date, duration and window saved in the watch and stops at the first acceptable live result. It does **not** currently run every candidate through the full weighted ranker. That distinction had disappeared in my first account of the project, and the code is more interesting when I don't make it tidier than it is.
+Underneath that ranking, I normalised availability into slot observations carrying the start time, duration, availability and the service's listing identifiers. Those identifiers came from the selected address and live catalogue. An hour of House Help wasn't one universal product ID I could paste into the code and forget.
 
-Appointment times are local civil times; scheduled checks happen at instants. Tranquilo uses the [`Temporal`](https://tc39.es/proposal-temporal/docs/) model to keep those concepts apart and rejects past or out-of-horizon results. The [MCP](https://modelcontextprotocol.io/) tool can turn “tomorrow after six” into validated dates, a time window and duration preferences. It then persists a watch rather than leaving the conversation open.
+The [MCP](https://modelcontextprotocol.io/) interface let a model turn my sentence into dates, a time window and duration preferences. I used [Temporal](https://tc39.es/proposal-temporal/docs/) to keep appointment times in the local calendar separate from the instants when a check should run. Once the request had a concrete shape, the rest could be ordinary TypeScript.
 
-## A scheduler, not an immortal loop
+For a saved watch, I needed less machinery than the interactive search: check the requested date, duration and window, then stop at the first acceptable result. At that point I wanted to hear about an appointment, not keep shopping for a theoretically perfect one.
 
-My first version wanted to do this:
+## Let the conversation end
+
+My first instinct was a loop:
 
 ```ts
 while (true) {
@@ -62,67 +52,50 @@ while (true) {
 }
 ```
 
-That works until the laptop sleeps, the network changes, the process dies, or I forget why a random Bun process has been alive for four days.
+It was easy to write and awkward to own. The laptop could sleep, the network could change, the process could die. I could also forget why a random Bun process had been alive for four days.
 
-The repository implements all three desktop scheduler adapters:
+The operating system already knew how to start a program later. I saved the watch and handed the repeated checks to the desktop scheduler: `launchd` on macOS, a `systemd` user timer on Linux, or Task Scheduler on Windows. Each run loads due watches, checks availability, records what happened and exits.
 
-| Platform | What Tranquilo installs            |
-| -------- | ---------------------------------- |
-| macOS    | a per-user `launchd` agent         |
-| Linux    | a `systemd` user service and timer |
-| Windows  | a Task Scheduler task              |
-
-Each trigger launches a short-lived check which loads due watches, queries availability, records the result and exits. On macOS, `StartInterval` doesn't magically poll while a laptop is asleep. The useful property is that the saved watch is still there when the machine is available again; this is durable intent, not an always-on service.
-
-The state progression is small enough to read without a diagram:
-
-```text
-enabled --no match--> enabled (next run)
-enabled --error-----> enabled (delayed retry)
-enabled --slot------> found
-enabled --date past-> expired
-paused  --resume----> enabled
+```mermaid
+sequenceDiagram
+  accTitle: A watch outlives the conversation
+  accDescr: The agent saves a watch, then the desktop scheduler starts separate checks. An empty result leaves the watch waiting. A matching slot triggers a notification back to Sid.
+  actor Me
+  participant Agent
+  participant Watch as Saved watch
+  participant Timer as Desktop scheduler
+  participant Pronto
+  Me->>Agent: Tomorrow after six, for an hour
+  Agent->>Watch: Save the request
+  Timer->>Watch: Load due checks
+  Watch->>Pronto: Any matching slots?
+  Pronto-->>Watch: Nothing yet
+  Timer->>Watch: Check again later
+  Watch->>Pronto: Any matching slots?
+  Pronto-->>Watch: A matching slot
+  Watch-->>Me: Notify me
 ```
 
-There are two reliability details worth stating precisely. The current lock is an exclusive `wx` sentinel file. It prevents a scheduled run and a manual run from overlapping normally, but it isn't a lease and it has no stale-lock recovery after an abnormal exit. State is also written directly as JSON rather than through a temporary file plus `fsync` and atomic rename. So a reboot doesn't require a daemon restart, but I won't claim the watch store is crash-proof.
+The machine still has to be awake to check. The useful change was that the request had a life outside the chat window. I could leave, and the next scheduled run would know what I wanted.
 
-Notification delivery has a similar edge. Today the watcher notifies before it saves the final `found` state. If the notification succeeds and the process dies before the write, a later run can notify twice. If notification fails and the error is swallowed, the watch can still become `found` and stop checking. This is best-effort delivery. A production-grade version needs a small outbox, an atomic state transition and retryable notification records. “Exactly once” would be a very ambitious phrase for a desktop notification anyway.
+That also put a natural end on the task. No match means wait for another run. A match means notify me. A date that has passed means expire the watch. There was no reason to keep a model thinking about an empty booking screen between checks.
 
-Those aren't theoretical distributed-systems flourishes. They're the bits I would harden before telling someone else to depend on a week-long watch.
+## The slot can still disappear
 
-## Finding a slot still isn't booking it
+A notification gets me back to the app at a better time. It doesn't hold the appointment. Somebody else can take it while I'm reading.
 
-No local lock can reserve an appointment in a remote service. When I select a result, the booking path searches again for the exact timestamp and duration. If the slot has gone, it stops before checkout. If it remains, Tranquilo:
+So choosing a slot starts with another availability check for that exact time and duration. If it remains available, Tranquilo puts the resolved item into the cart and reads the cart back. Checkout uses the listing identifiers, amount and cart version from that fresh read.
 
-1. resolves the saved address and current House Help listing;
-2. sets exactly one resolved item and the selected slot in the cart;
-3. fetches the cart again;
-4. verifies both listing identifiers against the choice; and
-5. creates checkout using the amount and cart version from that fresh read.
+Even then, Pronto can return `SLOT_OVERBOOKED`. The response sends the flow back to fresh availability. The remote service gets the final say about whether there is still a place in the queue.
 
-Another customer can still take the appointment between the final check and checkout. Tranquilo treats `SLOT_OVERBOOKED` as an expected result and returns to fresh availability. The revalidation narrows the race; it doesn't turn Pronto into my database transaction.
+I kept that operation separate from watching. A watch can tell me about a slot; preparing a booking changes the cart and can create a payment order. Payment approval stays in my terminal. These are useful boundaries for the tool because they match the decisions I actually want to make: find something, choose it, then pay.
 
-Preparing a booking is itself a remote mutation: it changes the cart and can create the Juspay order before I pay. That is why it is a separate, explicit operation rather than something a notify-only watch may call.
+The division also made the agent's job pleasantly small. It could understand “after six” and save the request. It didn't need my payment URI in its reply, or permission to act on every good result it found.
 
-## The agent-facing boundary is narrow, not magic
+## An evening back
 
-The MCP catalogue gives search, watching, booking preparation and payment handoff different capabilities:
+The result is a CLI and MCP server, with [documentation here](https://tranquilo-ai.vercel.app/docs). I can ask for a slot in a sentence, leave a watch behind, and return when there's something worth choosing.
 
-| Tool                        | Behaviour | Boundary                         |
-| --------------------------- | --------- | -------------------------------- |
-| `househelp_find_slots`      | read-only | never touches cart or checkout   |
-| `househelp_watch_create`    | mutating  | persists a notify-only watch     |
-| `househelp_prepare_booking` | mutating  | needs an exact duration and slot |
-| `househelp_payment_handoff` | read-only | returns a local payment command  |
+What changed for me was the empty screen no longer occupying a corner of my working memory. The scheduler could spend time on it while I did something else.
 
-The watch can't auto-book, and search can't quietly mutate the cart. Long-lived authentication tokens and the payment URI are kept out of the public agent-facing response; payment approval stays in my terminal. That is narrower than saying “provider credentials never enter model context”. A phone number, OTP, address label or order metadata can still be exposed if someone places it in a prompt or chooses a hosted model. The boundary depends on the client and model provider as well as Tranquilo's response schema.
-
-I also don't regard an undocumented personal-service API as an invitation to hammer it. The current watcher uses a fixed cadence and a coarse delay after errors. Before broader use, I would add jitter, explicit `Retry-After` handling, a longer adaptive backoff and a conservative ceiling on requests. The tool should remain a quiet substitute for my own refreshes, not become a small denial-of-service project because I wanted a clean floor.
-
-## What the repository proves
-
-The [public source](https://github.com/f0rr0/tranquilo) contains the TypeScript CLI, MCP server, scheduler adapters, booking revalidation and local payment handoff. The [documentation](https://tranquilo-ai.vercel.app/docs) describes the commands and installation. It demonstrates the mechanism; it isn't a controlled experiment in slot-acquisition speed, and I don't have a neat graph of polls-to-booking to pretend otherwise.
-
-What changed for me was much smaller. I stopped keeping an empty booking screen in my working memory. The model parsed the request, the scheduler checked when my laptop was awake, and a notification returned the choice to me.
-
-I had sent the machine to spend time, not authority. Then I got on with my evening.
+I had sent the machine to wait. Then I got on with my evening.

@@ -66,7 +66,6 @@ function RepositoryIdentity({
             height={28}
             sizes="28px"
             src={repository.avatarUrl}
-            unoptimized
             width={28}
           />
         )}

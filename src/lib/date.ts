@@ -21,14 +21,20 @@ export const dateFormats = {
   dateTime: { dateStyle: "medium", timeStyle: "short", hour12: true },
 } satisfies Record<string, Intl.DateTimeFormatOptions>;
 
+const dateFormatters = new Map<string, Intl.DateTimeFormat>();
+
 export const formatDate = (
   value: Date | string,
   format: keyof typeof dateFormats = "date",
   timeZone = "UTC"
-) =>
-  new Intl.DateTimeFormat("en-US", { ...dateFormats[format], timeZone }).format(
-    new Date(value)
-  );
+) => {
+  const key = `${format}:${timeZone}`;
+  const formatter =
+    dateFormatters.get(key) ??
+    new Intl.DateTimeFormat("en-US", { ...dateFormats[format], timeZone });
+  dateFormatters.set(key, formatter);
+  return formatter.format(new Date(value));
+};
 
 export const dateKey = (value: Date | string, timeZone = "UTC") =>
   new Intl.DateTimeFormat("en-CA", {

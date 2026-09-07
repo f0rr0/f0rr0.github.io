@@ -141,6 +141,13 @@
       "when": 1788467778715,
       "tag": "0019_wise_doorman",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1788807293156,
+      "tag": "0020_lame_blindfold",
+      "breakpoints": true
     }
   ]
 }

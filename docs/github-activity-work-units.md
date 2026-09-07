@@ -193,8 +193,14 @@ The evidence shape depends on attribution:
 - Branch work currently uses its ordered owned commit diffs because no branch
   comparison outcome is persisted.
 
+JSON file lists can omit large text patches. Commit and PR acquisition recover
+these from GitHub's raw diff using immutable commit/base/head SHAs, and validate
+paths and line counts against the JSON ledger. PR acquisition also checks that
+its base/head did not move during retrieval. Binary assets have no text patch;
+their explicit binary entries describe an asset change without inventing contents.
+
 An otherwise projected unit remains facts-only when its summary evidence has an
-unavailable or binary patch, a counter mismatch, an incomplete or capped PR net
+unrecoverable text patch, a counter mismatch, an incomplete or capped PR net
 ledger, or an empty normalized outcome. It also remains facts-only when even
 the compact file ledger and one changed-line sample per text file exceed the
 hard input limit. Commit-level incomplete or capped ledgers are excluded at the
@@ -226,8 +232,9 @@ Claims are ordered by newest activity, then newest observed content:
 
 These limits are application configuration; the database only records usage.
 Started requests count even when they fail. A transient failure waits 15
-minutes before its one possible retry. Invalid input/output and exhausted
-attempts become facts-only. Superseded attempts that never started are removed;
+minutes before its one possible retry. Output-format rejection uses that same
+bounded retry; invalid persisted input and exhausted attempts become facts-only.
+The last failure code is retained on the attempt. Superseded attempts that never started are removed;
 a paid retryable attempt becomes a payload-free tombstone that retains its
 request count. Its input is rebuilt and debounced only if the exact input becomes
 current again. Expired leases are recovered by the next worker.

@@ -105,11 +105,20 @@ export const runGitHubWorkUnitSummaryWorker = async (
       result.failed = 1;
     }
   } catch (error) {
-    if (
-      error instanceof GitHubWorkUnitSummaryInvalidInputError ||
+    const errorCode =
       error instanceof GitHubWorkUnitSummaryInvalidOutputError
-    ) {
-      if (await dependencies.terminal(claim, checkedNow(dependencies.now()))) {
+        ? `output_${error.reason}`
+        : error instanceof Error
+          ? error.name.slice(0, 80)
+          : "unknown_error";
+    if (error instanceof GitHubWorkUnitSummaryInvalidInputError) {
+      if (
+        await dependencies.terminal(
+          claim,
+          checkedNow(dependencies.now()),
+          errorCode
+        )
+      ) {
         result.unavailable = 1;
       } else {
         result.failed = 1;
@@ -120,7 +129,8 @@ export const runGitHubWorkUnitSummaryWorker = async (
     const disposition = await dependencies.defer(
       claim,
       new Date(deferredAt.getTime() + RETRY_DELAY_MS),
-      deferredAt
+      deferredAt,
+      errorCode
     );
     if (disposition === "deferred") {
       result.deferred = 1;

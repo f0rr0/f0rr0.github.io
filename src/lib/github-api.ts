@@ -155,6 +155,7 @@ const readDefaultGitHubToken = () => {
 export const githubApiUrl = (path: string) => new URL(path, GITHUB_API_ORIGIN);
 
 interface GitHubFetchOptions {
+  accept?: "application/vnd.github.diff";
   body?: string;
   deadlineAt?: number;
   ifNoneMatch?: string | null;
@@ -279,7 +280,7 @@ export const fetchGitHub = async (
         body: options.body,
         cache: "no-store",
         headers: {
-          Accept: "application/vnd.github+json",
+          Accept: options.accept ?? "application/vnd.github+json",
           ...(token === null ? {} : { Authorization: `Bearer ${token}` }),
           ...(options.ifNoneMatch === undefined || options.ifNoneMatch === null
             ? {}

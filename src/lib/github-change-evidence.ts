@@ -1,3 +1,5 @@
+import { githubFilePatchIsComplete } from "@/lib/github-diff";
+
 const generatedOrVendored =
   /(?:^|\/)(?:dist|build|coverage|generated|vendor|node_modules)(?:\/|$)|(?:\.min\.(?:css|js)|\.snap)$/iu;
 const lockfile =
@@ -112,7 +114,8 @@ export const githubWorkUnitFileFactsFrom = (
   files.map((file) => ({
     ...file,
     binary: file.patch === null && binaryAsset.test(file.filename),
-    patchComplete: file.patch !== null || file.additions + file.deletions === 0,
+    patchComplete:
+      githubFilePatchIsComplete(file) || file.additions + file.deletions === 0,
   }));
 
 export const aggregateGitHubLanguages = (

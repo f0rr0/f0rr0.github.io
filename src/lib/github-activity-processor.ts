@@ -21,6 +21,10 @@ import type {
   GitHubRepository,
   TrackedGitHubAccount,
 } from "@/lib/github-commits-core";
+import {
+  githubFilePatchIsComplete,
+  recoverGitHubDiffPatches,
+} from "@/lib/github-diff";
 
 const GITHUB_FILE_PAGE_SIZE = 100;
 const MAXIMUM_GITHUB_FILE_PAGES = 30;
@@ -104,6 +108,8 @@ export interface GitHubActivityPullRequestSnapshot {
 }
 
 export interface GitHubPullRequestDiffReference extends GitHubActivityPullRequestReference {
+  baseSha: string;
+  headSha: string;
   expectedChangedFiles: number;
 }
 
@@ -656,6 +662,59 @@ const fileEvidenceFrom = (value: unknown): GitHubFileChangeEvidence => {
   };
 };
 
+const completeFilePatches = async (
+  files: readonly GitHubFileChangeEvidence[],
+  path: string,
+  token: string,
+  options: GitHubProviderRequestOptions
+) => {
+  if (
+    !files.some(
+      (file) =>
+        !githubFilePatchIsComplete(file) && file.additions + file.deletions > 0
+    )
+  ) {
+    return files;
+  }
+  const response = await fetchGitHub(githubApiUrl(path), {
+    ...options,
+    accept: "application/vnd.github.diff",
+    token,
+  });
+  // Bound raw provider data before buffering; a larger diff remains retryable.
+  const reader = response.body?.getReader();
+  const chunks: Uint8Array[] = [];
+  let bytes = 0;
+  if (reader !== undefined) {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        break;
+      }
+      bytes += value.byteLength;
+      if (bytes > 8 * 1024 * 1024) {
+        await reader.cancel();
+        throw new ActivityProcessingError(
+          "source_incomplete",
+          "The raw GitHub diff exceeds the retrieval bound."
+        );
+      }
+      chunks.push(value);
+    }
+  }
+  const recovered = recoverGitHubDiffPatches(
+    files,
+    new TextDecoder("utf-8", { fatal: true }).decode(Buffer.concat(chunks))
+  );
+  if (recovered === null) {
+    throw new ActivityProcessingError(
+      "source_incomplete",
+      "The raw GitHub diff does not match the changed-file ledger."
+    );
+  }
+  return recovered;
+};
+
 const commitEvidenceFrom = (
   root: JsonObject,
   files: readonly GitHubFileChangeEvidence[],
@@ -782,8 +841,16 @@ const fetchCommitSourceWithToken = async (
   }
   const commit = commitEvidenceFrom(
     root,
-    [...files.values()].toSorted((left, right) =>
-      compareCodeUnitStrings(left.filename, right.filename)
+    await completeFilePatches(
+      [...files.values()].toSorted((left, right) =>
+        compareCodeUnitStrings(left.filename, right.filename)
+      ),
+      repositoryApiPath(
+        row.repository,
+        `/commits/${encodeURIComponent(row.sha)}`
+      ),
+      token,
+      options
     ),
     providerFileCapReached,
     row
@@ -1477,11 +1544,35 @@ const fetchGitHubPullRequestDiffWithToken = async (
       "GitHub returned an incomplete pull request file ledger."
     );
   }
-  return {
-    files: [...files.values()].toSorted((left, right) =>
+  const completeFiles = await completeFilePatches(
+    [...files.values()].toSorted((left, right) =>
       compareCodeUnitStrings(left.filename, right.filename)
     ),
-  };
+    repositoryApiPath(
+      row.repository,
+      `/compare/${encodeURIComponent(row.baseSha)}...${encodeURIComponent(row.headSha)}`
+    ),
+    token,
+    options
+  );
+  const current = await fetchJson(
+    repositoryApiPath(row.repository, `/pulls/${String(row.number)}`),
+    token,
+    options
+  );
+  if (
+    !isObject(current) ||
+    !isObject(current.base) ||
+    !isObject(current.head) ||
+    current.base.sha !== row.baseSha ||
+    current.head.sha !== row.headSha
+  ) {
+    throw new ActivityProcessingError(
+      "snapshot_stale",
+      "The pull request changed while its file evidence was fetched."
+    );
+  }
+  return { files: completeFiles };
 };
 
 export const fetchGitHubPullRequestDiff = async (

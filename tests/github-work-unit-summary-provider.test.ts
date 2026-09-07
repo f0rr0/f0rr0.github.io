@@ -151,7 +151,7 @@ describe("GitHub work-unit summary provider", () => {
     expect(calls).toBe(1);
   });
 
-  test("makes structured and semantic rejection terminal with no fallback", async () => {
+  test("reports structured and semantic rejection for bounded worker retry", async () => {
     let semanticCalls = 0;
     const semanticFailure = generateGitHubWorkUnitSummary(request(), {
       generateText: mockGenerateText(async () => {
@@ -168,7 +168,7 @@ describe("GitHub work-unit summary provider", () => {
     expect(semanticFailure).rejects.toMatchObject({
       name: "GitHubWorkUnitSummaryInvalidOutputError",
       reason: "url",
-      retryable: false,
+      retryable: true,
     });
     expect(semanticCalls).toBe(1);
 
@@ -180,7 +180,7 @@ describe("GitHub work-unit summary provider", () => {
     expect(structuredFailure).rejects.toMatchObject({
       name: "GitHubWorkUnitSummaryInvalidOutputError",
       reason: "invalid_shape",
-      retryable: false,
+      retryable: true,
     });
 
     const schemaFailure = generateGitHubWorkUnitSummary(request(), {
@@ -204,7 +204,7 @@ describe("GitHub work-unit summary provider", () => {
     expect(schemaFailure).rejects.toMatchObject({
       name: "GitHubWorkUnitSummaryInvalidOutputError",
       reason: "invalid_shape",
-      retryable: false,
+      retryable: true,
     });
   });
 

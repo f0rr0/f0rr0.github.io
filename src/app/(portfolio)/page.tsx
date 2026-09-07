@@ -1,6 +1,5 @@
 import { Star, GitFork } from "lucide-react";
 import type { Metadata } from "next";
-import { Suspense } from "react";
 
 import { CodexStats } from "@/components/codex-stats";
 import { GitHubTimeline } from "@/components/github-timeline";
@@ -21,7 +20,9 @@ import {
 import { resumeData } from "@/content/resume";
 import { getBlogPosts } from "@/lib/blog-utils";
 import { getPublicCodexStats } from "@/lib/codex/public-stats";
+import { getInitialGitHubActivity } from "@/lib/github-activity-feed";
 import { getGitHubProfile } from "@/lib/github-profile";
+import type { GitHubProfile } from "@/lib/github-profile";
 import { publicUrl, siteConfig } from "@/lib/site";
 
 const { description } = siteConfig;
@@ -48,43 +49,7 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-function SectionLoading({
-  id,
-  label,
-}: Readonly<{ id: string; label: string }>) {
-  return (
-    <SiteSection className="home-section min-h-64" id={id} title={label}>
-      <p className="py-2.5 text-muted-foreground" role="status">
-        Loading…
-      </p>
-    </SiteSection>
-  );
-}
-
-async function RecentWriting() {
-  const posts = await getBlogPosts();
-  return (
-    <SiteSection id="writing" title="Writing">
-      <WritingList posts={posts.slice(0, 3)} />
-    </SiteSection>
-  );
-}
-
-async function TokenLog() {
-  const codexStats = await getPublicCodexStats();
-  return codexStats === null ? (
-    <SiteSection id="token-log" title="Token log">
-      <p className="py-2.5 text-muted-foreground">
-        Token activity is unavailable right now.
-      </p>
-    </SiteSection>
-  ) : (
-    <CodexStats stats={codexStats} />
-  );
-}
-
-async function OpenSource() {
-  const github = await getGitHubProfile();
+function OpenSource({ github }: Readonly<{ github: GitHubProfile }>) {
   const projects = featuredProjectNames.flatMap((name) => {
     const project = github.projects.find(
       (candidate) => candidate.name === name
@@ -160,29 +125,35 @@ async function OpenSource() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const [codexStats, activity, posts, github] = await Promise.all([
+    getPublicCodexStats(),
+    getInitialGitHubActivity(),
+    getBlogPosts(),
+    getGitHubProfile(),
+  ]);
   return (
     <SiteShell currentPath="/">
       <SiteMain>
         <h1 className="sr-only">{resumeData.person.name}</h1>
         <p>{homeIntroduction}</p>
 
-        <Suspense fallback={<SectionLoading id="writing" label="Writing" />}>
-          <RecentWriting />
-        </Suspense>
+        <SiteSection id="writing" title="Writing">
+          <WritingList posts={posts.slice(0, 3)} />
+        </SiteSection>
 
-        <GitHubTimeline preview />
-        <Suspense
-          fallback={<SectionLoading id="token-log" label="Token log" />}
-        >
-          <TokenLog />
-        </Suspense>
+        <GitHubTimeline initialPage={activity} preview />
+        {codexStats === null ? (
+          <SiteSection id="token-log" title="Token log">
+            <p className="py-2.5 text-muted-foreground">
+              Token activity is unavailable right now.
+            </p>
+          </SiteSection>
+        ) : (
+          <CodexStats stats={codexStats} />
+        )}
 
-        <Suspense
-          fallback={<SectionLoading id="open-source" label="Open source" />}
-        >
-          <OpenSource />
-        </Suspense>
+        <OpenSource github={github} />
       </SiteMain>
     </SiteShell>
   );

@@ -1,3 +1,5 @@
+export const WORK_LOG_TIME_ZONE = "Asia/Kolkata";
+
 export const dateFormats = {
   date: { dateStyle: "medium" },
   weekday: {

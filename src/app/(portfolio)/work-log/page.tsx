@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { GitHubTimeline } from "@/components/github-timeline";
 import { SiteMain } from "@/components/site-page";
 import { SiteShell } from "@/components/site-shell";
+import { getInitialGitHubActivity } from "@/lib/github-activity-feed";
 import { publicUrl, siteConfig } from "@/lib/site";
 
 const description =
@@ -29,11 +30,12 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default function WorkLogPage() {
+export default async function WorkLogPage() {
+  const initialPage = await getInitialGitHubActivity();
   return (
     <SiteShell activeHref="/work-log">
       <SiteMain>
-        <GitHubTimeline />
+        <GitHubTimeline initialPage={initialPage} />
       </SiteMain>
     </SiteShell>
   );

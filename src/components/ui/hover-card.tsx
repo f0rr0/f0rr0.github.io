@@ -68,7 +68,7 @@ function HoverCardContent({
     <HoverCardPrimitive.Portal>
       <HoverCardPrimitive.Positioner
         align="start"
-        className="z-50 motion-safe:transition-[top,left,right,bottom,transform] motion-safe:duration-100 motion-safe:ease-out"
+        className="site-preview-positioner z-50"
         side={side}
         sideOffset={24}
         collisionPadding={16}
@@ -79,10 +79,7 @@ function HoverCardContent({
         }}
       >
         <HoverCardPrimitive.Popup
-          className={cn(
-            "site-preview h-[var(--popup-height,auto)] origin-(--transform-origin) overflow-hidden outline-none motion-safe:transition-[height,opacity] motion-safe:duration-100",
-            className
-          )}
+          className={cn("site-preview overflow-hidden outline-none", className)}
           data-slot="hover-card-content"
           {...props}
         >

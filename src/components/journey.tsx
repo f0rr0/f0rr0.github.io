@@ -1,7 +1,16 @@
 "use client";
 
-import { motion, MotionConfig, LayoutGroup } from "motion/react";
-import { useId, useRef, useState } from "react";
+import {
+  animate,
+  AnimatePresence,
+  motion,
+  MotionConfig,
+  LayoutGroup,
+  useReducedMotion,
+  useMotionValue,
+} from "motion/react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { DisclosureChevron } from "@/components/ui/collapsible";
@@ -15,6 +24,69 @@ import {
   resumeRoleMarkerLabels,
 } from "@/content/resume";
 import type { LogoAsset, ResumeExperience, ResumeRole } from "@/content/resume";
+
+const layoutTransition = {
+  type: "spring",
+  visualDuration: 0.24,
+  bounce: 0,
+} as const;
+const revealEase = [0.23, 1, 0.32, 1] as const;
+
+// Exit in place while the persistent labels move to their new positions.
+function JourneyReveal({
+  expanded,
+  children,
+  className,
+  delay = 0.18,
+  inline = false,
+}: Readonly<{
+  expanded: boolean;
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+  inline?: boolean;
+}>) {
+  const reducedMotion = useReducedMotion() === true;
+  const Element = inline ? motion.span : motion.div;
+  return (
+    <AnimatePresence initial={false} mode="popLayout">
+      {expanded ? (
+        <Element
+          key="detail"
+          className={className}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={{
+            hidden: {
+              opacity: 0,
+              transform: reducedMotion || inline ? "none" : "translateY(6px)",
+            },
+            visible: {
+              opacity: 1,
+              transform: reducedMotion || inline ? "none" : "translateY(0px)",
+            },
+            exit: {
+              opacity: 0,
+              transform: reducedMotion || inline ? "none" : "translateY(3px)",
+              transition: {
+                duration: reducedMotion ? 0 : 0.1,
+                ease: revealEase,
+              },
+            },
+          }}
+          transition={{
+            duration: reducedMotion ? 0 : inline ? 0.14 : 0.18,
+            delay: reducedMotion ? 0 : delay,
+            ease: revealEase,
+          }}
+        >
+          {children}
+        </Element>
+      ) : null}
+    </AnimatePresence>
+  );
+}
 
 function CompanyLogo({
   logo,
@@ -78,68 +150,107 @@ function RoleBlock({
   role,
   expanded,
 }: Readonly<{ role: ResumeRole; expanded: boolean }>) {
+  const reducedMotion = useReducedMotion() === true;
+  const pointVariants = {
+    hidden: {
+      opacity: reducedMotion ? 1 : 0,
+      transform: reducedMotion ? "none" : "translateY(4px)",
+    },
+    visible: (index: number) => ({
+      opacity: 1,
+      transform: reducedMotion ? "none" : "translateY(0px)",
+      transition: {
+        duration: reducedMotion ? 0 : 0.16,
+        delay: reducedMotion ? 0 : 0.16 + Math.min(index, 3) * 0.03,
+        ease: revealEase,
+      },
+    }),
+  };
   return (
     <div className="journey-role">
       <motion.div
         layout="position"
-        className="journey-role-title flex min-w-0 flex-wrap items-center gap-2"
+        className="journey-role-title relative flex min-w-0 flex-wrap items-center gap-2"
       >
-        <span className="font-medium text-foreground">{role.title}</span>
-        <span className="flex flex-wrap gap-2" hidden={!expanded}>
+        <motion.span layout="position" className="font-medium text-foreground">
+          {role.title}
+        </motion.span>
+        <JourneyReveal
+          expanded={expanded}
+          inline
+          className="flex flex-wrap gap-2"
+          delay={0.12}
+        >
           <RoleMarkers role={role} />
-        </span>
+        </JourneyReveal>
       </motion.div>
       <motion.p
         layout="position"
-        className="journey-role-dates text-xs text-muted-foreground"
+        className="journey-role-dates relative text-xs text-muted-foreground"
       >
-        <span hidden={!expanded}>{role.location} · </span>
-        {role.dates}
+        <JourneyReveal
+          expanded={expanded}
+          inline
+          className="inline-block"
+          delay={0.22}
+        >
+          {role.location} ·&nbsp;
+        </JourneyReveal>
+        <motion.span layout="position" className="inline-block">
+          {role.dates}
+        </motion.span>
       </motion.p>
-      <motion.div
+      <JourneyReveal
+        expanded={expanded}
         className="journey-role-detail"
-        hidden={!expanded}
-        initial={false}
-        animate={{ opacity: expanded ? 1 : 0 }}
+        delay={0.12}
       >
         {role.summary === undefined ? null : (
           <p className="mt-2 text-muted-foreground">{role.summary}</p>
         )}
         {role.bullets !== undefined && role.bullets.length > 0 ? (
           <ul className="mt-2 space-y-2 text-muted-foreground">
-            {role.bullets.map((bullet) => {
+            {role.bullets.map((bullet, index) => {
               const isTextBullet = typeof bullet === "string";
               const text = isTextBullet ? bullet : bullet.text;
               const label = isTextBullet ? undefined : bullet.label;
               const logo = isTextBullet ? undefined : bullet.logo;
 
-              return logo === undefined ? (
-                <li
+              return (
+                <motion.li
                   key={text}
-                  className="relative pl-4 before:absolute before:left-0 before:text-primary before:content-['·']"
+                  custom={index}
+                  variants={pointVariants}
+                  className={
+                    logo === undefined
+                      ? "relative pl-4 before:absolute before:left-0 before:text-primary before:content-['·']"
+                      : "flex gap-2.5"
+                  }
                 >
-                  {text}
-                </li>
-              ) : (
-                <li className="flex gap-2.5" key={text}>
-                  <BulletLogo logo={logo} />
-                  <span>
-                    {label === undefined ? null : (
-                      <>
-                        <span className="font-medium text-foreground">
-                          {label}
-                        </span>
-                        {": "}
-                      </>
-                    )}
-                    {text}
-                  </span>
-                </li>
+                  {logo === undefined ? (
+                    text
+                  ) : (
+                    <>
+                      <BulletLogo logo={logo} />
+                      <span>
+                        {label === undefined ? null : (
+                          <>
+                            <span className="font-medium text-foreground">
+                              {label}
+                            </span>
+                            {": "}
+                          </>
+                        )}
+                        {text}
+                      </span>
+                    </>
+                  )}
+                </motion.li>
               );
             })}
           </ul>
         ) : null}
-      </motion.div>
+      </JourneyReveal>
     </div>
   );
 }
@@ -167,7 +278,7 @@ function ExperienceItem({
         <CompanyLogo logo={item.logo} />
       </motion.div>
       <motion.div layout="position" className="journey-company min-w-0">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <div className="relative flex flex-wrap items-center gap-x-2 gap-y-1">
           <h3 className="font-semibold text-foreground">
             <TooltipTrigger
               payload={
@@ -194,7 +305,7 @@ function ExperienceItem({
                   })}
                 </TooltipContent>
               }
-              className="min-h-6 cursor-pointer text-start hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+              className="journey-company-trigger relative block min-h-6 cursor-pointer text-start focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
               onClick={onToggle}
               aria-expanded={expanded}
               aria-label={`${company}: ${expanded ? "hide details" : "show details"}`}
@@ -203,29 +314,50 @@ function ExperienceItem({
                 company
               ) : (
                 <>
-                  <span hidden={expanded}>{compactName}</span>
-                  <span hidden={!expanded}>{fullName}</span>
+                  <JourneyReveal
+                    expanded={!expanded}
+                    inline
+                    delay={0}
+                    className="block"
+                  >
+                    {compactName}
+                  </JourneyReveal>
+                  <JourneyReveal
+                    expanded={expanded}
+                    inline
+                    delay={0}
+                    className="block"
+                  >
+                    {fullName}
+                  </JourneyReveal>
                 </>
               )}
             </TooltipTrigger>
           </h3>
           {companyStage === undefined ? null : (
-            <Badge
-              hidden={!expanded}
-              variant="outline"
-              title={`Company stage during this role: ${companyStage}`}
+            <JourneyReveal
+              expanded={expanded}
+              inline
+              className="inline-flex"
+              delay={0.12}
             >
-              {companyStage}
-            </Badge>
+              <Badge
+                variant="outline"
+                title={`Company stage during this role: ${companyStage}`}
+              >
+                {companyStage}
+              </Badge>
+            </JourneyReveal>
           )}
         </div>
       </motion.div>
-      <p
-        hidden={!expanded}
+      <JourneyReveal
+        expanded={expanded}
         className="journey-tagline text-xs text-muted-foreground"
+        delay={0.08}
       >
-        {item.tagline}
-      </p>
+        <p>{item.tagline}</p>
+      </JourneyReveal>
       <div className="journey-roles">
         {item.roles.map((role) => (
           <RoleBlock key={role.title} role={role} expanded={expanded} />
@@ -248,13 +380,38 @@ export function Journey({
 }>) {
   const [expanded, setExpanded] = useState(false);
   const contentId = useId();
+  const contentRef = useRef<HTMLDivElement>(null);
+  const height = useMotionValue<number | string>("auto");
+  const reducedMotion = useReducedMotion() === true;
+
+  // Keep the footer and the document's scroll limit in step with the entries.
+  useLayoutEffect(() => {
+    const observer = new ResizeObserver(([entry]) => {
+      const nextHeight = entry.borderBoxSize[0].blockSize;
+      if (reducedMotion || height.get() === "auto") {
+        height.stop();
+        height.set(nextHeight);
+      } else {
+        animate(height, nextHeight, layoutTransition);
+      }
+    });
+    const content = contentRef.current;
+    if (content !== null) {
+      observer.observe(content);
+    }
+    return () => {
+      observer.disconnect();
+      height.stop();
+    };
+  }, [height, reducedMotion]);
+
   const toggle = () => {
     setExpanded((value) => !value);
   };
   return (
     <MotionConfig
       reducedMotion="user"
-      transition={{ duration: 0.2, ease: [0.2, 0, 0, 1] }}
+      transition={{ layout: layoutTransition }}
     >
       <LayoutGroup>
         <TooltipGroup>
@@ -267,7 +424,7 @@ export function Journey({
             <div className="flex min-h-11 items-center justify-between gap-4">
               <button
                 type="button"
-                className="site-text-link"
+                className="journey-toggle site-text-link"
                 aria-expanded={expanded}
                 aria-controls={contentId}
                 onClick={toggle}
@@ -277,30 +434,27 @@ export function Journey({
               </button>
               {action}
             </div>
-            <div id={contentId}>
-              <div hidden={!expanded} className="mt-6">
-                <h2 className="section-title">Skills</h2>
-                <p className="mt-2 text-muted-foreground">
-                  {skills.join(" · ")}
-                </p>
-              </div>
-              <motion.h2 layout="position" className="section-title mt-8">
-                Experience
-              </motion.h2>
-              <ol className="mt-4">
-                {experience.map((item) => (
-                  <ExperienceItem
-                    key={item.company}
-                    item={item}
-                    expanded={expanded}
-                    onToggle={toggle}
-                  />
-                ))}
-              </ol>
-              <motion.div layout="position" className="mt-8">
-                <h2 className="section-title">Education</h2>
+            <motion.div style={{ height }}>
+              <div
+                ref={contentRef}
+                id={contentId}
+                className="relative flow-root"
+              >
+                <JourneyReveal
+                  expanded={expanded}
+                  className="mt-6"
+                  delay={0.04}
+                >
+                  <h2 className="section-title">Skills</h2>
+                  <p className="mt-2 text-muted-foreground">
+                    {skills.join(" · ")}
+                  </p>
+                </JourneyReveal>
+                <motion.h2 layout="position" className="section-title mt-8">
+                  Experience
+                </motion.h2>
                 <ol className="mt-4">
-                  {education.map((item) => (
+                  {experience.map((item) => (
                     <ExperienceItem
                       key={item.company}
                       item={item}
@@ -309,8 +463,21 @@ export function Journey({
                     />
                   ))}
                 </ol>
-              </motion.div>
-            </div>
+                <motion.div layout="position" className="mt-8">
+                  <h2 className="section-title">Education</h2>
+                  <ol className="mt-4">
+                    {education.map((item) => (
+                      <ExperienceItem
+                        key={item.company}
+                        item={item}
+                        expanded={expanded}
+                        onToggle={toggle}
+                      />
+                    ))}
+                  </ol>
+                </motion.div>
+              </div>
+            </motion.div>
           </section>
         </TooltipGroup>
       </LayoutGroup>

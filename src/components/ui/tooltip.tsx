@@ -57,7 +57,7 @@ function TooltipContent({
         anchor={anchor}
         align={align}
         alignOffset={alignOffset}
-        className="isolate z-50 motion-safe:transition-[top,left,right,bottom,transform] motion-safe:duration-100 motion-safe:ease-out"
+        className="site-preview-positioner isolate z-50"
         side={side}
         sideOffset={sideOffset}
         collisionPadding={preview ? 16 : undefined}
@@ -70,8 +70,8 @@ function TooltipContent({
         <TooltipPrimitive.Popup
           className={cn(
             preview
-              ? "site-preview block h-[var(--popup-height,auto)] overflow-hidden motion-safe:transition-[height,opacity] motion-safe:duration-100"
-              : "z-50 inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 rounded-md bg-foreground px-3 py-1.5 text-xs text-background has-data-[slot=kbd]:pr-1.5 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 **:data-[slot=kbd]:relative **:data-[slot=kbd]:isolate **:data-[slot=kbd]:z-50 **:data-[slot=kbd]:rounded-sm data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 duration-150 motion-reduce:animate-none",
+              ? "site-preview block overflow-hidden"
+              : "site-tooltip has-data-[slot=kbd]:pr-1.5 **:data-[slot=kbd]:relative **:data-[slot=kbd]:isolate **:data-[slot=kbd]:z-50 **:data-[slot=kbd]:rounded-sm",
             preview ? undefined : className
           )}
           data-slot="tooltip-content"

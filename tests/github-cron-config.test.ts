@@ -26,8 +26,8 @@ import vercelConfig from "../vercel.json";
 
 const minutesFrom = (schedule: string) => {
   const [minute] = schedule.split(" ", 1);
-  if (minute === "*") {
-    return Array.from({ length: 60 }, (_, index) => index);
+  if (minute === "*/3") {
+    return Array.from({ length: 20 }, (_, index) => index * 3);
   }
   if (minute === "*/5") {
     return Array.from({ length: 12 }, (_, index) => index * 5);
@@ -45,7 +45,7 @@ const minutesFrom = (schedule: string) => {
 };
 
 describe("GitHub cron configuration", () => {
-  test("factual jobs stay staggered while summaries can run every minute", () => {
+  test("factual jobs stay staggered while summaries run 20 times per hour", () => {
     const jobs = [
       GITHUB_EVENTS_CRON_JOB,
       GITHUB_WORKER_CRON_JOB,
@@ -56,7 +56,7 @@ describe("GitHub cron configuration", () => {
     expect(new Set(allMinutes).size).toBe(allMinutes.length);
 
     expect(minutesFrom(GITHUB_SUMMARY_CRON_JOB.schedule)).toEqual(
-      Array.from({ length: 60 }, (_, index) => index)
+      Array.from({ length: 20 }, (_, index) => index * 3)
     );
   });
 

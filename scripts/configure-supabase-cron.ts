@@ -21,6 +21,7 @@ const SUMMARY_URL_NAME = "github_summary_url";
 const WORKER_URL_NAME = "github_worker_url";
 const CODEX_STATS_URL_NAME = "codex_stats_url";
 const CODEX_STATS_JOB_NAME = "codex-stats-every-fifteen-minutes";
+const LEGACY_SUMMARY_JOB_NAME = "github-summary-worker-every-five-minutes";
 const LEGACY_JOB_NAME = "github-sync-every-three-hours";
 const LEGACY_REFS_JOB_NAME = "github-refs-every-fifteen-minutes";
 const LEGACY_TAG_REFS_JOB_NAME = "github-tag-refs-every-fifteen-minutes";
@@ -205,6 +206,7 @@ export const configureSupabaseCron = async (
           ${LEGACY_JOB_NAME},
           ${LEGACY_REFS_JOB_NAME},
           ${LEGACY_TAG_REFS_JOB_NAME},
+          ${LEGACY_SUMMARY_JOB_NAME},
           ${GITHUB_EVENTS_CRON_JOB.name},
           ${GITHUB_HEAD_REFS_CRON_JOB.name},
           ${GITHUB_SUMMARY_CRON_JOB.name},

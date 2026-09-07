@@ -167,10 +167,10 @@ function RoleBlock({
     }),
   };
   return (
-    <div className="journey-role">
+    <div className="journey-role contents [.journey[data-expanded='true']_&]:flex [.journey[data-expanded='true']_&]:flex-wrap [.journey[data-expanded='true']_&]:items-baseline [.journey[data-expanded='true']_&]:justify-between [.journey[data-expanded='true']_&]:[gap:0.25rem_1rem] [.journey[data-expanded='true']_&]:mt-4">
       <motion.div
         layout="position"
-        className="journey-role-title relative flex min-w-0 flex-wrap items-center gap-2"
+        className="journey-role-title [grid-column:2] mt-1 [.journey[data-expanded='false']_&]:justify-self-end [.journey[data-expanded='false']_&]:text-end sm:[.journey[data-expanded='false']_&]:[grid-column:3] sm:[.journey[data-expanded='false']_&]:[grid-row:1] sm:[.journey[data-expanded='false']_&]:self-end sm:[.journey[data-expanded='false']_&]:[margin-top:0] relative flex min-w-0 flex-wrap items-center gap-2"
       >
         <motion.span layout="position" className="font-medium text-foreground">
           {role.title}
@@ -186,7 +186,7 @@ function RoleBlock({
       </motion.div>
       <motion.p
         layout="position"
-        className="journey-role-dates relative text-xs text-muted-foreground"
+        className="journey-role-dates [grid-column:2] mt-2 [.journey[data-expanded='false']_&]:justify-self-end [.journey[data-expanded='false']_&]:text-end sm:[.journey[data-expanded='false']_&]:[grid-column:3] sm:[.journey[data-expanded='false']_&]:[grid-row:2] sm:[.journey[data-expanded='false']_&]:mt-1 relative text-xs text-muted-foreground"
       >
         <JourneyReveal
           expanded={expanded}
@@ -202,7 +202,7 @@ function RoleBlock({
       </motion.p>
       <JourneyReveal
         expanded={expanded}
-        className="journey-role-detail"
+        className="journey-role-detail basis-full min-w-0"
         delay={0.12}
       >
         {role.summary === undefined ? null : (
@@ -273,11 +273,21 @@ function ExperienceItem({
       ? undefined
       : resumeCompanyStageLabels[item.companyStage];
   return (
-    <motion.li ref={entryRef} layout="position" className="journey-entry">
-      <motion.div layout="position" className="journey-logo">
+    <motion.li
+      ref={entryRef}
+      layout="position"
+      className="journey-entry relative [border-bottom:1px_solid_transparent] [transition:border-color_100ms_ease-out] grid [grid-template-columns:2.5rem_minmax(0,_1fr)] items-start gap-x-4 py-3 [.journey[data-expanded='false']_&:not(:last-child)]:[border-bottom-color:var(--border)] [.journey[data-expanded='false']_&:not(:last-child)]:[transition:border-color_140ms_ease-out_200ms] sm:[.journey[data-expanded='false']_&]:[grid-template-columns:2.5rem_minmax(0,_1fr)_minmax(0,_1.25fr)] motion-reduce:transition-none motion-reduce:[.journey[data-expanded='false']_&:not(:last-child)]:transition-none"
+    >
+      <motion.div
+        layout="position"
+        className="journey-logo [grid-column:1] [grid-row:1] self-center sm:[.journey[data-expanded='false']_&]:[grid-row:1_/_span_2]"
+      >
         <CompanyLogo logo={item.logo} />
       </motion.div>
-      <motion.div layout="position" className="journey-company min-w-0">
+      <motion.div
+        layout="position"
+        className="journey-company flex min-h-10 items-center self-center [grid-column:2] [grid-row:1] sm:[.journey[data-expanded='false']_&]:[grid-row:1_/_span_2] min-w-0"
+      >
         <div className="relative flex flex-wrap items-center gap-x-2 gap-y-1">
           <h3 className="font-semibold text-foreground">
             <TooltipTrigger
@@ -305,7 +315,7 @@ function ExperienceItem({
                   })}
                 </TooltipContent>
               }
-              className="journey-company-trigger relative block min-h-6 cursor-pointer text-start focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+              className="journey-company-trigger underline [text-decoration-color:transparent] [text-underline-offset:0.2em] [transition:text-decoration-color_150ms_ease-out] [&:is(:hover,_:focus-visible)]:[text-decoration-color:currentColor] motion-reduce:transition-none relative block min-h-6 cursor-pointer text-start focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
               onClick={onToggle}
               aria-expanded={expanded}
               aria-label={`${company}: ${expanded ? "hide details" : "show details"}`}
@@ -353,12 +363,12 @@ function ExperienceItem({
       </motion.div>
       <JourneyReveal
         expanded={expanded}
-        className="journey-tagline text-xs text-muted-foreground"
+        className="journey-tagline [grid-column:2] mt-2 text-xs text-muted-foreground"
         delay={0.08}
       >
         <p>{item.tagline}</p>
       </JourneyReveal>
-      <div className="journey-roles">
+      <div className="journey-roles contents [.journey[data-expanded='true']_&]:block [.journey[data-expanded='true']_&]:[grid-column:1_/_-1] sm:[.journey[data-expanded='true']_&]:[grid-column:2]">
         {item.roles.map((role) => (
           <RoleBlock key={role.title} role={role} expanded={expanded} />
         ))}
@@ -416,7 +426,7 @@ export function Journey({
       <LayoutGroup>
         <TooltipGroup>
           <section
-            className="journey"
+            className="journey [overflow-anchor:none]"
             id="journey"
             data-expanded={expanded}
             aria-label="Career history"
@@ -424,7 +434,7 @@ export function Journey({
             <div className="flex min-h-11 items-center justify-between gap-4">
               <button
                 type="button"
-                className="journey-toggle site-text-link"
+                className="journey-toggle [transition:color_150ms_ease-out] motion-reduce:transition-none site-text-link inline-flex min-h-11 items-center gap-1.5 rounded-sm text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
                 aria-expanded={expanded}
                 aria-controls={contentId}
                 onClick={toggle}
@@ -445,12 +455,17 @@ export function Journey({
                   className="mt-6"
                   delay={0.04}
                 >
-                  <h2 className="section-title">Skills</h2>
+                  <h2 className="section-title mb-4 font-serif text-2xl font-normal text-foreground">
+                    Skills
+                  </h2>
                   <p className="mt-2 text-muted-foreground">
                     {skills.join(" · ")}
                   </p>
                 </JourneyReveal>
-                <motion.h2 layout="position" className="section-title mt-8">
+                <motion.h2
+                  layout="position"
+                  className="section-title mb-4 font-serif text-2xl font-normal text-foreground mt-8"
+                >
                   Experience
                 </motion.h2>
                 <ol className="mt-4">
@@ -464,7 +479,9 @@ export function Journey({
                   ))}
                 </ol>
                 <motion.div layout="position" className="mt-8">
-                  <h2 className="section-title">Education</h2>
+                  <h2 className="section-title mb-4 font-serif text-2xl font-normal text-foreground">
+                    Education
+                  </h2>
                   <ol className="mt-4">
                     {education.map((item) => (
                       <ExperienceItem

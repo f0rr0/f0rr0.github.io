@@ -22,7 +22,7 @@ export async function WritingList({ posts }: Readonly<{ posts: BlogPost[] }>) {
     <p className="text-muted-foreground">No published writing yet.</p>
   ) : (
     <HoverCardGroup>
-      <ol className="site-list">
+      <ol className="site-list divide-y divide-border">
         {entries.map((post) => (
           <li key={post.slug}>
             <HoverCardTrigger
@@ -51,14 +51,14 @@ export async function WritingList({ posts }: Readonly<{ posts: BlogPost[] }>) {
                   </div>
                 </HoverCardContent>
               }
-              className="site-row group"
+              className="site-row grid min-h-11 w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 rounded-sm py-2.5 text-start text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring group"
               render={<Link href={`/blog/${post.slug}`} prefetch={false} />}
             >
-              <span className="site-row-title group-hover:underline">
+              <span className="site-row-title min-w-0 truncate font-light [.site-row[aria-expanded]_&]:[interpolate-size:allow-keywords] [.site-row[aria-expanded]_&]:[block-size:1lh] [.site-row[aria-expanded]_&]:[transition:block-size_240ms_var(--ease-settle)] [.site-row[aria-expanded='true']_&]:wrap-anywhere [.site-row[aria-expanded='true']_&]:whitespace-normal [.site-row[aria-expanded='true']_&]:[block-size:auto] motion-reduce:[.site-row[aria-expanded]_&]:transition-none group-hover:underline">
                 {post.metadata.title}
               </span>
               <LocalDateTime
-                className="site-row-meta hidden sm:flex"
+                className="site-row-meta min-h-6 shrink-0 items-center justify-end gap-2 text-xs text-muted-foreground tabular-nums hidden sm:flex"
                 dateTime={post.date.toISOString()}
               />
             </HoverCardTrigger>

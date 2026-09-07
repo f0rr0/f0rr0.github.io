@@ -39,7 +39,7 @@ function LanguageLabel({ className, language }: LanguageLabelProps) {
     <span className={className}>
       <span
         aria-hidden="true"
-        className="code-block-language-icon"
+        className="code-block-language-icon relative w-4 h-4 flex-none [&::before]:absolute [&::before]:[inset:0] [&::before]:[background:currentColor] [&::before]:content-[''] [&::before]:[mask:var(--code-language-icon)_center_/_contain_no-repeat]"
         style={iconStyle}
       />
       <span>{getCodeLanguageName(language)}</span>
@@ -62,24 +62,27 @@ export default function CodeBlock({
     const sourceHref = props["data-github-href"] ?? "https://github.com";
 
     return (
-      <figure className="code-block github-code-embed" data-language={language}>
+      <figure
+        className="code-block min-w-0 overflow-hidden [border:1px_solid_color-mix(in_oklab,_var(--border)_88%,_var(--foreground))] [border-radius:0.875rem] [background:color-mix(in_oklab,_var(--card)_92%,_var(--muted))] [box-shadow:0_1px_2px_rgb(41_37_36_/_8%),_0_16px_38px_-32px_rgb(41_37_36_/_38%)] dark:[box-shadow:0_1px_2px_rgb(0_0_0_/_30%),_0_18px_42px_-30px_rgb(0_0_0_/_85%)] [&_pre[data-theme]]:[max-width:100%] [&_pre[data-theme]]:[margin:0] [&_pre[data-theme]]:overflow-x-auto [&_pre[data-theme]]:[overscroll-behavior-inline:contain] [&_pre[data-theme]]:border-0 [&_pre[data-theme]]:rounded-none [&_pre[data-theme]]:bg-transparent [&_pre[data-theme]]:[padding:0] [&_pre[data-theme]]:[scrollbar-color:color-mix(in_oklab,_var(--muted-foreground)_48%,_transparent)_transparent] [&_pre[data-theme]]:[scrollbar-width:thin] [&_pre[data-theme]:focus-visible]:[outline:2px_solid_var(--ring)] [&_pre[data-theme]:focus-visible]:[outline-offset:-2px] [&_pre[data-theme]::-webkit-scrollbar]:h-3 [&_pre[data-theme]::-webkit-scrollbar-track]:[border-top:1px_solid_color-mix(in_oklab,_var(--border)_72%,_transparent)] [&_pre[data-theme]::-webkit-scrollbar-track]:[background:color-mix(in_oklab,_var(--muted)_58%,_transparent)] [&_pre[data-theme]::-webkit-scrollbar-thumb]:[border:0.2rem_solid_transparent] [&_pre[data-theme]::-webkit-scrollbar-thumb]:rounded-full [&_pre[data-theme]::-webkit-scrollbar-thumb]:[background:color-mix(in_oklab,_var(--muted-foreground)_52%,_transparent)] [&_pre[data-theme]::-webkit-scrollbar-thumb]:[background-clip:padding-box] [&_pre[data-theme]_>_code]:grid [&_pre[data-theme]_>_code]:w-max [&_pre[data-theme]_>_code]:min-w-full [&_pre[data-theme]_>_code]:[padding:1.125rem_0_1.25rem] [&_pre[data-theme]_>_code]:bg-transparent [&_pre[data-theme]_>_code]:text-foreground [&_pre[data-theme]_>_code]:[font-size:0.875rem] [&_pre[data-theme]_>_code]:font-normal [&_pre[data-theme]_>_code]:[line-height:1.5rem] [&_[data-line]]:min-w-full [&_[data-line]]:[padding:0_1.25rem] [&_[data-highlighted-line]]:[background:color-mix(in_oklab,_var(--primary)_10%,_transparent)] [&_[data-highlighted-line]]:[box-shadow:inset_2px_0_0_color-mix(in_oklab,_var(--primary)_82%,_transparent)] [&_[data-highlighted-chars]]:[border-radius:0.25rem] [&_[data-highlighted-chars]]:[background:color-mix(in_oklab,_var(--primary)_15%,_transparent)] [&_[data-highlighted-chars]]:[box-shadow:0_0_0_0.125rem_color-mix(in_oklab,_var(--primary)_15%,_transparent)] max-sm:[&_pre[data-theme]_>_code]:[padding-block:1rem_1.125rem] max-sm:[&_[data-line]]:px-4 github-code-embed [margin:1rem_0_2rem] [&_pre[data-theme]]:max-h-128 [&_pre[data-theme]]:overflow-y-auto [&_pre[data-theme]]:[overscroll-behavior:contain] [&_[data-line-number]]:block [&_[data-line-number]]:min-w-full [&_[data-line-number]]:pr-5 [&_[data-line-number]::before]:inline-block [&_[data-line-number]::before]:w-15 [&_[data-line-number]::before]:[margin-right:0.875rem] [&_[data-line-number]::before]:[border-right:1px_solid_color-mix(in_oklab,_var(--border)_78%,_transparent)] [&_[data-line-number]::before]:pr-3 [&_[data-line-number]::before]:[color:color-mix(in_oklab,_var(--muted-foreground)_70%,_transparent)] [&_[data-line-number]::before]:[content:attr(data-line-number)] [&_[data-line-number]::before]:tabular-nums [&_[data-line-number]::before]:text-right [&_[data-line-number]::before]:select-none dark:[&_code[data-theme]]:[color:var(--shiki-dark)] dark:[&_code[data-theme]_span]:[color:var(--shiki-dark)] max-sm:[&_[data-line-number]]:pr-4 max-sm:[&_[data-line-number]::before]:w-14 max-sm:[&_[data-line-number]::before]:[margin-right:0.75rem] max-sm:[&_[data-line-number]::before]:[padding-right:0.65rem] print:shadow-none print:[&_pre[data-theme]]:[max-height:none] print:[&_pre[data-theme]]:overflow-visible print:[&_pre[data-theme]]:whitespace-pre-wrap print:[&_pre[data-theme]_>_code]:[width:auto] print:[&_pre[data-theme]_>_code]:wrap-anywhere"
+        data-language={language}
+      >
         <pre {...props}>{children}</pre>
-        <figcaption className="github-code-embed-toolbar">
+        <figcaption className="github-code-embed-toolbar [&.github-code-embed-toolbar]:mt-0 flex min-h-10.5 [margin:0] items-center justify-between gap-4 [border-top:1px_solid_color-mix(in_oklab,_var(--border)_88%,_transparent)] [background:color-mix(in_oklab,_var(--muted)_72%,_var(--card))] [padding:0.35rem_0.5rem_0.35rem_0.65rem] font-sans max-sm:min-h-10 max-sm:gap-1 max-sm:[padding-inline:0.4rem]">
           <a
             aria-label={`View ${owner}/${repo}/${filePath}, ${lineLabel}, on GitHub`}
-            className="github-code-embed-source"
+            className="github-code-embed-source flex [flex:1_1_auto] min-w-0 items-center gap-2 [border-radius:0.5rem] [padding:0.35rem_0.45rem] text-muted-foreground [text-decoration:none] [transition:background-color_150ms_ease,_color_150ms_ease] [&:hover]:[background:color-mix(in_oklab,_var(--card)_75%,_transparent)] [&:hover]:text-foreground [&:focus-visible]:[outline:2px_solid_color-mix(in_oklab,_var(--ring)_42%,_transparent)] [&:focus-visible]:outline-offset-1 [&_svg]:w-4 [&_svg]:h-4 [&_svg]:flex-none [&_svg]:fill-current max-sm:[padding-left:0.35rem]"
             href={sourceHref}
             rel="noreferrer noopener"
             target="_blank"
           >
             <GitHubMark />
-            <span className="github-code-embed-source-label">
+            <span className="github-code-embed-source-label overflow-hidden text-ellipsis [font-size:0.75rem] font-normal [line-height:1] whitespace-nowrap">
               {owner}/{repo}/{filePath}
             </span>
           </a>
-          <div className="github-code-embed-meta">
+          <div className="github-code-embed-meta flex flex-none items-center gap-1 text-muted-foreground">
             <LanguageLabel
-              className="github-code-embed-language"
+              className="github-code-embed-language [color:color-mix(in_oklab,_var(--muted-foreground)_88%,_var(--foreground))] [font-size:0.75rem] font-semibold [letter-spacing:0.075em] [line-height:1] uppercase inline-flex items-center gap-1.5 [padding:0_0.4rem] whitespace-nowrap"
               language={language}
             />
             <CopyCodeButton language={languageName} />
@@ -90,10 +93,16 @@ export default function CodeBlock({
   }
 
   return (
-    <div className="code-block" data-language={language}>
+    <div
+      className="code-block min-w-0 overflow-hidden [border:1px_solid_color-mix(in_oklab,_var(--border)_88%,_var(--foreground))] [border-radius:0.875rem] [background:color-mix(in_oklab,_var(--card)_92%,_var(--muted))] [box-shadow:0_1px_2px_rgb(41_37_36_/_8%),_0_16px_38px_-32px_rgb(41_37_36_/_38%)] dark:[box-shadow:0_1px_2px_rgb(0_0_0_/_30%),_0_18px_42px_-30px_rgb(0_0_0_/_85%)] [&_pre[data-theme]]:[max-width:100%] [&_pre[data-theme]]:[margin:0] [&_pre[data-theme]]:overflow-x-auto [&_pre[data-theme]]:[overscroll-behavior-inline:contain] [&_pre[data-theme]]:border-0 [&_pre[data-theme]]:rounded-none [&_pre[data-theme]]:bg-transparent [&_pre[data-theme]]:[padding:0] [&_pre[data-theme]]:[scrollbar-color:color-mix(in_oklab,_var(--muted-foreground)_48%,_transparent)_transparent] [&_pre[data-theme]]:[scrollbar-width:thin] [&_pre[data-theme]:focus-visible]:[outline:2px_solid_var(--ring)] [&_pre[data-theme]:focus-visible]:[outline-offset:-2px] [&_pre[data-theme]::-webkit-scrollbar]:h-3 [&_pre[data-theme]::-webkit-scrollbar-track]:[border-top:1px_solid_color-mix(in_oklab,_var(--border)_72%,_transparent)] [&_pre[data-theme]::-webkit-scrollbar-track]:[background:color-mix(in_oklab,_var(--muted)_58%,_transparent)] [&_pre[data-theme]::-webkit-scrollbar-thumb]:[border:0.2rem_solid_transparent] [&_pre[data-theme]::-webkit-scrollbar-thumb]:rounded-full [&_pre[data-theme]::-webkit-scrollbar-thumb]:[background:color-mix(in_oklab,_var(--muted-foreground)_52%,_transparent)] [&_pre[data-theme]::-webkit-scrollbar-thumb]:[background-clip:padding-box] [&_pre[data-theme]_>_code]:grid [&_pre[data-theme]_>_code]:w-max [&_pre[data-theme]_>_code]:min-w-full [&_pre[data-theme]_>_code]:[padding:1.125rem_0_1.25rem] [&_pre[data-theme]_>_code]:bg-transparent [&_pre[data-theme]_>_code]:text-foreground [&_pre[data-theme]_>_code]:[font-size:0.875rem] [&_pre[data-theme]_>_code]:font-normal [&_pre[data-theme]_>_code]:[line-height:1.5rem] [&_[data-line]]:min-w-full [&_[data-line]]:[padding:0_1.25rem] [&_[data-highlighted-line]]:[background:color-mix(in_oklab,_var(--primary)_10%,_transparent)] [&_[data-highlighted-line]]:[box-shadow:inset_2px_0_0_color-mix(in_oklab,_var(--primary)_82%,_transparent)] [&_[data-highlighted-chars]]:[border-radius:0.25rem] [&_[data-highlighted-chars]]:[background:color-mix(in_oklab,_var(--primary)_15%,_transparent)] [&_[data-highlighted-chars]]:[box-shadow:0_0_0_0.125rem_color-mix(in_oklab,_var(--primary)_15%,_transparent)] max-sm:[&_pre[data-theme]_>_code]:[padding-block:1rem_1.125rem] max-sm:[&_[data-line]]:px-4 print:shadow-none print:[&_pre[data-theme]]:overflow-visible print:[&_pre[data-theme]]:whitespace-pre-wrap print:[&_pre[data-theme]_>_code]:[width:auto] print:[&_pre[data-theme]_>_code]:wrap-anywhere"
+      data-language={language}
+    >
       <pre {...props}>{children}</pre>
-      <div className="code-block-toolbar">
-        <LanguageLabel className="code-block-language" language={language} />
+      <div className="code-block-toolbar flex min-h-10.5 items-center justify-end gap-1 [border-top:1px_solid_color-mix(in_oklab,_var(--border)_88%,_transparent)] [background:color-mix(in_oklab,_var(--muted)_72%,_var(--card))] [padding:0.35rem_0.5rem_0.35rem_1rem] font-sans max-sm:min-h-10">
+        <LanguageLabel
+          className="code-block-language [color:color-mix(in_oklab,_var(--muted-foreground)_88%,_var(--foreground))] [font-size:0.75rem] font-semibold [letter-spacing:0.075em] [line-height:1] uppercase inline-flex items-center gap-1.5 [padding:0_0.4rem]"
+          language={language}
+        />
         <CopyCodeButton language={languageName} />
       </div>
     </div>

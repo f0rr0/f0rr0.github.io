@@ -359,7 +359,7 @@ async function renderCodeReference(parsed, data) {
 }
 
 function renderShell({ content, href, label }) {
-  return `<a aria-label="${escapeHtml(label)}" class="github-embed" href="${escapeHtml(href)}" rel="noreferrer noopener" target="_blank">${content}</a>`;
+  return `<a aria-label="${escapeHtml(label)}" class="github-embed flex min-w-0 min-h-48 flex-col [gap:0.7rem] overflow-hidden [border:1px_solid_color-mix(in_oklab,_var(--border)_88%,_var(--foreground))] [border-radius:0.875rem] [background:radial-gradient(_circle_at_100%_0%,_color-mix(in_oklab,_var(--primary)_10%,_transparent),_transparent_42%_),_color-mix(in_oklab,_var(--card)_95%,_var(--muted))] [box-shadow:0_1px_2px_rgb(41_37_36_/_8%),_0_18px_42px_-34px_rgb(41_37_36_/_34%)] [padding:1.1rem] [color:inherit] [text-decoration:none] [transition:border-color_150ms_ease,_box-shadow_150ms_ease,_transform_150ms_ease] dark:[box-shadow:0_1px_2px_rgb(0_0_0_/_30%),_0_18px_42px_-30px_rgb(0_0_0_/_80%)] [&:hover]:[border-color:color-mix(in_oklab,_var(--primary)_58%,_var(--border))] [&:hover]:[box-shadow:0_2px_4px_rgb(41_37_36_/_10%),_0_22px_46px_-32px_rgb(41_37_36_/_42%)] [&:hover]:[transform:translateY(-1px)] [&:focus-visible]:border-ring [&:focus-visible]:[outline:2px_solid_color-mix(in_oklab,_var(--ring)_38%,_transparent)] [&:focus-visible]:outline-offset-3 [&_svg]:fill-none [&_svg]:stroke-current [&_svg]:[stroke-linecap:round] [&_svg]:[stroke-linejoin:round]" href="${escapeHtml(href)}" rel="noreferrer noopener" target="_blank">${content}</a>`;
 }
 
 function renderPullRequest(parsed, data) {
@@ -370,19 +370,19 @@ function renderPullRequest(parsed, data) {
 
   return renderShell({
     content: `
-      <span class="github-embed-header">
-        <span class="github-embed-repository">${icons.branch}<span>${escapeHtml(parsed.owner)} / ${escapeHtml(parsed.repo)}</span></span>
-        <span class="github-embed-status github-embed-status-${status}">${icons.pullRequest}${escapeHtml(status)}</span>
+      <span class="github-embed-header flex items-center justify-between gap-3">
+        <span class="github-embed-repository flex items-center min-w-0 [gap:0.45rem] overflow-hidden text-muted-foreground font-sans [font-size:0.75rem] font-semibold text-ellipsis whitespace-nowrap [&_svg]:w-4 [&_svg]:h-4 [&_svg]:flex-none [&_svg]:[stroke-width:1.8]">${icons.branch}<span>${escapeHtml(parsed.owner)} / ${escapeHtml(parsed.repo)}</span></span>
+        <span class="github-embed-status flex items-center flex-none [gap:0.3rem] [border:1px_solid_color-mix(in_oklab,_currentColor_34%,_transparent)] rounded-full [padding:0.28rem_0.55rem] font-sans [font-size:0.75rem] font-bold [line-height:1] capitalize [&_svg]:w-3 [&_svg]:h-3 [&_svg]:[stroke-width:2.2] github-embed-status-${status}">${icons.pullRequest}${escapeHtml(status)}</span>
       </span>
-      <span class="github-embed-title">${escapeHtml(data.title)}</span>
-      <span class="github-embed-meta">
+      <span class="github-embed-title [display:-webkit-box] overflow-hidden text-foreground font-serif [font-size:0.875rem] font-normal [line-height:1.35] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">${escapeHtml(data.title)}</span>
+      <span class="github-embed-meta flex items-center [gap:0.45rem] text-muted-foreground font-sans [font-size:0.75rem] [line-height:1.35]">
         <span>#${fullNumberFormatter.format(data.number)} by ${escapeHtml(data.user.login)}</span>
         <span aria-hidden="true">·</span>
         <time datetime="${escapeHtml(statusDate)}">${dateFormatter.format(new Date(statusDate))}</time>
       </span>
-      <span aria-label="Pull request changes" class="github-embed-stats">
-        <span class="github-embed-additions">+${fullNumberFormatter.format(data.additions)}</span>
-        <span class="github-embed-deletions">−${fullNumberFormatter.format(data.deletions)}</span>
+      <span aria-label="Pull request changes" class="github-embed-stats flex items-center min-h-5 [margin-top:auto] flex-wrap gap-3 text-muted-foreground font-sans [font-size:0.75rem] tabular-nums font-semibold [line-height:1] [&_>_span]:inline-flex [&_>_span]:items-center [&_>_span]:[gap:0.3rem] [&_svg]:w-3.5 [&_svg]:h-3.5 [&_svg]:[stroke-width:1.8]">
+        <span class="github-embed-additions [color:light-dark(oklch(42%_0.14_145),_oklch(78%_0.15_145))]">+${fullNumberFormatter.format(data.additions)}</span>
+        <span class="github-embed-deletions [color:light-dark(oklch(48%_0.18_25),_oklch(75%_0.16_25))]">−${fullNumberFormatter.format(data.deletions)}</span>
         <span>${fullNumberFormatter.format(data.changed_files)} ${fileLabel}</span>
       </span>`,
     href: data.html_url,
@@ -392,26 +392,26 @@ function renderPullRequest(parsed, data) {
 
 function renderRepository(data) {
   const archivedStatus = data.archived
-    ? '<span class="github-embed-status github-embed-status-archived">Archived</span>'
+    ? '<span class="github-embed-status flex items-center flex-none [gap:0.3rem] [border:1px_solid_color-mix(in_oklab,_currentColor_34%,_transparent)] rounded-full [padding:0.28rem_0.55rem] font-sans [font-size:0.75rem] font-bold [line-height:1] capitalize [&_svg]:w-3 [&_svg]:h-3 [&_svg]:[stroke-width:2.2] github-embed-status-archived">Archived</span>'
     : "";
   const description =
     data.description === null
       ? ""
-      : `<span class="github-embed-description">${escapeHtml(data.description)}</span>`;
+      : `<span class="github-embed-description [display:-webkit-box] overflow-hidden text-muted-foreground [font-size:0.875rem] [line-height:1.5] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">${escapeHtml(data.description)}</span>`;
   const language =
     data.language === null
       ? ""
-      : `<span class="github-embed-language"><span aria-hidden="true"></span>${escapeHtml(data.language)}</span>`;
+      : `<span class="github-embed-language flex items-center [gap:0.35rem] [&_>_span]:[width:0.55rem] [&_>_span]:[height:0.55rem] [&_>_span]:[border:1px_solid_color-mix(in_oklab,_var(--primary)_72%,_var(--foreground))] [&_>_span]:rounded-full [&_>_span]:bg-primary"><span aria-hidden="true"></span>${escapeHtml(data.language)}</span>`;
 
   return renderShell({
     content: `
-      <span class="github-embed-header">
-        <span class="github-embed-repository">${icons.branch}GitHub repository</span>
+      <span class="github-embed-header flex items-center justify-between gap-3">
+        <span class="github-embed-repository flex items-center min-w-0 [gap:0.45rem] overflow-hidden text-muted-foreground font-sans [font-size:0.75rem] font-semibold text-ellipsis whitespace-nowrap [&_svg]:w-4 [&_svg]:h-4 [&_svg]:flex-none [&_svg]:[stroke-width:1.8]">${icons.branch}GitHub repository</span>
         ${archivedStatus}
       </span>
-      <span class="github-embed-title">${escapeHtml(data.full_name)}</span>
+      <span class="github-embed-title [display:-webkit-box] overflow-hidden text-foreground font-serif [font-size:0.875rem] font-normal [line-height:1.35] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">${escapeHtml(data.full_name)}</span>
       ${description}
-      <span aria-label="Repository statistics" class="github-embed-stats">
+      <span aria-label="Repository statistics" class="github-embed-stats flex items-center min-h-5 [margin-top:auto] flex-wrap gap-3 text-muted-foreground font-sans [font-size:0.75rem] tabular-nums font-semibold [line-height:1] [&_>_span]:inline-flex [&_>_span]:items-center [&_>_span]:[gap:0.3rem] [&_svg]:w-3.5 [&_svg]:h-3.5 [&_svg]:[stroke-width:1.8]">
         ${language}
         <span>${icons.star}${compactNumberFormatter.format(data.stargazers_count)}</span>
         <span>${icons.fork}${compactNumberFormatter.format(data.forks_count)}</span>
@@ -436,11 +436,11 @@ function renderFallback(parsed) {
 
   return renderShell({
     content: `
-      <span class="github-embed-header">
-        <span class="github-embed-repository">${icons.branch}GitHub</span>
+      <span class="github-embed-header flex items-center justify-between gap-3">
+        <span class="github-embed-repository flex items-center min-w-0 [gap:0.45rem] overflow-hidden text-muted-foreground font-sans [font-size:0.75rem] font-semibold text-ellipsis whitespace-nowrap [&_svg]:w-4 [&_svg]:h-4 [&_svg]:flex-none [&_svg]:[stroke-width:1.8]">${icons.branch}GitHub</span>
       </span>
-      <span class="github-embed-title">${escapeHtml(label)}</span>
-      <span class="github-embed-description">${escapeHtml(description)}</span>`,
+      <span class="github-embed-title [display:-webkit-box] overflow-hidden text-foreground font-serif [font-size:0.875rem] font-normal [line-height:1.35] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">${escapeHtml(label)}</span>
+      <span class="github-embed-description [display:-webkit-box] overflow-hidden text-muted-foreground [font-size:0.875rem] [line-height:1.5] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">${escapeHtml(description)}</span>`,
     href: parsed.href,
     label: `Open ${label} on GitHub`,
   });

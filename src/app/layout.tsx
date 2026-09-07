@@ -102,7 +102,7 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
     >
-      <body className="min-h-screen antialiased">
+      <body className="min-h-screen font-sans antialiased [&_:is(h1,h2,h3,h4,h5,h6)]:font-normal [&_:is(a,button,summary)]:decoration-wavy [&_:is(a,button,summary)]:decoration-1 [&_:is(a,button,summary)]:underline-offset-4 [&_:is(a,button)_:is(h3,span)]:decoration-wavy [&_:is(a,button)_:is(h3,span)]:decoration-1 [&_:is(a,button)_:is(h3,span)]:underline-offset-4">
         <JsonLd data={buildRootJsonLd()} />
         <ThemeProvider
           attribute="class"

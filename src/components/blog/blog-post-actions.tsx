@@ -51,7 +51,7 @@ export function BlogPostActions({
       <DropdownMenu>
         <DropdownMenuTrigger
           aria-label={`Ask AI about ${title}`}
-          className="site-text-link"
+          className="site-text-link inline-flex min-h-11 items-center gap-1.5 rounded-sm text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
         >
           <SparklesIcon aria-hidden="true" className="size-3.5" />
           Ask AI
@@ -119,7 +119,7 @@ export function BlogPostActions({
       </DropdownMenu>
 
       <a
-        className="site-text-link"
+        className="site-text-link inline-flex min-h-11 items-center gap-1.5 rounded-sm text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
         aria-label="View this post as Markdown"
         href={markdownHref}
         {...externalLinkProps}

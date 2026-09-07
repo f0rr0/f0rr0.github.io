@@ -26,7 +26,7 @@ It sounded like a fun weekend project. It also sounded like an excellent excuse 
 
 I had already used ZeroClaw at work and spent enough time inside its Rust runtime to know where the interesting seams were. Two of my fixes had made it upstream: one for authenticated Slack attachments and Socket Mode hardening, and a much smaller one that made Slack's `mention_only` setting work end to end. So channels, attachments, reply policy and long-running agents were familiar territory.
 
-<div className="github-embed-grid">
+<div className="github-embed-grid grid gap-4 [margin:2rem_0] sm:[grid-template-columns:repeat(2,_minmax(0,_1fr))]">
 
 https://github.com/zeroclaw-labs/zeroclaw/pull/3086
 
@@ -98,7 +98,7 @@ That last case matters. The easiest implementation is to flatten every sentence 
 
 The same separation helps with repetition. “We ate this recently”, “I didn't enjoy it”, and “everyone liked it” are different signals. The system records a meal episode, associates later feedback with it, and makes both available during the next round of suggestions.
 
-<figure id="preference-memory" className="article-screenshot">
+<figure id="preference-memory" className="article-screenshot max-w-112 mx-auto [scroll-margin-top:6rem] [&_img]:w-full [&_img]:[margin:0]">
   <Image
     src="./meal-preferences.png"
     alt="Telegram conversation where ZeroClaw summarizes Sid and Shreya's meal preferences"
@@ -170,7 +170,7 @@ Direct photo evidence starts at `1.0`, a manual chat observation at `0.9`, and a
 
 This is not a magical fridge API. It is something more useful: a current best guess with enough provenance to say “capsicum is probably available; paneer needs checking”. The cook can correct it in one message and become the freshest source again.
 
-<div id="pantry-freshness" className="article-screenshot-grid">
+<div id="pantry-freshness" className="article-screenshot-grid [scroll-margin-top:6rem] [&_img]:w-full [&_img]:[margin:0] grid gap-6 [margin:2rem_0] [&.article-screenshot-grid_figure]:min-w-0 [&.article-screenshot-grid_figure]:[margin:0] sm:[grid-template-columns:repeat(2,_minmax(0,_1fr))] sm:items-start">
   <figure>
     <Image
       src="./pantry-from-order-history.png"
@@ -219,7 +219,7 @@ score =
 
 The cook's messages remain part of the grounding context because “technically possible from the ingredient list” and “reasonable to cook today” are not the same thing. The assistant is there to get the group to a sensible shortlist and a visible decision, not to issue culinary decrees from a SQLite database.
 
-<div id="context-aware-recommendations" className="article-screenshot-grid">
+<div id="context-aware-recommendations" className="article-screenshot-grid [scroll-margin-top:6rem] [&_img]:w-full [&_img]:[margin:0] grid gap-6 [margin:2rem_0] [&.article-screenshot-grid_figure]:min-w-0 [&.article-screenshot-grid_figure]:[margin:0] sm:[grid-template-columns:repeat(2,_minmax(0,_1fr))] sm:items-start">
   <figure>
     <Image
       src="./lunch-from-fridge-photos.png"

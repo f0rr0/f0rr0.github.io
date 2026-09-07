@@ -18,7 +18,7 @@ export function SiteHeader({
   const navigation = resumeData.navItems.map((item) => {
     const props = {
       "aria-current": item.href === currentPath ? ("page" as const) : undefined,
-      className: `site-nav-link ${item.href === activeHref ? "site-nav-link-active" : ""}`,
+      className: `site-nav-link inline-flex min-h-11 items-center rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${item.href === activeHref ? "site-nav-link-active text-primary underline" : ""}`,
       href: item.href,
     };
     return (
@@ -37,7 +37,7 @@ export function SiteHeader({
   });
   return (
     <header className="bg-background font-sans text-foreground print:hidden">
-      <div className="site-container py-6">
+      <div className="site-container mx-auto w-full max-w-192 px-4 sm:px-8 lg:px-12 py-6">
         <nav
           aria-label="Primary navigation"
           className="flex items-center justify-between"

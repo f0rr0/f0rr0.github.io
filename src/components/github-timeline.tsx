@@ -12,7 +12,7 @@ export function GitHubTimeline({
 }: Readonly<{ initialPage: PublicGitHubActivityPage; preview?: boolean }>) {
   return (
     <SiteSection
-      className={preview ? "home-section" : ""}
+      className={preview ? "home-section mt-12 [scroll-margin-top:2rem]" : ""}
       heading={preview ? "h2" : "h1"}
       headingClassName={preview ? undefined : "sr-only"}
       href={preview ? "/work-log" : undefined}

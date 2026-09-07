@@ -136,6 +136,7 @@ export interface PublicCodexSeries {
 }
 
 export interface PublicCodexStats {
+  reportingDay: string;
   activity: {
     cumulative: PublicCodexSeries;
     daily: PublicCodexSeries;
@@ -553,6 +554,7 @@ export const buildPublicCodexStats = (
   ];
 
   return {
+    reportingDay: today,
     activity: {
       cumulative: { partial: cumulativePartial, values: cumulativeUsage },
       daily: { partial: dailyPartial, values: dailyUsage },

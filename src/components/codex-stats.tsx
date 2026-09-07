@@ -1,11 +1,18 @@
 import { Info, Plug } from "lucide-react";
 import Image from "next/image";
+import type { ReactNode } from "react";
 
 import { CodexActivity } from "@/components/codex-activity";
+import { SiteSection } from "@/components/site-page";
 import {
-  Tooltip,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  DisclosureChevron,
+} from "@/components/ui/collapsible";
+import {
   TooltipContent,
-  TooltipProvider,
+  TooltipGroup,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type {
@@ -13,18 +20,13 @@ import type {
   PublicCodexRange,
   PublicCodexStats,
 } from "@/lib/codex/stats";
+import { formatDate } from "@/lib/date";
 
 const compactNumber = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 1,
   notation: "compact",
 });
 const number = new Intl.NumberFormat("en-US");
-const day = new Intl.DateTimeFormat("en-US", {
-  day: "numeric",
-  month: "short",
-  timeZone: "UTC",
-  year: "numeric",
-});
 const formatDuration = (seconds: number | null) => {
   if (seconds === null) {
     return "—";
@@ -99,19 +101,15 @@ const Metric = ({
   label,
   metric,
 }: {
-  label: string;
+  label: ReactNode;
   metric: PublicCodexMetric;
 }) => (
-  <div className="border-t border-border pt-3">
-    <dt className="font-ui text-xs uppercase tracking-[0.12em] text-muted-foreground">
-      {label}
-    </dt>
-    <dd className="mt-1 font-mono text-2xl font-medium tracking-tight text-foreground">
+  <div className="py-2.5">
+    <dt className="text-xs text-muted-foreground">{label}</dt>
+    <dd className="mt-1 text-2xl font-medium tracking-tight text-foreground">
       {metric.value === null ? "—" : compactNumber.format(metric.value)}
       {metric.partial ? (
-        <span className="ml-2 font-ui text-[0.625rem] uppercase tracking-wider text-muted-foreground">
-          partial
-        </span>
+        <span className="ml-2 text-xs text-muted-foreground">partial</span>
       ) : null}
     </dd>
   </div>
@@ -127,7 +125,7 @@ const LimitBar = ({
   const used = Math.min(100, usedPercent);
   return (
     <div>
-      <div className="flex items-baseline justify-between gap-3 font-ui text-xs text-muted-foreground">
+      <div className="flex items-baseline justify-between gap-4 text-xs text-muted-foreground">
         <span>{label}</span>
         <span>{Math.round(100 - used)}% left</span>
       </div>
@@ -215,15 +213,8 @@ export function CodexStats({ stats }: { stats: PublicCodexStats }) {
   ];
 
   return (
-    <section aria-labelledby="codex-stats-title" className="home-section">
-      <h2
-        className="font-serif text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
-        id="codex-stats-title"
-      >
-        Token Log
-      </h2>
-
-      <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
+    <SiteSection id="token-log" title="Token log">
+      <dl className="grid grid-cols-2 gap-x-4 sm:grid-cols-4">
         <Metric label="Lifetime tokens" metric={stats.totals.lifetimeTokens} />
         <Metric label="Today" metric={stats.totals.todayTokens} />
         <Metric label="Last 7 days" metric={stats.totals.last7Days} />
@@ -232,140 +223,151 @@ export function CodexStats({ stats }: { stats: PublicCodexStats }) {
 
       <CodexActivity {...stats.activity} />
 
-      <dl className="mt-6 grid grid-cols-2 gap-4 border-y border-border py-4 text-sm sm:grid-cols-4">
-        <div>
-          <dt className="text-muted-foreground">Busiest day</dt>
-          <dd className="mt-1 font-mono text-foreground">
-            {stats.busiestDay === null
-              ? "—"
-              : `${day.format(new Date(`${stats.busiestDay.day}T00:00:00.000Z`))} · ${compactNumber.format(stats.busiestDay.tokens)}`}
-            {stats.busiestDay?.partial === true ? " · partial" : ""}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">Longest chat</dt>
-          <dd className="mt-1 font-mono text-foreground">
-            {formatDuration(stats.totals.longestRunningTurnSec.value)}
-            {stats.totals.longestRunningTurnSec.partial ? " · partial" : ""}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">Total chats</dt>
-          <dd className="mt-1 font-mono text-foreground">
-            {stats.totals.totalThreads.value === null
-              ? "—"
-              : number.format(stats.totals.totalThreads.value)}
-            {stats.totals.totalThreads.partial ? " · partial" : ""}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">Total skills used</dt>
-          <dd className="mt-1 font-mono text-foreground">
-            {stats.totals.totalSkillsUsed.value === null
-              ? "—"
-              : number.format(stats.totals.totalSkillsUsed.value)}
-            {stats.totals.totalSkillsUsed.partial ? " · partial" : ""}
-          </dd>
-        </div>
-      </dl>
-
-      <TooltipProvider delay={100}>
-        <article className="mt-8 rounded-lg border border-border p-5">
-          <h3 className="font-serif text-xl font-bold text-foreground">
-            Activity highlights
-          </h3>
-          <dl className="mt-5 grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
-            {highlights.map(({ label, metric, tooltip, value }) => (
-              <div key={label}>
-                <dt className="flex items-center gap-1 text-muted-foreground">
-                  {label}
-                  {tooltip === null ? null : (
-                    <Tooltip>
-                      <TooltipTrigger
-                        aria-label={`${label}: ${tooltip}`}
-                        className="inline-flex size-4 items-center justify-center rounded-sm"
-                        type="button"
-                      >
-                        <Info aria-hidden="true" className="size-3" />
-                      </TooltipTrigger>
-                      <TooltipContent>{tooltip}</TooltipContent>
-                    </Tooltip>
-                  )}
-                </dt>
-                <dd className="mt-1 font-mono text-foreground">
-                  {value}
-                  {metric.partial ? " · partial" : ""}
-                </dd>
-              </div>
-            ))}
+      <Collapsible className="mt-4">
+        <CollapsibleTrigger className="site-row group cursor-pointer">
+          <span className="site-row-title text-muted-foreground group-hover:underline">
+            Usage details
+          </span>
+          <span className="site-row-meta">
+            <DisclosureChevron />
+          </span>
+        </CollapsibleTrigger>
+        <CollapsibleContent hiddenUntilFound>
+          <dl className="grid grid-cols-2 gap-x-4 sm:grid-cols-4">
+            <div className="py-2.5">
+              <dt className="text-muted-foreground">Busiest day</dt>
+              <dd className="mt-1 text-foreground">
+                {stats.busiestDay === null ? (
+                  "—"
+                ) : (
+                  <>
+                    {formatDate(stats.busiestDay.day)} ·{" "}
+                    {compactNumber.format(stats.busiestDay.tokens)}
+                  </>
+                )}
+                {stats.busiestDay?.partial === true ? " · partial" : ""}
+              </dd>
+            </div>
+            <div className="py-2.5">
+              <dt className="text-muted-foreground">Longest chat</dt>
+              <dd className="mt-1 text-foreground">
+                {formatDuration(stats.totals.longestRunningTurnSec.value)}
+                {stats.totals.longestRunningTurnSec.partial ? " · partial" : ""}
+              </dd>
+            </div>
+            <div className="py-2.5">
+              <dt className="text-muted-foreground">Total chats</dt>
+              <dd className="mt-1 text-foreground">
+                {stats.totals.totalThreads.value === null
+                  ? "—"
+                  : number.format(stats.totals.totalThreads.value)}
+                {stats.totals.totalThreads.partial ? " · partial" : ""}
+              </dd>
+            </div>
+            <div className="py-2.5">
+              <dt className="text-muted-foreground">Total skills used</dt>
+              <dd className="mt-1 text-foreground">
+                {stats.totals.totalSkillsUsed.value === null
+                  ? "—"
+                  : number.format(stats.totals.totalSkillsUsed.value)}
+                {stats.totals.totalSkillsUsed.partial ? " · partial" : ""}
+              </dd>
+            </div>
           </dl>
-          {stats.insights.topTools.length === 0 ? null : (
-            <div className="mt-6 border-t border-border pt-5">
-              <h4 className="font-ui text-sm font-medium text-foreground">
-                Top tools
-              </h4>
-              <ol className="mt-3 grid gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
-                {stats.insights.topTools.map((tool) => (
-                  <li
-                    className="flex min-w-0 items-center justify-between gap-3"
-                    key={`${tool.kind}:${tool.name}`}
-                  >
-                    <span className="flex min-w-0 items-center gap-2">
-                      <span className="inline-flex size-6 shrink-0 items-center justify-center rounded-lg border border-border bg-background text-foreground">
-                        {tool.logoUrl === undefined ? null : (
-                          <Image
-                            alt=""
-                            className={
-                              tool.logoUrlDark === undefined
-                                ? "size-3.5 object-contain"
-                                : "size-3.5 object-contain dark:hidden"
-                            }
-                            height={14}
-                            src={tool.logoUrl}
-                            width={14}
-                          />
-                        )}
-                        {tool.logoUrlDark === undefined ? null : (
-                          <Image
-                            alt=""
-                            className="hidden size-3.5 object-contain dark:block"
-                            height={14}
-                            src={tool.logoUrlDark}
-                            width={14}
-                          />
-                        )}
-                        {tool.logoUrl === undefined ? (
-                          tool.kind === "skill" ? (
-                            <SkillMark />
-                          ) : tool.name === "github" ? (
-                            <GitHubMark />
-                          ) : (
-                            <Plug aria-hidden="true" className="size-3.5" />
-                          )
-                        ) : null}
-                      </span>
-                      <span className="truncate font-mono text-foreground">
-                        {tool.name}
-                      </span>
-                    </span>
-                    <span className="shrink-0 font-mono text-muted-foreground">
-                      {number.format(tool.usageCount)} runs
-                    </span>
-                  </li>
+
+          <TooltipGroup>
+            <div className="mt-4 pb-2.5">
+              <h3 className="section-title">Activity highlights</h3>
+              <dl className="grid grid-cols-2 gap-x-4 sm:grid-cols-3">
+                {highlights.map(({ label, metric, tooltip, value }) => (
+                  <div className="py-2.5" key={label}>
+                    <dt className="flex items-center gap-1 text-muted-foreground">
+                      {label}
+                      {tooltip === null ? null : (
+                        <TooltipTrigger
+                          payload={<TooltipContent>{tooltip}</TooltipContent>}
+                          aria-label={`${label}: ${tooltip}`}
+                          className="inline-flex size-6 items-center justify-center rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                          type="button"
+                        >
+                          <Info aria-hidden="true" className="size-3" />
+                        </TooltipTrigger>
+                      )}
+                    </dt>
+                    <dd className="mt-1 text-foreground">
+                      {value}
+                      {metric.partial ? " · partial" : ""}
+                    </dd>
+                  </div>
                 ))}
-              </ol>
+              </dl>
+              {stats.insights.topTools.length === 0 ? null : (
+                <div className="mt-4">
+                  <h4 className="section-title">Top tools</h4>
+                  <ol className="site-list">
+                    {stats.insights.topTools.map((tool) => (
+                      <li key={`${tool.kind}:${tool.name}`}>
+                        <div className="site-row">
+                          <span className="flex min-w-0 items-center gap-2">
+                            <span className="inline-flex size-6 shrink-0 items-center justify-center text-foreground">
+                              {tool.logoUrl === undefined ? null : (
+                                <Image
+                                  alt=""
+                                  className={
+                                    tool.logoUrlDark === undefined
+                                      ? "size-3.5 object-contain"
+                                      : "size-3.5 object-contain dark:hidden"
+                                  }
+                                  height={14}
+                                  src={tool.logoUrl}
+                                  width={14}
+                                />
+                              )}
+                              {tool.logoUrlDark === undefined ? null : (
+                                <Image
+                                  alt=""
+                                  className="hidden size-3.5 object-contain dark:block"
+                                  height={14}
+                                  src={tool.logoUrlDark}
+                                  width={14}
+                                />
+                              )}
+                              {tool.logoUrl === undefined ? (
+                                tool.kind === "skill" ? (
+                                  <SkillMark />
+                                ) : tool.name === "github" ? (
+                                  <GitHubMark />
+                                ) : (
+                                  <Plug
+                                    aria-hidden="true"
+                                    className="size-3.5"
+                                  />
+                                )
+                              ) : null}
+                            </span>
+                            <span className="site-row-title">{tool.name}</span>
+                          </span>
+                          <span className="site-row-meta">
+                            {number.format(tool.usageCount)} runs
+                          </span>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+              {stats.primaryLimit === null ? null : (
+                <div className="mt-4 py-2.5">
+                  <LimitBar
+                    label="Primary limit"
+                    usedPercent={stats.primaryLimit.usedPercent}
+                  />
+                </div>
+              )}
             </div>
-          )}
-          {stats.primaryLimit === null ? null : (
-            <div className="mt-6 border-t border-border pt-5">
-              <LimitBar
-                label="Primary limit"
-                usedPercent={stats.primaryLimit.usedPercent}
-              />
-            </div>
-          )}
-        </article>
-      </TooltipProvider>
-    </section>
+          </TooltipGroup>
+        </CollapsibleContent>
+      </Collapsible>
+    </SiteSection>
   );
 }

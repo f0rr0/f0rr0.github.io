@@ -2,29 +2,18 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Tooltip,
   TooltipContent,
-  TooltipProvider,
+  TooltipGroup,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type { PublicCodexSeries } from "@/lib/codex/stats";
+import { formatDate } from "@/lib/date";
 
 const number = new Intl.NumberFormat("en-US");
 const compactNumber = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 1,
   notation: "compact",
 });
-const month = new Intl.DateTimeFormat("en-US", {
-  month: "short",
-  timeZone: "UTC",
-});
-const fullDay = new Intl.DateTimeFormat("en-US", {
-  day: "numeric",
-  month: "short",
-  timeZone: "UTC",
-  year: "numeric",
-});
-
 const date = (day: string) => new Date(`${day}T00:00:00.000Z`);
 const weekStart = (day: string) => {
   const value = date(day);
@@ -53,22 +42,26 @@ const MonthAxis = ({
 }) => {
   const columns = Math.ceil((calendarOffset + values.length) / 7);
   const ticks = values.flatMap((point, index) =>
-    index === 0 || point.day.slice(5, 7) === values[index - 1]?.day.slice(5, 7)
+    index === 0 ||
+    point.day.slice(0, 7) === (values[index - 1]?.day ?? point.day).slice(0, 7)
       ? []
       : [{ day: point.day, index }]
   );
   return (
-    <div aria-hidden="true" className="relative mt-2 h-4">
+    <div
+      aria-hidden="true"
+      className="relative mt-2 h-4 max-sm:[&>span:nth-child(even)]:hidden"
+    >
       {ticks.map((tick) => {
         const position =
           Math.floor((calendarOffset + tick.index) / 7) / (columns - 1);
         return (
           <span
-            className={`absolute -translate-x-1/2 font-mono text-[0.625rem] uppercase tracking-wider text-muted-foreground ${position > 0.95 ? "-translate-x-full" : ""}`}
+            className={`absolute -translate-x-1/2 font-sans text-xs text-muted-foreground ${position > 0.95 ? "-translate-x-full" : ""}`}
             key={tick.day}
             style={{ left: `${String(position * 100)}%` }}
           >
-            {month.format(date(tick.day))}
+            {formatDate(tick.day, "month")}
           </span>
         );
       })}
@@ -76,23 +69,11 @@ const MonthAxis = ({
   );
 };
 
-const labels = {
-  cumulative: {
-    day: (value: string) => `Through ${fullDay.format(date(value))}`,
-  },
-  daily: {
-    day: (value: string) => fullDay.format(date(value)),
-  },
-  weekly: {
-    day: (value: string) => `Week of ${fullDay.format(weekStart(value))}`,
-  },
-} as const;
-
 const ActivityHeatmap = ({
   mode,
   series,
 }: {
-  mode: keyof typeof labels;
+  mode: "cumulative" | "daily" | "weekly";
   series: PublicCodexSeries;
 }) => {
   const positiveTokens = series.values
@@ -101,7 +82,6 @@ const ActivityHeatmap = ({
   const minimum = Math.min(...positiveTokens);
   const maximum = Math.max(...positiveTokens);
   const leadingDays = date(series.values[0]?.day ?? "1970-01-04").getUTCDay();
-  const label = labels[mode];
   return (
     <figure>
       <div
@@ -124,28 +104,26 @@ const ActivityHeatmap = ({
                   : ratio < 0.75
                     ? "bg-primary/70"
                     : "bg-primary";
-          const dayLabel = label.day(day);
+          const dayLabel = formatDate(mode === "weekly" ? weekStart(day) : day);
           return (
-            <Tooltip key={day}>
-              <TooltipTrigger
-                aria-label={`${dayLabel}: ${number.format(tokens)} tokens`}
-                className={`aspect-square min-w-0 rounded-[0.2rem] outline-none transition-transform hover:scale-125 focus-visible:z-10 focus-visible:scale-125 focus-visible:ring-2 focus-visible:ring-ring ${color}`}
-                tabIndex={tokens === 0 ? -1 : 0}
-                type="button"
-              />
-              <TooltipContent className="flex-col items-start gap-0.5">
-                <span>{dayLabel}</span>
-                <span className="font-mono font-medium">
-                  {compactNumber.format(tokens)} tokens
-                </span>
-              </TooltipContent>
-            </Tooltip>
+            <TooltipTrigger
+              key={day}
+              payload={
+                <TooltipContent>
+                  {dayLabel} · {compactNumber.format(tokens)} tokens
+                </TooltipContent>
+              }
+              aria-label={`${dayLabel}: ${number.format(tokens)} tokens`}
+              className={`aspect-square min-w-0 rounded-[0.2rem] outline-none motion-safe:transition-transform motion-safe:hover:scale-125 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-ring ${color}`}
+              tabIndex={tokens === 0 ? -1 : 0}
+              type="button"
+            />
           );
         })}
       </div>
       <MonthAxis calendarOffset={leadingDays} values={series.values} />
       {series.partial ? (
-        <figcaption className="mt-1 font-mono text-[0.625rem] uppercase tracking-wider text-muted-foreground">
+        <figcaption className="mt-1 font-sans text-xs text-muted-foreground">
           Partial history
         </figcaption>
       ) : null}
@@ -163,12 +141,10 @@ export function CodexActivity({
   weekly: PublicCodexSeries;
 }) {
   return (
-    <TooltipProvider delay={100}>
-      <Tabs className="mt-10 gap-5" defaultValue="daily">
+    <TooltipGroup>
+      <Tabs className="mt-6 gap-4" defaultValue="daily">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <h3 className="font-serif text-xl font-bold text-foreground">
-            Token activity
-          </h3>
+          <h3 className="text-sm font-medium text-foreground">Activity</h3>
           <TabsList aria-label="Token activity interval" variant="line">
             <TabsTrigger value="daily">Daily</TabsTrigger>
             <TabsTrigger value="weekly">Weekly</TabsTrigger>
@@ -185,6 +161,6 @@ export function CodexActivity({
           <ActivityHeatmap mode="cumulative" series={cumulative} />
         </TabsContent>
       </Tabs>
-    </TooltipProvider>
+    </TooltipGroup>
   );
 }

@@ -30,6 +30,7 @@ export interface PublicGitHubWorkUnitFacts {
 }
 
 export interface PublicGitHubWorkUnitActivity {
+  activityAt: string;
   destination: PublicGitHubActivityDestination | null;
   facts: PublicGitHubWorkUnitFacts;
   id: string;
@@ -40,6 +41,7 @@ export interface PublicGitHubWorkUnitActivity {
 }
 
 export interface PublicGitHubIssueOpenedActivity {
+  activityAt: string;
   destination: PublicGitHubActivityDestination | null;
   id: string;
   kind: "issue-opened";

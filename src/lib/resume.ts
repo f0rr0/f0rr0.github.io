@@ -205,7 +205,7 @@ export const buildJsonResume = () => ({
     canonical: publicUrl("/resume.json"),
     lastModified: resumeData.lastUpdated,
     schema: "https://jsonresume.org/schema/",
-    source: publicUrl("/resume"),
+    source: publicUrl("/journey"),
   },
   work: resumeData.experience.flatMap((item) =>
     item.roles.map((role) => {
@@ -274,7 +274,7 @@ export const buildLlmsTxt = (
 
 - [JSON résumé](${localProfileUrl("/resume.json")}): Role titles, employers, dates, skills, and concise accomplishments in structured form.
 - [Detailed career context](${localProfileUrl("/llms-full.txt")}): Full work history, engineering decisions, leadership scope, client engagements, and source links. Read for technical interviews or role-fit questions.
-- [Résumé](${localProfileUrl("/resume")}): Human-readable experience and education.
+- [Journey](${localProfileUrl("/journey")}): Human-readable experience and education.
 
 ## Namefi Work
 
@@ -309,8 +309,8 @@ export const buildLlmsFullTxt = (blogPosts: BlogPost[] = []) => {
       note: "Selected work and writing.",
     },
     {
-      href: localProfileUrl("/resume"),
-      label: "Resume",
+      href: localProfileUrl("/journey"),
+      label: "Journey",
       note: "Experience, education, and contact details.",
     },
     {
@@ -398,6 +398,8 @@ ${canonicalText}
 - Education: ${educationSummary}.
 
 ## Engineering Expertise
+
+Skills: ${resumeData.skills.join(", ")}.
 
 ${strengths.map((strength) => `- ${strength}`).join("\n")}
 

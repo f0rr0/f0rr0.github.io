@@ -22,11 +22,17 @@ const validPage = (value: unknown): value is PublicGitHubActivityPage => {
 };
 
 export function GitHubTimelinePager({
-  initialCursor,
-  orderingRevision,
-}: Readonly<{ initialCursor: string; orderingRevision: string }>) {
+  initialPage,
+  preview,
+  now,
+}: Readonly<{
+  initialPage: PublicGitHubActivityPage;
+  preview: boolean;
+  now: string;
+}>) {
+  const { orderingRevision } = initialPage;
   const { feedRevision, markLatestAvailable } = useGitHubActivityLive();
-  const [cursor, setCursor] = useState<string | null>(initialCursor);
+  const [cursor, setCursor] = useState<string | null>(initialPage.nextCursor);
   const [error, setError] = useState(false);
   const [generationChanged, setGenerationChanged] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -79,18 +85,18 @@ export function GitHubTimelinePager({
   return (
     <>
       <div className="contents" id="github-activity-paginated-days">
-        {pages.map((page) => (
-          <GitHubActivityDays
-            days={page.days}
-            key={page.days[0]?.day ?? page.orderingRevision}
-          />
-        ))}
+        <GitHubActivityDays
+          days={[...initialPage.days, ...pages.flatMap((page) => page.days)]}
+          itemLimit={preview ? 2 : undefined}
+          preview={preview}
+          now={now}
+        />
       </div>
-      {cursor === null || generationChanged ? null : (
+      {preview || cursor === null || generationChanged ? null : (
         <div className="flex flex-col items-start gap-3">
           <button
             aria-controls="github-activity-paginated-days"
-            className="site-action-link"
+            className="site-text-link"
             disabled={isPending}
             onClick={loadMore}
             type="button"

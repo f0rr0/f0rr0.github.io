@@ -1,12 +1,9 @@
-import { Rss } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 
 import { JsonLd } from "@/components/json-ld";
-import { SiteActionLink } from "@/components/site-action-link";
-import { SitePage } from "@/components/site-page";
+import { SiteMain } from "@/components/site-page";
+import { WritingList } from "@/components/writing-list";
 import { getBlogPosts } from "@/lib/blog-utils";
-import { formatDate } from "@/lib/date";
 import { publicUrl, siteConfig } from "@/lib/site";
 import { buildBlogCollectionJsonLd } from "@/lib/structured-data";
 
@@ -42,42 +39,10 @@ export default async function BlogIndexPage() {
   return (
     <>
       <JsonLd data={buildBlogCollectionJsonLd(posts)} />
-      <SitePage
-        title="Blog"
-        action={
-          <SiteActionLink
-            href="/rss.xml"
-            icon={<Rss aria-hidden="true" className="h-3.5 w-3.5" />}
-          >
-            RSS
-          </SiteActionLink>
-        }
-      >
-        {posts.length > 0 ? (
-          <ol className="divide-y divide-border border-y border-border">
-            {posts.map((post) => (
-              <li key={post.slug}>
-                <Link
-                  href={`/blog/${post.slug}`}
-                  className="group flex flex-col gap-1 py-5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
-                >
-                  <h2 className="font-serif text-xl font-bold tracking-tight transition-colors group-hover:text-brand-hover">
-                    {post.metadata.title}
-                  </h2>
-                  <time
-                    dateTime={post.date.toISOString()}
-                    className="shrink-0 text-sm text-muted-foreground"
-                  >
-                    {formatDate(post.date, siteConfig.language)}
-                  </time>
-                </Link>
-              </li>
-            ))}
-          </ol>
-        ) : (
-          <p className="text-sm text-muted-foreground">No posts yet.</p>
-        )}
-      </SitePage>
+      <SiteMain>
+        <h1 className="sr-only">Blog</h1>
+        <WritingList posts={posts} />
+      </SiteMain>
     </>
   );
 }

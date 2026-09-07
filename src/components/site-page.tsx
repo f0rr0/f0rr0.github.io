@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
@@ -10,31 +11,46 @@ interface SiteMainProps {
 export function SiteMain({ children, className }: Readonly<SiteMainProps>) {
   return (
     <main
-      className={cn("site-container pb-20 pt-8 sm:pt-12 print:pt-8", className)}
+      className={cn("site-container flex-1 pb-12 pt-8", className)}
+      id="main-content"
     >
       {children}
     </main>
   );
 }
 
-interface SitePageProps {
-  action?: ReactNode;
+export function SiteSection({
+  children,
+  className = "home-section",
+  heading: Heading = "h2",
+  headingClassName,
+  href,
+  id,
+  title,
+}: Readonly<{
   children: ReactNode;
-  title: ReactNode;
-}
-
-export function SitePage({ action, children, title }: Readonly<SitePageProps>) {
+  className?: string;
+  heading?: "h1" | "h2";
+  headingClassName?: string;
+  href?: string;
+  id: string;
+  title: string;
+}>) {
   return (
-    <SiteMain>
-      <header className="max-w-4xl">
-        <div className="flex items-end justify-between gap-4">
-          <h1 className="font-serif text-3xl font-bold text-foreground sm:text-4xl">
+    <section aria-labelledby={`${id}-title`} className={className} id={id}>
+      <Heading
+        className={cn("section-title", headingClassName)}
+        id={`${id}-title`}
+      >
+        {href === undefined ? (
+          title
+        ) : (
+          <Link className="section-title-link" href={href} prefetch={false}>
             {title}
-          </h1>
-          {action}
-        </div>
-      </header>
-      <div className="mt-8 max-w-4xl print:mt-8">{children}</div>
-    </SiteMain>
+          </Link>
+        )}
+      </Heading>
+      {children}
+    </section>
   );
 }

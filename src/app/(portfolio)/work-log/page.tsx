@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 import { GitHubTimeline } from "@/components/github-timeline";
+import { SiteMain } from "@/components/site-page";
 import { SiteShell } from "@/components/site-shell";
-import { getInitialGitHubActivity } from "@/lib/github-activity-feed";
 import { publicUrl, siteConfig } from "@/lib/site";
 
 const description =
@@ -29,14 +29,12 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function WorkLogPage() {
-  const activity = await getInitialGitHubActivity();
-
+export default function WorkLogPage() {
   return (
-    <SiteShell currentPath="/work-log" includeFooter>
-      <main className="site-container pb-20 pt-8 sm:pb-24 sm:pt-12">
-        <GitHubTimeline initialPage={activity} />
-      </main>
+    <SiteShell activeHref="/work-log">
+      <SiteMain>
+        <GitHubTimeline />
+      </SiteMain>
     </SiteShell>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible";
+import { ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -30,4 +31,13 @@ function CollapsibleContent({
   );
 }
 
-export { Collapsible, CollapsibleTrigger, CollapsibleContent };
+function DisclosureChevron() {
+  return <ChevronRight aria-hidden="true" className="disclosure-chevron" />;
+}
+
+export {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+  DisclosureChevron,
+};

@@ -1,62 +1,59 @@
-import Link from "next/link";
+import Image from "next/image";
 
+import { CopyEmailButton } from "@/components/copy-email-button";
 import { resumeData } from "@/content/resume";
+import { buildAskAgentLinks } from "@/lib/resume";
+import { publicUrl } from "@/lib/site";
 
-const footerLinks = [
-  { href: "https://github.com/f0rr0", label: "GitHub", external: true },
-  { href: "https://linkedin.com/in/f0rr0", label: "LinkedIn", external: true },
-  {
-    href: `mailto:${resumeData.person.email}`,
-    label: "Email",
-    external: false,
-  },
-  { href: "/resume", label: "Résumé", external: false },
-  { href: "/rss.xml", label: "RSS", external: false },
-] as const;
+const { actions } = buildAskAgentLinks();
 
-export function SiteFooter(): React.ReactNode {
+export function SiteFooter() {
   return (
-    <footer className="site-container font-ui print:hidden">
-      <div className="flex flex-col gap-6 border-t border-border py-8 text-sm text-muted-foreground sm:flex-row sm:items-end sm:justify-between sm:py-10">
-        <div>
-          <p className="font-semibold text-foreground">
-            {resumeData.person.name}
-          </p>
-          <p className="mt-1 max-w-md text-xs leading-relaxed sm:text-sm">
-            {resumeData.person.location}
-          </p>
-        </div>
-        <div className="sm:text-right">
-          <nav aria-label="Footer navigation">
-            <ul className="flex flex-wrap gap-x-4 gap-y-2 sm:justify-end">
-              {footerLinks.map((item) => (
-                <li key={item.label}>
-                  {item.href.startsWith("/") ? (
-                    <Link
-                      className="rounded-sm transition-colors hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                      href={item.href}
-                      prefetch={false}
-                    >
-                      {item.label}
-                    </Link>
-                  ) : (
-                    <a
-                      className="rounded-sm transition-colors hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                      href={item.href}
-                      rel={item.external ? "noopener noreferrer" : undefined}
-                      target={item.external ? "_blank" : undefined}
-                    >
-                      {item.label}
-                    </a>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <p className="mt-3 text-xs">
-            © {new Date().getUTCFullYear()} Sid Jain
-          </p>
-        </div>
+    <footer className="site-container pb-8 print:hidden">
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-border pt-4">
+        <nav aria-label="Contact and feed" className="flex items-center gap-6">
+          <CopyEmailButton email={resumeData.person.email} />
+          <a
+            className="site-text-link"
+            href="https://linkedin.com/in/f0rr0"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            LinkedIn
+          </a>
+          <a
+            className="site-text-link"
+            href={publicUrl("/rss.xml")}
+            type="application/rss+xml"
+            rel="alternate"
+          >
+            RSS
+          </a>
+        </nav>
+        <p className="flex flex-wrap items-center gap-x-2 text-muted-foreground">
+          <span>Ask</span>
+          {actions.map((action, index) => (
+            <span key={action.label} className="inline-flex items-center gap-2">
+              {index === 0 ? null : <span>or</span>}
+              <a
+                className="site-text-link"
+                href={action.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={action.description}
+              >
+                <Image
+                  alt=""
+                  className="size-3.5 object-contain"
+                  height={14}
+                  width={14}
+                  src={action.iconSrc}
+                />
+                {action.label}
+              </a>
+            </span>
+          ))}
+        </p>
       </div>
     </footer>
   );

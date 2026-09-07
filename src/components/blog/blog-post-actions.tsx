@@ -1,16 +1,15 @@
 "use client";
 
-import { ChevronDownIcon, FileTextIcon, SparklesIcon } from "lucide-react";
+import { FileTextIcon, SparklesIcon } from "lucide-react";
 import Image from "next/image";
 
-import { Button } from "@/components/ui/button";
+import { DisclosureChevron } from "@/components/ui/collapsible";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLinkItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
 import { buildAskAiLinks, buildAskAiPrompt } from "@/lib/ask-ai";
 
 interface BlogPostActionsProps {
@@ -47,30 +46,21 @@ export function BlogPostActions({
   return (
     <nav
       aria-label="Post actions"
-      className="flex min-h-10 items-center border-t border-border sm:border-t-0"
+      className="flex items-center gap-4 border-t border-border sm:border-t-0"
     >
       <DropdownMenu>
         <DropdownMenuTrigger
           aria-label={`Ask AI about ${title}`}
-          render={
-            <Button
-              className="group/ask-ai px-2 text-muted-foreground shadow-none hover:text-foreground"
-              size="sm"
-              variant="ghost"
-            />
-          }
+          className="site-text-link"
         >
           <SparklesIcon aria-hidden="true" className="size-3.5" />
           Ask AI
-          <ChevronDownIcon
-            aria-hidden="true"
-            className="size-3.5 transition-transform group-data-[popup-open]/ask-ai:rotate-180"
-          />
+          <DisclosureChevron />
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
           aria-label="Choose an AI assistant"
-          className="w-52 p-1.5"
+          className="w-52"
           sideOffset={6}
         >
           <DropdownMenuLinkItem
@@ -121,31 +111,22 @@ export function BlogPostActions({
               width={16}
             />
             Gemini
-            <span className="ml-auto text-[0.6875rem] text-muted-foreground">
+            <span className="ml-auto text-xs text-muted-foreground">
               copies prompt
             </span>
           </DropdownMenuLinkItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Separator className="mx-1" orientation="vertical" />
-
-      <Button
-        className="px-2 text-muted-foreground shadow-none hover:text-foreground"
-        render={
-          <a
-            aria-label="View this post as Markdown"
-            href={markdownHref}
-            {...externalLinkProps}
-          />
-        }
-        nativeButton={false}
-        size="sm"
-        variant="ghost"
+      <a
+        className="site-text-link"
+        aria-label="View this post as Markdown"
+        href={markdownHref}
+        {...externalLinkProps}
       >
         <FileTextIcon aria-hidden="true" className="size-3.5" />
         Markdown
-      </Button>
+      </a>
     </nav>
   );
 }

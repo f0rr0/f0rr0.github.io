@@ -5,9 +5,9 @@ import type { ComponentType } from "react";
 
 import { BlogPostActions } from "@/components/blog/blog-post-actions";
 import { JsonLd } from "@/components/json-ld";
+import { LocalDateTime } from "@/components/local-date-time";
 import MDXImage from "@/components/mdx/MDXImage";
 import { SiteMain } from "@/components/site-page";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   findMetadataImageAsset,
@@ -15,7 +15,6 @@ import {
   getBlogPosts,
   importBlogPostModule,
 } from "@/lib/blog-utils";
-import { formatDate } from "@/lib/date";
 import { publicUrl, siteConfig } from "@/lib/site";
 import { buildBlogPostingJsonLd } from "@/lib/structured-data";
 
@@ -129,28 +128,15 @@ export default async function BlogPostPage({ params }: { params: PageParams }) {
   return (
     <SiteMain className="relative">
       <JsonLd data={jsonLd} />
-      <article className="flex flex-col gap-10">
-        <header className="flex max-w-4xl flex-col gap-5">
-          {metadata.tags !== undefined && metadata.tags.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {metadata.tags.map((tag) => (
-                <Badge key={tag} variant="tag">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-          ) : null}
-          <h1 className="text-balance max-w-4xl font-serif text-3xl font-bold tracking-tight sm:text-4xl">
-            {metadata.title}
-          </h1>
+      <article className="flex flex-col gap-8">
+        <header className="flex flex-col">
+          <h1 className="section-title text-balance">{metadata.title}</h1>
           <div
             className="grid border-y border-border sm:grid-cols-[1fr_auto]"
             data-slot="blog-post-rail"
           >
-            <div className="flex min-h-10 items-center gap-3 px-2 text-sm text-muted-foreground">
-              <time dateTime={date.toISOString()}>
-                {formatDate(date, siteConfig.language)}
-              </time>
+            <div className="flex min-h-11 items-center gap-3 text-xs text-muted-foreground">
+              <LocalDateTime dateTime={date.toISOString()} />
               <Separator orientation="vertical" />
               <span>{readingTime}</span>
             </div>
@@ -161,7 +147,7 @@ export default async function BlogPostPage({ params }: { params: PageParams }) {
             />
           </div>
         </header>
-        <div className="prose min-w-0 w-full max-w-4xl prose-h2:text-2xl prose-h3:text-xl prose-p:leading-relaxed">
+        <div className="prose min-w-0 w-full">
           <Content components={mdxComponents} />
         </div>
       </article>

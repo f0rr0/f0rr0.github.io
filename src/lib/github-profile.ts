@@ -41,7 +41,7 @@ const fetchGitHubProfile = async (): Promise<GitHubProfile> => {
 
 const getCachedGitHubProfile = unstable_cache(
   fetchGitHubProfile,
-  ["portfolio-github-profile-v6", GITHUB_LOGIN],
+  ["portfolio-github-profile-v7", GITHUB_LOGIN],
   { revalidate: GITHUB_CACHE_SECONDS, tags: ["github-profile"] }
 );
 

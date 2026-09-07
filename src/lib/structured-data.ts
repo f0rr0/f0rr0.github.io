@@ -52,7 +52,7 @@ const buildPersonNode = (): Person => ({
   knowsAbout: [...resumeData.skills],
   name: resumeData.person.name,
   sameAs,
-  url: publicUrl("/resume"),
+  url: publicUrl("/journey"),
   worksFor: {
     "@type": "Organization",
     name: currentExperience?.company ?? "Current employer",
@@ -92,7 +92,7 @@ export const buildRootJsonLd = (): Graph => ({
 
 export const buildProfilePageJsonLd = (): WithContext<ProfilePage> => ({
   "@context": "https://schema.org",
-  "@id": publicUrl("/resume#profile"),
+  "@id": publicUrl("/journey#profile"),
   "@type": "ProfilePage",
   dateModified: resumeData.lastUpdated,
   description: siteConfig.description,
@@ -103,8 +103,8 @@ export const buildProfilePageJsonLd = (): WithContext<ProfilePage> => ({
     url: publicUrl("/"),
   },
   mainEntity: buildPersonNode(),
-  name: "Sid Jain Résumé",
-  url: publicUrl("/resume"),
+  name: "Sid Jain Journey",
+  url: publicUrl("/journey"),
 });
 
 export const buildBlogPostingJsonLd = ({
@@ -124,7 +124,7 @@ export const buildBlogPostingJsonLd = ({
       "@id": personId(),
       "@type": "Person",
       name: post.metadata.author,
-      url: publicUrl("/resume"),
+      url: publicUrl("/journey"),
     },
     dateModified: (post.updatedAt ?? post.date).toISOString(),
     datePublished: post.date.toISOString(),

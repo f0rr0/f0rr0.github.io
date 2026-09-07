@@ -1,3 +1,6 @@
+export const homeIntroduction =
+  "I’m a full-stack engineer in Mumbai. I build web and mobile products, and more recently, AI applications. My work often starts where the documentation ends.";
+
 export const projectEditorial = {
   "thrift-compact-protocol": {
     bucket: "Open source" as const,

@@ -18,50 +18,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     {
-      changeFrequency: "weekly",
       lastModified: siteUpdatedAt,
-      priority: 1,
       url: publicUrl("/"),
     },
     {
-      changeFrequency: "monthly",
       lastModified: resumeUpdatedAt,
-      priority: 0.9,
       url: publicUrl("/journey"),
     },
     {
-      changeFrequency: "daily",
-      priority: 0.9,
       url: publicUrl("/work-log"),
     },
     {
-      changeFrequency: "weekly",
       lastModified: resumeUpdatedAt,
-      priority: 0.8,
-      url: publicUrl("/llms.txt"),
-    },
-    {
-      changeFrequency: "monthly",
-      lastModified: resumeUpdatedAt,
-      priority: 0.6,
-      url: publicUrl("/resume.json"),
-    },
-    {
-      changeFrequency: "monthly",
-      lastModified: resumeUpdatedAt,
-      priority: 0.7,
       url: publicUrl("/resume/sid-jain-resume.pdf"),
     },
     {
-      changeFrequency: "weekly",
       lastModified: latestPostDate,
-      priority: 0.8,
       url: publicUrl("/blog"),
     },
     ...posts.map((post) => ({
-      changeFrequency: "monthly" as const,
       lastModified: post.updatedAt ?? post.date,
-      priority: 0.7,
       url: publicUrl(`/blog/${post.slug}`),
     })),
   ];

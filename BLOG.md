@@ -1,5 +1,13 @@
 # Blog Notes
 
+Use `.rulesync/skills/blog-writing/SKILL.md` for voice and story, and
+`.rulesync/skills/site-seo/SKILL.md` for site/blog SEO, agent discovery and
+publication checks. Both include reusable prompts and researched references.
+
+Public identity URLs always use `https://f0rr0.dev`; preview deployments return
+`noindex`. The sitemap lists intended search destinations, while alternate
+Markdown and profile exports remain discoverable through links and `llms.txt`.
+
 For voice, storytelling, and editorial review, use the
 [blog-writing skill](.rulesync/skills/blog-writing/SKILL.md).
 This guide covers the site's MDX and publishing mechanics.
@@ -117,7 +125,10 @@ flowchart LR
 - Robots: `/robots.txt`
 - Article source: `/blog/<slug>.md`
 - Curated machine-readable index: `/llms.txt`
-- Full published article text: `/llms-full.txt`
+- Detailed career context and all published article links: `/llms-full.txt`
+- Full article text: `/blog/{slug}.md` (also advertised in each article's alternate link)
+- Exports retain authored MDX and Mermaid source. Co-located image references
+  resolve to the public repository's `next` branch; fenced examples stay verbatim.
 
 Canonical URLs are derived from Vercel system environment variables when deployed on Vercel.
 

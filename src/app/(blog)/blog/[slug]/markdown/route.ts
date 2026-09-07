@@ -35,7 +35,7 @@ export async function GET(
       "Content-Disposition": `inline; filename="${slug}.md"`,
       "Content-Language": siteConfig.language,
       "Content-Type": "text/markdown; charset=utf-8",
-      Link: `<${canonicalUrl}>; rel="canonical"`,
+      Link: `<${canonicalUrl}>; rel="canonical", <${publicUrl("/llms.txt")}>; rel="describedby"`,
       "X-Content-Type-Options": "nosniff",
       "X-Robots-Tag": "noindex",
     },

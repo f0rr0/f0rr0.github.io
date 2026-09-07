@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/json-ld";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { env } from "@/env";
 import { siteConfig } from "@/lib/site";
 import { buildRootJsonLd } from "@/lib/structured-data";
 
@@ -72,12 +73,12 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: {
       follow: true,
-      index: true,
+      index: env.VERCEL_ENV !== "preview",
       "max-image-preview": "large",
       "max-snippet": -1,
       "max-video-preview": -1,
     },
-    index: true,
+    index: env.VERCEL_ENV !== "preview",
   },
   title: {
     default: siteConfig.name,
@@ -102,6 +103,9 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
     >
+      <head>
+        <link href="/llms.txt" rel="describedby" />
+      </head>
       <body className="min-h-screen font-sans antialiased [&_:is(h1,h2,h3,h4,h5,h6)]:font-normal [&_:is(a,button,summary)]:decoration-wavy [&_:is(a,button,summary)]:decoration-1 [&_:is(a,button,summary)]:underline-offset-4 [&_:is(a,button)_:is(h3,span)]:decoration-wavy [&_:is(a,button)_:is(h3,span)]:decoration-1 [&_:is(a,button)_:is(h3,span)]:underline-offset-4">
         <JsonLd data={buildRootJsonLd()} />
         <ThemeProvider

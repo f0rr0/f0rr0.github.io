@@ -294,17 +294,11 @@ const reuseAcceptedSummaries = async (
 };
 
 const claimSelection = {
-  activityAt: githubWorkUnits.activityAt,
-  attributionMode: githubWorkUnitSummaryAttempts.attributionMode,
-  contentObservedAt: githubWorkUnits.contentObservedAt,
   debounceUntil: githubWorkUnitSummaryAttempts.debounceUntil,
-  outcomeDigest: githubWorkUnitSummaryAttempts.outcomeDigest,
-  recipe: githubWorkUnitSummaryAttempts.recipe,
   requestPayload: githubWorkUnitSummaryAttempts.requestPayload,
   revision: githubWorkUnitSummaryAttempts.revision,
   startedRequests: githubWorkUnitSummaryAttempts.startedRequests,
   state: githubWorkUnitSummaryAttempts.state,
-  summaryInputDigest: githubWorkUnitSummaryAttempts.summaryInputDigest,
   workUnitId: githubWorkUnitSummaryAttempts.workUnitId,
 };
 
@@ -388,9 +382,7 @@ const lockedUnit = async (
     .select({
       activityDay: githubWorkUnits.activityDay,
       attributionMode: githubWorkUnits.attributionMode,
-      identityKey: githubWorkUnits.identityKey,
       outcomeDigest: githubWorkUnits.outcomeDigest,
-      repositoryId: githubWorkUnits.repositoryId,
       summaryEvaluatedDigest: githubWorkUnits.summaryEvaluatedDigest,
       summaryEvaluationDigest: githubWorkUnits.summaryEvaluationDigest,
       summaryInputDigest: githubWorkUnits.summaryInputDigest,
@@ -552,7 +544,6 @@ const tryClaimCandidate = async (
     .update(githubWorkUnitSummaryAttempts)
     .set({
       lastStartedAt: now,
-      requestStartedAt: sql`array_append(${githubWorkUnitSummaryAttempts.requestStartedAt}, ${now.toISOString()}::timestamptz)`,
       leaseToken,
       leaseUntil: new Date(now.getTime() + leaseDurationMs),
       startedRequests,

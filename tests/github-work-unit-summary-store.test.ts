@@ -407,6 +407,117 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit summary store", () => {
     expect(await claimGitHubWorkUnitSummary({ now })).toBeNull();
   });
 
+  test("upgrades paid attempts without inventing legacy request timestamps", async () => {
+    const now = new Date("2026-09-01T12:00:00Z");
+    for (const startedRequests of [0, 1, 2]) {
+      await seedUnit({
+        activityAt: now,
+        debounceUntil: now,
+        lastStartedAt: startedRequests === 0 ? null : now,
+        startedRequests,
+        state: startedRequests === 0 ? "pending" : "retryable",
+      });
+    }
+    const rollback = new Error("Rollback migration rehearsal");
+    try {
+      await admin.begin(async (transaction) => {
+        // Recreate the deployed table shape with real pending and paid rows.
+        await transaction`drop trigger record_github_summary_attempt on github_work_unit_summary_attempts`;
+        await transaction`drop function record_github_summary_attempt()`;
+        await transaction`
+          alter table github_work_unit_summary_attempts
+          drop column identity_key cascade, drop column repository_id,
+          drop column request_started_at cascade,
+          add constraint gh_work_unit_summary_attempts_unit_fk
+            foreign key (work_unit_id) references github_work_units(id) on delete cascade
+        `;
+        const migration = await Bun.file(
+          new URL("../drizzle/0021_windy_midnight.sql", import.meta.url)
+        ).text();
+        for (const statement of migration.split("--> statement-breakpoint")) {
+          await transaction.unsafe(statement);
+        }
+        const rows = await transaction`
+          select a.started_requests, cardinality(a.request_started_at) as recorded,
+            a.identity_key = w.identity_key and a.repository_id = w.repository_id as identity_preserved,
+            a.request_started_at[1] is null as first_unknown,
+            a.request_started_at[a.started_requests] = a.last_started_at as last_preserved
+          from github_work_unit_summary_attempts a join github_work_units w on w.id = a.work_unit_id
+          order by a.started_requests
+        `;
+        expect([...rows]).toEqual([
+          {
+            started_requests: 0,
+            recorded: 0,
+            identity_preserved: true,
+            first_unknown: true,
+            last_preserved: null,
+          },
+          {
+            started_requests: 1,
+            recorded: 1,
+            identity_preserved: true,
+            first_unknown: false,
+            last_preserved: true,
+          },
+          {
+            started_requests: 2,
+            recorded: 2,
+            identity_preserved: true,
+            first_unknown: true,
+            last_preserved: true,
+          },
+        ]);
+        throw rollback;
+      });
+    } catch (error) {
+      if (error !== rollback) {
+        throw error;
+      }
+    }
+  });
+
+  test("keeps the deployed worker's inserts and claims compatible during rollout", async () => {
+    const now = new Date("2026-09-01T12:00:00Z");
+    const unit = await seedUnit({ activityAt: now, debounceUntil: now });
+    await admin`delete from github_work_unit_summary_attempts`;
+    // These are the columns written by the worker before migration 0021.
+    await admin`
+      insert into github_work_unit_summary_attempts (
+        attribution_mode, debounce_until, outcome_digest, recipe,
+        request_payload, revision, summary_input_digest, work_unit_id
+      ) select attribution_mode, ${instant(now)}, outcome_digest, ${recipe},
+        ${unit.payload}, 1, summary_input_digest, id
+      from github_work_units where id = ${unit.workUnitId}
+    `;
+    expect(await readAttempt(unit)).toMatchObject({
+      identity_key: unit.identityKey,
+      repository_id: repositoryId,
+      started_requests: 0,
+    });
+    for (const startedAt of [now, new Date("2026-09-02T00:10:00Z")]) {
+      await admin`
+        update github_work_unit_summary_attempts
+        set state = 'processing', started_requests = started_requests + 1,
+            last_started_at = ${instant(startedAt)}, lease_token = gen_random_uuid(),
+            lease_until = ${instant(new Date(startedAt.getTime() + 90_000))}
+        where work_unit_id = ${unit.workUnitId}
+      `;
+      await admin`
+        update github_work_unit_summary_attempts
+        set state = 'retryable', lease_token = null, lease_until = null
+        where work_unit_id = ${unit.workUnitId}
+      `;
+    }
+    const [history] = await admin`
+      select started_requests, request_started_at = ARRAY[
+        '2026-09-01T12:00:00Z'::timestamptz, '2026-09-02T00:10:00Z'::timestamptz
+      ] as recorded from github_work_unit_summary_attempts
+      where work_unit_id = ${unit.workUnitId}
+    `;
+    expect(history).toEqual({ started_requests: 2, recorded: true });
+  });
+
   test("records each paid start across a UTC-day boundary", async () => {
     const first = new Date("2026-09-01T23:50:00Z");
     const second = new Date("2026-09-02T00:10:00Z");

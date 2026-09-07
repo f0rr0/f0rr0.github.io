@@ -256,6 +256,8 @@ Each future start is recorded on the existing attempt (at most two timestamps),
 so daily usage can be reconciled even when a retry crosses UTC midnight. The
 migration preserves the known last-start time and marks an unrecoverable earlier
 legacy start as null; it does not invent past timestamps.
+The database records each counter increment, including claims from the previous
+worker version while the new build is rolling out.
 
 `OPENAI_API_KEY` is optional; without it the factual pipeline continues and no
 summary claim is started. This is not an OpenAI free-tier design. At the

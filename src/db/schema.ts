@@ -1352,6 +1352,7 @@ export const githubWorkUnitSummaryAttempts = pgTable(
       withTimezone: true,
     }).notNull(),
     inputTokens: integer("input_tokens"),
+    // Recorded by the database trigger when startedRequests increases.
     // At most two starts. A null entry marks an unknown pre-migration time.
     requestStartedAt: timestamp("request_started_at", {
       mode: "date",

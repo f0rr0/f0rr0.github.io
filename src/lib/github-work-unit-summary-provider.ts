@@ -45,8 +45,6 @@ export interface GitHubWorkUnitSummaryProviderDependencies {
 }
 
 export class GitHubWorkUnitSummaryInvalidInputError extends Error {
-  readonly retryable = false;
-
   constructor(options?: ErrorOptions) {
     super("The persisted GitHub work-unit summary input is invalid.", options);
     this.name = "GitHubWorkUnitSummaryInvalidInputError";
@@ -56,7 +54,6 @@ export class GitHubWorkUnitSummaryInvalidInputError extends Error {
 // oxlint-disable-next-line max-classes-per-file -- Input and output failures have different terminal meanings at the worker boundary.
 export class GitHubWorkUnitSummaryInvalidOutputError extends Error {
   readonly reason: GitHubWorkUnitSummaryOutputRejectionReason;
-  readonly retryable = true;
 
   constructor(
     reason: GitHubWorkUnitSummaryOutputRejectionReason,

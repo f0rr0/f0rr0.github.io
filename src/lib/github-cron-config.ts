@@ -9,8 +9,8 @@ export const GITHUB_WORKER_CRON_JOB = {
 } as const;
 
 export const GITHUB_SUMMARY_CRON_JOB = {
-  name: "github-summary-worker-every-five-minutes",
-  schedule: "3-58/5 * * * *",
+  name: "github-summary-worker-every-three-minutes",
+  schedule: "*/3 * * * *",
 } as const;
 
 export const GITHUB_SUMMARY_REQUEST_BUDGET = {

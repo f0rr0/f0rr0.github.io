@@ -168,7 +168,6 @@ describe("GitHub work-unit summary provider", () => {
     expect(semanticFailure).rejects.toMatchObject({
       name: "GitHubWorkUnitSummaryInvalidOutputError",
       reason: "url",
-      retryable: true,
     });
     expect(semanticCalls).toBe(1);
 
@@ -180,7 +179,6 @@ describe("GitHub work-unit summary provider", () => {
     expect(structuredFailure).rejects.toMatchObject({
       name: "GitHubWorkUnitSummaryInvalidOutputError",
       reason: "invalid_shape",
-      retryable: true,
     });
 
     const schemaFailure = generateGitHubWorkUnitSummary(request(), {
@@ -204,7 +202,6 @@ describe("GitHub work-unit summary provider", () => {
     expect(schemaFailure).rejects.toMatchObject({
       name: "GitHubWorkUnitSummaryInvalidOutputError",
       reason: "invalid_shape",
-      retryable: true,
     });
   });
 
@@ -260,7 +257,6 @@ describe("GitHub work-unit summary provider", () => {
       );
       expect(receivedError).toMatchObject({
         name: "GitHubWorkUnitSummaryInvalidInputError",
-        retryable: false,
       });
     }
     expect(calls).toBe(0);

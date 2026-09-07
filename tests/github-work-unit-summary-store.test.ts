@@ -75,7 +75,7 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit summary store", () => {
     lastStartedAt = null,
     leaseToken = null,
     leaseUntil = null,
-    outcomeDigest = digest("a"),
+    outcomeDigest,
     requestPayload,
     startedRequests = 0,
     state = "pending",
@@ -105,6 +105,7 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit summary store", () => {
     const workUnitId = `00000000-0000-4000-8000-${suffix}`;
     const branchLineageId = `10000000-0000-4000-8000-${suffix}`;
     const sha = sequence.toString(16).padStart(40, "0");
+    const unitOutcomeDigest = outcomeDigest ?? sha.padStart(64, "0");
     const activityDay = activityAt.toISOString().slice(0, 10);
     const payload = requestPayload ?? JSON.stringify({ unit: sequence });
     await admin`
@@ -129,7 +130,7 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit summary store", () => {
         'branch_owned_composite', ${branchLineageId}, ${instant(contentObservedAt)}, 1,
         ${digest("c")}, 1, ${instant(activityAt)}, ${workUnitId},
         ${`branch:${branchLineageId}`}, 'branch', ${instant(activityAt)}, 1,
-        ${digest("d")}, ${repositoryId}, ${sha}, ${outcomeDigest},
+        ${digest("d")}, ${repositoryId}, ${sha}, ${unitOutcomeDigest},
         ${repositoryId}, ${workUnitRevision}, ${summaryEvaluatedDigest},
         ${summaryEvaluationDigest}, ${summaryInputDigest}, 'public'
       )
@@ -137,20 +138,21 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit summary store", () => {
     await admin`
       insert into github_work_unit_summary_attempts (
         attribution_mode, created_at, debounce_until, input_tokens,
-        last_started_at, lease_token, lease_until, outcome_digest, recipe,
+        last_started_at, lease_token, lease_until, outcome_digest, recipe, request_started_at,
         request_payload, revision, started_requests, state,
-        summary_input_digest, work_unit_id
+        summary_input_digest, work_unit_id, identity_key, repository_id
       ) values (
         'branch_owned_composite', ${instant(contentObservedAt)},
         ${instant(debounceUntil)}, 37, ${instant(lastStartedAt)}, ${leaseToken},
-        ${instant(leaseUntil)}, ${outcomeDigest},
-        ${recipe}, ${payload}, ${attemptRevision}, ${startedRequests}, ${state},
-        ${summaryInputDigest}, ${workUnitId}
+        ${instant(leaseUntil)}, ${unitOutcomeDigest},
+        ${recipe}, case when ${startedRequests} = 0 then ARRAY[]::timestamptz[] when ${startedRequests} = 1 then ARRAY[${instant(lastStartedAt)}::timestamptz] else ARRAY[null, ${instant(lastStartedAt)}::timestamptz] end,
+        ${payload}, ${attemptRevision}, ${startedRequests}, ${state},
+        ${summaryInputDigest}, ${workUnitId}, ${`branch:${branchLineageId}`}, ${repositoryId}
       )
     `;
     return {
       identityKey: `branch:${branchLineageId}`,
-      outcomeDigest,
+      outcomeDigest: unitOutcomeDigest,
       payload,
       revision: attemptRevision,
       workUnitId,
@@ -263,6 +265,7 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit summary store", () => {
 
   beforeEach(async () => {
     await admin`delete from github_work_unit_summary_attempts`;
+    await admin`delete from github_work_unit_accepted_summaries`;
     await admin`delete from github_work_unit_summary_daily_usage`;
     await admin`delete from github_work_units`;
     await admin`delete from github_issues`;
@@ -298,6 +301,267 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit summary store", () => {
         stdout: "ignore",
       });
     }
+  });
+
+  const seedAcceptedSummary = async (
+    unit: Awaited<ReturnType<typeof seedUnit>>,
+    acceptedAt: Date,
+    outcomeDigest = unit.outcomeDigest
+  ) => {
+    await admin`
+      insert into github_work_unit_accepted_summaries (
+        accepted_at, attribution_mode, identity_key, outcome, outcome_digest,
+        recipe, repository_id, summary_input_digest
+      ) values (
+        ${instant(acceptedAt)}, 'branch_owned_composite', ${unit.identityKey},
+        ${JSON.stringify({ headline: "Valid cached outcome", summary: "The accepted summary describes the same authored changes." })},
+        ${outcomeDigest}, ${recipe}, ${repositoryId}, ${digest("f")}
+      )
+    `;
+  };
+
+  test("reuses unchanged outcomes for free even when the daily budget is exhausted", async () => {
+    const now = new Date("2026-09-01T12:00:00Z");
+    const unit = await seedUnit({
+      activityAt: now,
+      debounceUntil: new Date("2026-09-01T13:00:00Z"),
+    });
+    await seedAcceptedSummary(unit, new Date("2026-08-31T12:00:00Z"));
+    await seedUsage([{ day: "2026-09-01", startedRequests: 100 }]);
+    expect(await claimGitHubWorkUnitSummary({ now })).toBeNull();
+    expect(await readAttempt(unit)).toMatchObject({
+      state: "accepted",
+      started_requests: 0,
+      request_payload: null,
+      lease_token: null,
+    });
+    expect([...(await readUsage())]).toEqual([
+      { day: "2026-09-01", started_requests: 100 },
+    ]);
+    expect(await readHead()).toMatchObject({ summarizing: false });
+  });
+
+  test("serves missing summaries newest first before refreshing existing prose", async () => {
+    const now = new Date("2026-09-01T12:00:00Z");
+    const refresh = await seedUnit({
+      activityAt: new Date("2026-09-01T11:00:00Z"),
+      debounceUntil: now,
+    });
+    await seedAcceptedSummary(
+      refresh,
+      new Date("2026-08-31T12:00:00Z"),
+      digest("c")
+    );
+    const newer = await seedUnit({
+      activityAt: new Date("2026-09-01T10:00:00Z"),
+      debounceUntil: now,
+    });
+    const older = await seedUnit({
+      activityAt: new Date("2026-08-31T10:00:00Z"),
+      debounceUntil: now,
+    });
+    for (const expected of [newer, older, refresh]) {
+      const claim = await claimGitHubWorkUnitSummary({ now });
+      assert.ok(claim);
+      expect(claim.workUnitId).toBe(expected.workUnitId);
+      await terminalGitHubWorkUnitSummary(claim, now);
+    }
+  });
+
+  test("retains paid history and accepts an in-flight result after projection deletion", async () => {
+    const now = new Date("2026-09-01T12:00:00Z");
+    const unit = await seedUnit({ activityAt: now, debounceUntil: now });
+    const claim = await claimGitHubWorkUnitSummary({ now });
+    assert.ok(claim);
+    await admin`delete from github_work_units where id = ${unit.workUnitId}`;
+    expect(
+      await completeGitHubWorkUnitSummary(
+        claim,
+        providerResult("Retained authored work."),
+        now
+      )
+    ).toEqual({ accepted: true });
+    expect(await readAttempt(unit)).toMatchObject({
+      state: "accepted",
+      started_requests: 1,
+      identity_key: unit.identityKey,
+    });
+    const [cached] =
+      await admin`select identity_key from github_work_unit_accepted_summaries where identity_key = ${unit.identityKey}`;
+    expect(cached.identity_key).toBe(unit.identityKey);
+    expect([...(await readUsage())]).toEqual([
+      { day: "2026-09-01", started_requests: 1 },
+    ]);
+  });
+
+  test("shows active work at the cap only while a provider claim is still running", async () => {
+    const now = new Date("2026-09-01T12:00:00Z");
+    await seedUnit({ activityAt: now, debounceUntil: now });
+    await seedUnit({ activityAt: now, debounceUntil: now });
+    await seedUsage([{ day: "2026-09-01", startedRequests: 99 }]);
+    const claim = await claimGitHubWorkUnitSummary({ now });
+    assert.ok(claim);
+    expect(await readHead()).toMatchObject({ summarizing: true });
+    await terminalGitHubWorkUnitSummary(claim, now);
+    expect(await readHead()).toMatchObject({ summarizing: false });
+    expect(await claimGitHubWorkUnitSummary({ now })).toBeNull();
+  });
+
+  test("upgrades paid attempts without inventing legacy request timestamps", async () => {
+    const now = new Date("2026-09-01T12:00:00Z");
+    for (const startedRequests of [0, 1, 2]) {
+      await seedUnit({
+        activityAt: now,
+        debounceUntil: now,
+        lastStartedAt: startedRequests === 0 ? null : now,
+        startedRequests,
+        state: startedRequests === 0 ? "pending" : "retryable",
+      });
+    }
+    const rollback = new Error("Rollback migration rehearsal");
+    try {
+      await admin.begin(async (transaction) => {
+        // Recreate the deployed table shape with real pending and paid rows.
+        await transaction`drop trigger record_github_summary_attempt on github_work_unit_summary_attempts`;
+        await transaction`drop function record_github_summary_attempt()`;
+        await transaction`
+          alter table github_work_unit_summary_attempts
+          drop column identity_key cascade, drop column repository_id,
+          drop column request_started_at cascade,
+          add constraint gh_work_unit_summary_attempts_unit_fk
+            foreign key (work_unit_id) references github_work_units(id) on delete cascade
+        `;
+        const migration = await Bun.file(
+          new URL("../drizzle/0021_windy_midnight.sql", import.meta.url)
+        ).text();
+        for (const statement of migration.split("--> statement-breakpoint")) {
+          await transaction.unsafe(statement);
+        }
+        const rows = await transaction`
+          select a.started_requests, cardinality(a.request_started_at) as recorded,
+            a.identity_key = w.identity_key and a.repository_id = w.repository_id as identity_preserved,
+            a.request_started_at[1] is null as first_unknown,
+            a.request_started_at[a.started_requests] = a.last_started_at as last_preserved
+          from github_work_unit_summary_attempts a join github_work_units w on w.id = a.work_unit_id
+          order by a.started_requests
+        `;
+        expect([...rows]).toEqual([
+          {
+            started_requests: 0,
+            recorded: 0,
+            identity_preserved: true,
+            first_unknown: true,
+            last_preserved: null,
+          },
+          {
+            started_requests: 1,
+            recorded: 1,
+            identity_preserved: true,
+            first_unknown: false,
+            last_preserved: true,
+          },
+          {
+            started_requests: 2,
+            recorded: 2,
+            identity_preserved: true,
+            first_unknown: true,
+            last_preserved: true,
+          },
+        ]);
+        throw rollback;
+      });
+    } catch (error) {
+      if (error !== rollback) {
+        throw error;
+      }
+    }
+  });
+
+  test("keeps the deployed worker's inserts and claims compatible during rollout", async () => {
+    const now = new Date("2026-09-01T12:00:00Z");
+    const unit = await seedUnit({ activityAt: now, debounceUntil: now });
+    await admin`delete from github_work_unit_summary_attempts`;
+    // These are the columns written by the worker before migration 0021.
+    await admin`
+      insert into github_work_unit_summary_attempts (
+        attribution_mode, debounce_until, outcome_digest, recipe,
+        request_payload, revision, summary_input_digest, work_unit_id
+      ) select attribution_mode, ${instant(now)}, outcome_digest, ${recipe},
+        ${unit.payload}, 1, summary_input_digest, id
+      from github_work_units where id = ${unit.workUnitId}
+    `;
+    expect(await readAttempt(unit)).toMatchObject({
+      identity_key: unit.identityKey,
+      repository_id: repositoryId,
+      started_requests: 0,
+    });
+    for (const startedAt of [now, new Date("2026-09-02T00:10:00Z")]) {
+      await admin`
+        update github_work_unit_summary_attempts
+        set state = 'processing', started_requests = started_requests + 1,
+            last_started_at = ${instant(startedAt)}, lease_token = gen_random_uuid(),
+            lease_until = ${instant(new Date(startedAt.getTime() + 90_000))}
+        where work_unit_id = ${unit.workUnitId}
+      `;
+      await admin`
+        update github_work_unit_summary_attempts
+        set state = 'retryable', lease_token = null, lease_until = null
+        where work_unit_id = ${unit.workUnitId}
+      `;
+    }
+    const [history] = await admin`
+      select started_requests, request_started_at = ARRAY[
+        '2026-09-01T12:00:00Z'::timestamptz, '2026-09-02T00:10:00Z'::timestamptz
+      ] as recorded from github_work_unit_summary_attempts
+      where work_unit_id = ${unit.workUnitId}
+    `;
+    expect(history).toEqual({ started_requests: 2, recorded: true });
+  });
+
+  test("records each paid start across a UTC-day boundary", async () => {
+    const first = new Date("2026-09-01T23:50:00Z");
+    const second = new Date("2026-09-02T00:10:00Z");
+    const unit = await seedUnit({ activityAt: first, debounceUntil: first });
+    const claim = await claimGitHubWorkUnitSummary({ now: first });
+    assert.ok(claim);
+    await deferGitHubWorkUnitSummary(claim, second, first, "TimeoutError");
+    const retry = await claimGitHubWorkUnitSummary({ now: second });
+    assert.ok(retry);
+    await terminalGitHubWorkUnitSummary(retry, second, "output_html");
+    await admin`delete from github_work_units where id = ${unit.workUnitId}`;
+    const starts =
+      await admin`select started::date::text as day, count(*)::integer as started_requests from github_work_unit_summary_attempts, unnest(request_started_at) started group by started::date order by day`;
+    expect([...starts]).toEqual([...(await readUsage())]);
+    expect([...starts]).toEqual([
+      { day: "2026-09-01", started_requests: 1 },
+      { day: "2026-09-02", started_requests: 1 },
+    ]);
+  });
+
+  test("paces historical work while keeping remaining daily capacity available to recent work", async () => {
+    const midnight = new Date("2026-09-01T00:00:00Z");
+    await seedUnit({
+      activityAt: new Date("2026-08-28T12:00:00Z"),
+      debounceUntil: midnight,
+    });
+    await seedUnit({
+      activityAt: new Date("2026-08-29T12:00:00Z"),
+      debounceUntil: midnight,
+    });
+    expect(await claimGitHubWorkUnitSummary({ now: midnight })).toBeNull();
+    await seedUsage([{ day: "2026-09-01", startedRequests: 49 }]);
+    const noon = new Date("2026-09-01T12:00:00Z");
+    const historical = await claimGitHubWorkUnitSummary({ now: noon });
+    assert.ok(historical);
+    await terminalGitHubWorkUnitSummary(historical, noon);
+    expect(await claimGitHubWorkUnitSummary({ now: noon })).toBeNull();
+    const recent = await seedUnit({ activityAt: noon, debounceUntil: noon });
+    expect(await claimGitHubWorkUnitSummary({ now: noon })).toMatchObject({
+      workUnitId: recent.workUnitId,
+    });
+    expect([...(await readUsage())]).toEqual([
+      { day: "2026-09-01", started_requests: 51 },
+    ]);
   });
 
   test("claims current work by newest activity then newest content", async () => {
@@ -868,14 +1132,14 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit summary store", () => {
         accepted_at, attribution_mode, completed_at, debounce_until,
         input_tokens, last_started_at, latency_ms, model, outcome,
         outcome_digest, output_tokens, recipe, revision, started_requests,
-        state, summary_input_digest, work_unit_id
+        state, summary_input_digest, work_unit_id, identity_key, repository_id, request_started_at
       ) values (
         '2026-08-31T13:00:00Z', 'branch_owned_composite',
         '2026-08-31T13:00:00Z', '2026-08-31T12:00:00Z', 40,
         '2026-08-31T13:00:00Z', 10, 'previous-model',
         'Prior prose for the same outcome.', ${rewrite.outcomeDigest}, 10,
         'github-work-unit-outcome-v0', 1, 1, 'accepted', ${digest("e")},
-        ${rewrite.workUnitId}
+        ${rewrite.workUnitId}, ${rewrite.identityKey}, ${repositoryId}, ARRAY['2026-08-31T13:00:00Z'::timestamptz]
       )
     `;
     const rewriteClaim = await claimGitHubWorkUnitSummary({ now });
@@ -955,7 +1219,10 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit summary store", () => {
     await admin`
       delete from github_work_units where id = ${stale.workUnitId}
     `;
-    expect(await readAttempt(stale)).toBeUndefined();
+    expect(await readAttempt(stale)).toMatchObject({
+      started_requests: 1,
+      state: "accepted",
+    });
     const [retained] = await admin`
       select * from github_work_unit_accepted_summaries
       where identity_key = ${stale.identityKey}

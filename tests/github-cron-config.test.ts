@@ -26,6 +26,9 @@ import vercelConfig from "../vercel.json";
 
 const minutesFrom = (schedule: string) => {
   const [minute] = schedule.split(" ", 1);
+  if (minute === "*/3") {
+    return Array.from({ length: 20 }, (_, index) => index * 3);
+  }
   if (minute === "*/5") {
     return Array.from({ length: 12 }, (_, index) => index * 5);
   }
@@ -42,23 +45,19 @@ const minutesFrom = (schedule: string) => {
 };
 
 describe("GitHub cron configuration", () => {
-  test("staggered routine jobs never start in the same minute", () => {
+  test("factual jobs stay staggered while summaries run 20 times per hour", () => {
     const jobs = [
       GITHUB_EVENTS_CRON_JOB,
       GITHUB_WORKER_CRON_JOB,
-      GITHUB_SUMMARY_CRON_JOB,
       GITHUB_HEAD_REFS_CRON_JOB,
     ];
     const allMinutes = jobs.flatMap((job) => minutesFrom(job.schedule));
     expect(new Set(jobs.map((job) => job.name)).size).toBe(jobs.length);
     expect(new Set(allMinutes).size).toBe(allMinutes.length);
 
-    const factualMinutes = new Set(
-      minutesFrom(GITHUB_WORKER_CRON_JOB.schedule)
+    expect(minutesFrom(GITHUB_SUMMARY_CRON_JOB.schedule)).toEqual(
+      Array.from({ length: 20 }, (_, index) => index * 3)
     );
-    for (const summaryMinute of minutesFrom(GITHUB_SUMMARY_CRON_JOB.schedule)) {
-      expect(factualMinutes.has((summaryMinute + 59) % 60)).toBe(true);
-    }
   });
 
   test("bounds scheduled repository reconciliation", () => {

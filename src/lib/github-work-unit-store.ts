@@ -1504,11 +1504,19 @@ const persistProjectedUnit = async (
     projected
   );
   if (current === undefined) {
+    const [retained] = await transaction
+      .select({ workUnitId: githubWorkUnitSummaryAttempts.workUnitId })
+      .from(githubWorkUnitSummaryAttempts)
+      .where(
+        eq(githubWorkUnitSummaryAttempts.identityKey, projected.identityKey)
+      )
+      .limit(1);
     const [row] = await transaction
       .insert(githubWorkUnits)
-      .values(
-        projectedValues(projected, 1, summaryEvaluationDigest, null, null)
-      )
+      .values({
+        ...projectedValues(projected, 1, summaryEvaluationDigest, null, null),
+        id: retained?.workUnitId,
+      })
       .returning({ id: githubWorkUnits.id });
     if (row === undefined) {
       throw new Error("A GitHub work unit could not be inserted.");
@@ -1642,6 +1650,15 @@ const swapProjection = async (
       .where(inArray(githubWorkUnitMemberships.workUnitId, affectedCurrentIds));
   }
   if (deleted.length > 0) {
+    await transaction.delete(githubWorkUnitSummaryAttempts).where(
+      and(
+        inArray(
+          githubWorkUnitSummaryAttempts.workUnitId,
+          deleted.map((unit) => unit.id)
+        ),
+        eq(githubWorkUnitSummaryAttempts.startedRequests, 0)
+      )
+    );
     await transaction.delete(githubWorkUnits).where(
       inArray(
         githubWorkUnits.id,
@@ -2075,6 +2092,8 @@ const setSummaryInputs = async (
       }
       const revision = (maximumRevisionByUnit.get(current.id) ?? 0) + 1;
       await transaction.insert(githubWorkUnitSummaryAttempts).values({
+        identityKey: item.unit.projected.identityKey,
+        repositoryId: item.unit.projected.repositoryId,
         attributionMode: item.unit.projected.attributionMode,
         debounceUntil: new Date(now.getTime() + SUMMARY_DEBOUNCE_MS),
         inputTokens: eligibleBuild.inputTokens,

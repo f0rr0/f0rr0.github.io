@@ -28,7 +28,10 @@ import { env } from "@/env";
 import { PUBLIC_GITHUB_ACTIVITY_DAY_PAGE_SIZE } from "@/lib/github-activity-store";
 import { GITHUB_SUMMARY_REQUEST_BUDGET } from "@/lib/github-cron-config";
 import { acquireGitHubWorkUnitProjectionLock } from "@/lib/github-work-unit-projection-state";
-import { GITHUB_WORK_UNIT_SUMMARY_RECIPE } from "@/lib/github-work-unit-summary";
+import {
+  decodeGitHubWorkUnitSummary,
+  GITHUB_WORK_UNIT_SUMMARY_RECIPE,
+} from "@/lib/github-work-unit-summary";
 import type { GitHubWorkUnitSummaryAttributionMode } from "@/lib/github-work-unit-summary";
 import type { GitHubWorkUnitSummaryProviderResult } from "@/lib/github-work-unit-summary-provider";
 
@@ -198,47 +201,25 @@ const currentUnitMatchesAttempt = (
 const reconcileInactiveSummaryInputs = async (
   transaction: SummaryTransaction
 ) => {
+  const inactive = sql`
+    (attempt.recipe <> ${GITHUB_WORK_UNIT_SUMMARY_RECIPE} or not exists (
+      select 1 from ${githubWorkUnits} w
+      where w.id = attempt.work_unit_id
+        and w.summary_evaluation_digest = w.summary_evaluated_digest
+        and w.outcome_digest = attempt.outcome_digest
+        and w.summary_input_digest = attempt.summary_input_digest
+        and w.attribution_mode = attempt.attribution_mode
+    ))
+  `;
   await transaction.execute(sql`
     delete from ${githubWorkUnitSummaryAttempts} as attempt
-    using ${githubWorkUnits} as work_unit
-    where attempt.work_unit_id = work_unit.id
-      and attempt.state in ('pending', 'retryable')
-      and (
-        attempt.recipe <> ${GITHUB_WORK_UNIT_SUMMARY_RECIPE}
-        or (
-          attempt.started_requests = 0
-          and (
-            work_unit.summary_evaluation_digest is null
-            or work_unit.summary_evaluation_digest
-              is distinct from work_unit.summary_evaluated_digest
-            or work_unit.outcome_digest is distinct from attempt.outcome_digest
-            or work_unit.summary_input_digest
-              is distinct from attempt.summary_input_digest
-            or work_unit.attribution_mode
-              is distinct from attempt.attribution_mode
-          )
-        )
-      )
+    where attempt.state in ('pending', 'retryable')
+      and attempt.started_requests = 0 and ${inactive}
   `);
   await transaction.execute(sql`
-    update ${githubWorkUnitSummaryAttempts} as attempt
-    set request_payload = null
-    from ${githubWorkUnits} as work_unit
-    where attempt.work_unit_id = work_unit.id
-      and attempt.state = 'retryable'
-      and attempt.started_requests > 0
-      and attempt.request_payload is not null
-      and attempt.recipe = ${GITHUB_WORK_UNIT_SUMMARY_RECIPE}
-      and (
-        work_unit.summary_evaluation_digest is null
-        or work_unit.summary_evaluation_digest
-          is distinct from work_unit.summary_evaluated_digest
-        or work_unit.outcome_digest is distinct from attempt.outcome_digest
-        or work_unit.summary_input_digest
-          is distinct from attempt.summary_input_digest
-        or work_unit.attribution_mode
-          is distinct from attempt.attribution_mode
-      )
+    update ${githubWorkUnitSummaryAttempts} as attempt set request_payload = null
+    where attempt.state = 'retryable' and attempt.started_requests > 0
+      and attempt.request_payload is not null and ${inactive}
   `);
 };
 
@@ -246,80 +227,78 @@ const recoverExpiredClaims = async (
   transaction: SummaryTransaction,
   now: Date
 ) => {
-  const expiredUnits = await transaction
-    .select({ id: githubWorkUnits.id })
-    .from(githubWorkUnits)
-    .innerJoin(
-      githubWorkUnitSummaryAttempts,
-      eq(githubWorkUnitSummaryAttempts.workUnitId, githubWorkUnits.id)
-    )
-    .where(
-      and(
-        eq(githubWorkUnitSummaryAttempts.state, "processing"),
-        lte(githubWorkUnitSummaryAttempts.leaseUntil, now)
-      )
-    )
-    .orderBy(githubWorkUnits.identityKey)
-    .for("update", { of: githubWorkUnits });
-  const expiredWorkUnitIds = [...new Set(expiredUnits.map(({ id }) => id))];
-  if (expiredWorkUnitIds.length > 0) {
-    await transaction
-      .update(githubWorkUnitSummaryAttempts)
-      .set({
-        acceptedAt: null,
-        completedAt: now,
-        leaseToken: null,
-        leaseUntil: null,
-        outcome: null,
-        requestPayload: null,
-        state: "terminal",
-      })
-      .where(
-        and(
-          inArray(githubWorkUnitSummaryAttempts.workUnitId, expiredWorkUnitIds),
-          eq(githubWorkUnitSummaryAttempts.state, "processing"),
-          lte(githubWorkUnitSummaryAttempts.leaseUntil, now),
-          gte(
-            githubWorkUnitSummaryAttempts.startedRequests,
-            MAXIMUM_STARTED_REQUESTS
-          )
-        )
-      );
-    await transaction
-      .update(githubWorkUnitSummaryAttempts)
-      .set({
-        debounceUntil: now,
-        leaseToken: null,
-        leaseUntil: null,
-        state: "retryable",
-      })
-      .where(
-        and(
-          inArray(githubWorkUnitSummaryAttempts.workUnitId, expiredWorkUnitIds),
-          eq(githubWorkUnitSummaryAttempts.state, "processing"),
-          lte(githubWorkUnitSummaryAttempts.leaseUntil, now),
-          lt(
-            githubWorkUnitSummaryAttempts.startedRequests,
-            MAXIMUM_STARTED_REQUESTS
-          )
-        )
-      );
-  }
+  // Both workers hold the summary/projection locks; expired orphaned attempts
+  // need the same settlement as attempts still attached to visible work.
+  await transaction.execute(sql`
+    update ${githubWorkUnitSummaryAttempts}
+    set accepted_at = null, lease_token = null, lease_until = null,
+        error_code = 'lease_expired',
+        state = case when started_requests >= ${MAXIMUM_STARTED_REQUESTS} then 'terminal' else 'retryable' end,
+        completed_at = case when started_requests >= ${MAXIMUM_STARTED_REQUESTS} then ${now.toISOString()}::timestamptz else null end,
+        request_payload = case when started_requests >= ${MAXIMUM_STARTED_REQUESTS} then null else request_payload end
+    where state = 'processing' and lease_until <= ${now.toISOString()}::timestamptz
+  `);
   await reconcileInactiveSummaryInputs(transaction);
 };
 
+// Reuse only the same outcome and attribution. Prompt/transport revisions do
+// not turn unchanged work into another paid request; the recipe can opt out.
+const reuseAcceptedSummaries = async (
+  transaction: SummaryTransaction,
+  now: Date
+) => {
+  const rows = await transaction.execute<{
+    work_unit_id: string;
+    revision: number;
+    outcome: string;
+    accepted_at: string;
+    activity_day: string;
+  }>(sql`
+    select distinct on (a.work_unit_id, a.revision)
+      a.work_unit_id, a.revision, s.outcome, s.accepted_at, to_char(w.activity_day, 'YYYY-MM-DD') as activity_day
+    from ${githubWorkUnitSummaryAttempts} a
+    join ${githubWorkUnits} w on w.id = a.work_unit_id
+    join ${githubWorkUnitAcceptedSummaries} s
+      on s.repository_id = w.repository_id
+      and (s.identity_key = w.identity_key or w.attribution_mode = 'branch_owned_composite')
+      and s.attribution_mode = a.attribution_mode
+      and s.outcome_digest = a.outcome_digest and s.recipe = a.recipe
+    where a.state in ('pending', 'retryable')
+      and a.recipe = ${GITHUB_WORK_UNIT_SUMMARY_RECIPE}
+      and w.summary_evaluation_digest = w.summary_evaluated_digest
+      and w.summary_input_digest = a.summary_input_digest
+      and w.outcome_digest = a.outcome_digest and w.attribution_mode = a.attribution_mode
+    order by a.work_unit_id, a.revision, s.accepted_at desc
+  `);
+  const reusable = rows.filter(
+    (row) => decodeGitHubWorkUnitSummary(row.outcome) !== null
+  );
+  if (reusable.length === 0) {
+    return new Set<string>();
+  }
+  await transaction.execute(sql`
+    update ${githubWorkUnitSummaryAttempts} a
+    set state = 'accepted', outcome = reused.outcome, accepted_at = reused.accepted_at,
+        completed_at = ${now.toISOString()}::timestamptz, request_payload = null
+    from (values ${sql.join(
+      reusable.map(
+        (row) => sql`(
+      ${row.work_unit_id}::uuid, ${row.revision}::integer, ${row.outcome}::text, ${new Date(row.accepted_at).toISOString()}::timestamptz
+    )`
+      ),
+      sql`, `
+    )}) as reused(work_unit_id, revision, outcome, accepted_at)
+    where a.work_unit_id = reused.work_unit_id and a.revision = reused.revision
+  `);
+  return new Set(reusable.map((row) => row.activity_day));
+};
+
 const claimSelection = {
-  activityAt: githubWorkUnits.activityAt,
-  attributionMode: githubWorkUnitSummaryAttempts.attributionMode,
-  contentObservedAt: githubWorkUnits.contentObservedAt,
   debounceUntil: githubWorkUnitSummaryAttempts.debounceUntil,
-  outcomeDigest: githubWorkUnitSummaryAttempts.outcomeDigest,
-  recipe: githubWorkUnitSummaryAttempts.recipe,
   requestPayload: githubWorkUnitSummaryAttempts.requestPayload,
   revision: githubWorkUnitSummaryAttempts.revision,
   startedRequests: githubWorkUnitSummaryAttempts.startedRequests,
   state: githubWorkUnitSummaryAttempts.state,
-  summaryInputDigest: githubWorkUnitSummaryAttempts.summaryInputDigest,
   workUnitId: githubWorkUnitSummaryAttempts.workUnitId,
 };
 
@@ -327,8 +306,16 @@ type ClaimCandidate = Awaited<ReturnType<typeof selectClaimCandidate>>;
 
 async function selectClaimCandidate(
   transaction: SummaryTransaction,
-  now: Date
+  now: Date,
+  usage: SummaryUsage
 ) {
+  // Older work may consume only the elapsed share of today's budget. Recent
+  // work can use the remainder immediately instead of waiting behind a backfill.
+  const dayMs = 24 * 60 * 60 * 1000;
+  const elapsed = now.getTime() - Date.parse(`${usage.day}T00:00:00.000Z`);
+  const historicalCapacity =
+    usage.dailyStartedRequests <
+    Math.floor((MAXIMUM_DAILY_STARTED_REQUESTS * elapsed) / dayMs);
   const [candidate] = await transaction
     .select(claimSelection)
     .from(githubWorkUnitSummaryAttempts)
@@ -338,6 +325,10 @@ async function selectClaimCandidate(
     )
     .where(
       and(
+        or(
+          gte(githubWorkUnits.activityAt, new Date(now.getTime() - dayMs)),
+          sql`${historicalCapacity}`
+        ),
         inArray(githubWorkUnitSummaryAttempts.state, ["pending", "retryable"]),
         lte(githubWorkUnitSummaryAttempts.debounceUntil, now),
         lt(
@@ -368,6 +359,12 @@ async function selectClaimCandidate(
       )
     )
     .orderBy(
+      sql`exists (
+        select 1 from ${githubWorkUnitAcceptedSummaries} s
+        where s.identity_key = ${githubWorkUnits.identityKey}
+          and s.repository_id = ${githubWorkUnits.repositoryId}
+          and s.attribution_mode = ${githubWorkUnits.attributionMode}
+      )`,
       desc(githubWorkUnits.activityAt),
       desc(githubWorkUnits.contentObservedAt),
       githubWorkUnitSummaryAttempts.createdAt,
@@ -385,9 +382,7 @@ const lockedUnit = async (
     .select({
       activityDay: githubWorkUnits.activityDay,
       attributionMode: githubWorkUnits.attributionMode,
-      identityKey: githubWorkUnits.identityKey,
       outcomeDigest: githubWorkUnits.outcomeDigest,
-      repositoryId: githubWorkUnits.repositoryId,
       summaryEvaluatedDigest: githubWorkUnits.summaryEvaluatedDigest,
       summaryEvaluationDigest: githubWorkUnits.summaryEvaluationDigest,
       summaryInputDigest: githubWorkUnits.summaryInputDigest,
@@ -406,6 +401,8 @@ const lockedAttempt = async (
   const [attempt] = await transaction
     .select({
       attributionMode: githubWorkUnitSummaryAttempts.attributionMode,
+      identityKey: githubWorkUnitSummaryAttempts.identityKey,
+      repositoryId: githubWorkUnitSummaryAttempts.repositoryId,
       inputTokens: githubWorkUnitSummaryAttempts.inputTokens,
       leaseToken: githubWorkUnitSummaryAttempts.leaseToken,
       outcomeDigest: githubWorkUnitSummaryAttempts.outcomeDigest,
@@ -675,6 +672,7 @@ async function hasCurrentInitialPageSummaryWork(
   ) {
     return false;
   }
+  const canStart = hasRequestCapacity(await readSummaryUsage(transaction, now));
   const [active] = await transaction
     .select({ revision: githubWorkUnitSummaryAttempts.revision })
     .from(githubWorkUnits)
@@ -703,6 +701,7 @@ async function hasCurrentInitialPageSummaryWork(
         inArray(githubWorkUnits.activityDay, [...initialPageDays]),
         or(
           and(
+            sql`${canStart}`,
             isNotNull(githubWorkUnits.summaryEvaluationDigest),
             sql`${githubWorkUnits.summaryEvaluationDigest} IS DISTINCT FROM ${githubWorkUnits.summaryEvaluatedDigest}`
           ),
@@ -726,6 +725,7 @@ async function hasCurrentInitialPageSummaryWork(
             isNotNull(githubWorkUnitSummaryAttempts.requestPayload),
             or(
               and(
+                sql`${canStart}`,
                 inArray(githubWorkUnitSummaryAttempts.state, [
                   "pending",
                   "retryable",
@@ -813,10 +813,11 @@ export const claimGitHubWorkUnitSummary = async (
   return await getDatabase().transaction(async (transaction) => {
     await acquireSummaryStateLocks(transaction);
     await recoverExpiredClaims(transaction, now);
+    const reused = await reuseAcceptedSummaries(transaction, now);
     const usage = await readSummaryUsage(transaction, now);
     let claim: GitHubWorkUnitSummaryClaim | null = null;
     if (hasRequestCapacity(usage)) {
-      const candidate = await selectClaimCandidate(transaction, now);
+      const candidate = await selectClaimCandidate(transaction, now, usage);
       if (candidate !== null) {
         claim = await tryClaimCandidate(
           transaction,
@@ -828,7 +829,14 @@ export const claimGitHubWorkUnitSummary = async (
       }
     }
     const initialPageDays = await readInitialPageDays(transaction);
-    await revisePublicSummaryHead(transaction, now, initialPageDays);
+    await revisePublicSummaryHead(
+      transaction,
+      now,
+      initialPageDays,
+      [...reused].some((day) => initialPageDays.has(day))
+        ? { feedRevisionChanged: true, initialPageContentChanged: true }
+        : undefined
+    );
     return claim;
   });
 };
@@ -854,10 +862,6 @@ export const completeGitHubWorkUnitSummary = async (
         mutation
       );
     const unit = await lockedUnit(transaction, claim.workUnitId);
-    if (unit === null) {
-      await settleHead();
-      return { accepted: false };
-    }
     const attempt = await lockedAttempt(
       transaction,
       claim.workUnitId,
@@ -867,9 +871,10 @@ export const completeGitHubWorkUnitSummary = async (
       await settleHead();
       return { accepted: false };
     }
-    const currentlyVisible = unitMatchesAttempt(unit, attempt);
     const initialPageChanged =
-      currentlyVisible && initialPageDays.has(unit.activityDay);
+      unit !== null &&
+      unitMatchesAttempt(unit, attempt) &&
+      initialPageDays.has(unit.activityDay);
     const [accepted] = await transaction
       .update(githubWorkUnitSummaryAttempts)
       .set({
@@ -903,11 +908,11 @@ export const completeGitHubWorkUnitSummary = async (
       .values({
         acceptedAt: now,
         attributionMode: attempt.attributionMode,
-        identityKey: unit.identityKey,
+        identityKey: attempt.identityKey,
         outcome: result.outcome,
         outcomeDigest: attempt.outcomeDigest,
         recipe: attempt.recipe,
-        repositoryId: unit.repositoryId,
+        repositoryId: attempt.repositoryId,
         summaryInputDigest: attempt.summaryInputDigest,
       })
       .onConflictDoNothing();
@@ -945,10 +950,6 @@ export const deferGitHubWorkUnitSummary = async (
     const settleHead = async () =>
       await revisePublicSummaryHead(transaction, now, initialPageDays);
     const unit = await lockedUnit(transaction, claim.workUnitId);
-    if (unit === null) {
-      await settleHead();
-      return "stale";
-    }
     const attempt = await lockedAttempt(
       transaction,
       claim.workUnitId,
@@ -963,7 +964,8 @@ export const deferGitHubWorkUnitSummary = async (
       await settleHead();
       return "terminal";
     }
-    const remainsCurrent = currentUnitMatchesAttempt(unit, attempt);
+    const remainsCurrent =
+      unit !== null && currentUnitMatchesAttempt(unit, attempt);
     const [deferred] = await transaction
       .update(githubWorkUnitSummaryAttempts)
       .set({
@@ -1022,7 +1024,15 @@ export const reconcileGitHubWorkUnitSummaryStatus = async (
   return await getDatabase().transaction(async (transaction) => {
     await acquireSummaryStateLocks(transaction);
     await recoverExpiredClaims(transaction, now);
+    const reused = await reuseAcceptedSummaries(transaction, now);
     const initialPageDays = await readInitialPageDays(transaction);
-    return await revisePublicSummaryHead(transaction, now, initialPageDays);
+    return await revisePublicSummaryHead(
+      transaction,
+      now,
+      initialPageDays,
+      [...reused].some((day) => initialPageDays.has(day))
+        ? { feedRevisionChanged: true, initialPageContentChanged: true }
+        : undefined
+    );
   });
 };

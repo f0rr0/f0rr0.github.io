@@ -170,8 +170,8 @@ revision. An ordering change returns `409`, prompting a fresh first page.
 
 The exact accepted summary is preferred. The newest accepted same-attribution
 summary remains a visible fallback while an identity is refreshed. Accepted
-output is also copied to durable storage without a work-unit foreign key, so a
-projection deletion cannot erase it; an exact same-repository outcome may reuse
+output and paid attempt history live without a work-unit foreign key, so a
+projection deletion cannot erase them; an exact same-repository outcome may reuse
 that prose after branch-lineage identity replacement.
 
 ## Outcome summaries
@@ -213,9 +213,13 @@ headline of at most 16 words and a standalone expanded summary of at most three
 sentences and 80 words. Validation rejects invalid Unicode,
 control/bidirectional characters, URLs, HTML, Markdown, and SHAs.
 
-Summary identity includes the semantic policy, recipe, prompt, normalized
-input, outcome digest, and attribution mode. Transport retries and storage
-configuration do not invalidate prose. A five-minute debounce absorbs active
+Summary input identity records the policy, recipe, prompt, normalized input,
+outcome digest, and attribution mode. Before any paid claim, the worker reuses a
+valid accepted summary for the same repository, outcome, attribution, and recipe
+(same identity, or equivalent branch lineage). Prompt, policy, and repository-context
+changes therefore do not spend another request on unchanged work. A recipe change
+explicitly requires a new summary. Cache reuse also runs when the paid budget is
+exhausted. A five-minute debounce absorbs active
 rewrites. Up to eight newest-first inputs are deterministically evaluated per
 projection refresh. A separate bounded worker starts at most one provider claim.
 Valid output remains cacheable if its input becomes stale while the request
@@ -225,25 +229,41 @@ branch outcome after lineage replacement. A force push with the same complete
 outcome can therefore reuse accepted prose without inventing ownership or
 changing the activity anchor.
 
-Claims are ordered by newest activity, then newest observed content:
+Missing summaries take priority over refreshing existing prose. Within each
+group, claims are ordered by newest activity, then newest observed content:
 
 - each attempt may start at most twice;
 - at most 100 requests may start per UTC day and 3,000 per UTC month.
 
-These limits are application configuration; the database only records usage.
+These limits are application configuration; the database records usage. Work older
+than 24 hours can consume only the elapsed share of the daily budget: at noon,
+that is 50 requests. Recent work can use any remaining capacity immediately.
+This lets historical work progress without taking the whole day’s allowance
+before new work arrives. Cache reuse consumes no request.
+
 Started requests count even when they fail. A transient failure waits 15
 minutes before its one possible retry. Output-format rejection uses that same
 bounded retry; invalid persisted input and exhausted attempts become facts-only.
 The last failure code is retained on the attempt. Superseded attempts that never started are removed;
 a paid retryable attempt becomes a payload-free tombstone that retains its
 request count. Its input is rebuilt and debounced only if the exact input becomes
-current again. Expired leases are recovered by the next worker.
+current again. Paid attempts retain their stable identity, repository, counters,
+per-request start timestamps, and failure code even after projection deletion or a recipe
+change. Recreating an identity reuses its prior work-unit ID and attempt budget.
+An in-flight result can still be cached after its projected row disappears.
+Expired leases, including orphaned attempts, are recovered by the next worker.
+Each future start is recorded on the existing attempt (at most two timestamps),
+so daily usage can be reconciled even when a retry crosses UTC midnight. The
+migration preserves the known last-start time and marks an unrecoverable earlier
+legacy start as null; it does not invent past timestamps.
+The database records each counter increment, including claims from the previous
+worker version while the new build is rolling out.
 
 `OPENAI_API_KEY` is optional; without it the factual pipeline continues and no
 summary claim is started. This is not an OpenAI free-tier design. At the
 [model's documented price](https://developers.openai.com/api/docs/models/gpt-5.4-nano)
 of $0.20/M input tokens and $1.25/M output tokens, the hard monthly maximum is
-`3,000 * (32,000 * $0.20/M + 160 * $1.25/M) = $19.80`.
+`3,000 * (32,000 * $0.20/M + 256 * $1.25/M) = $20.16`.
 
 ## Intake and cadence
 
@@ -265,7 +285,7 @@ Supabase Cron invokes:
 | -------------------------- | ------------------------------------- | -------------------------------------------------------------------- |
 | `/api/cron/github-sync`    | every 5 minutes                       | 15-second request                                                    |
 | `/api/cron/github-worker`  | every 5 minutes, offset by 2 minutes  | 60-second request; default eight items per factual queue and one ref |
-| `/api/cron/github-summary` | every 5 minutes, offset by 3 minutes  | 60-second request; at most one provider claim                        |
+| `/api/cron/github-summary` | every 3 minutes                       | 60-second request; at most one provider claim                        |
 | `/api/cron/github-refs`    | every 15 minutes, offset by 4 minutes | 15-second request; eight ref pages/repositories per account          |
 
 The worker processes factual queues and current-ref repair before recomputing
@@ -331,8 +351,10 @@ paginated inventory can require more than one invocation.
 The status endpoint returns the feed revision, a monotone head revision, last
 feed publication time, and one boolean: whether the configured summary pipeline
 has a current public evaluation, queued input, retry, or provider lease on the
-initial five-day page. The next worker reconciliation clears an expired
-abandoned lease. The UI renders only:
+initial five-day page. Queued work does not report active summarization when the
+paid budget is exhausted; an already-started request remains active until it
+settles. The next worker reconciliation clears an expired abandoned lease.
+The UI renders only:
 
 - `Shaping the latest update` while that boolean is true;
 - `Updated … ago` (or `Activity is up to date`) otherwise; or

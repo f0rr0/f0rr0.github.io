@@ -608,10 +608,10 @@ const readPublicRows = async (
       kind,
       repository: repository.projection,
       summarizing:
-        summarizingUnits.has(row.id) ||
-        (summariesAreRunning &&
-          row.summaryEvaluationDigest !== null &&
-          row.summaryEvaluationDigest !== row.summaryEvaluatedDigest),
+        summariesAreRunning &&
+        (summarizingUnits.has(row.id) ||
+          (row.summaryEvaluationDigest !== null &&
+            row.summaryEvaluationDigest !== row.summaryEvaluatedDigest)),
       summary: summary?.summary ?? null,
     };
   });

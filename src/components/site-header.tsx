@@ -6,17 +6,37 @@ import { resumeData } from "@/content/resume";
 
 import { SiteMobileMenu } from "./site-mobile-menu";
 
-interface SiteHeaderProps {
-  activeHref?: "/blog" | "/resume";
-  currentPath?: "/" | "/blog" | "/resume" | "/work-log";
+export interface SiteHeaderProps {
+  activeHref?: "/blog" | "/journey" | "/work-log";
+  currentPath?: "/" | "/blog" | "/journey" | "/work-log";
 }
 
 export function SiteHeader({
   activeHref,
   currentPath = activeHref ?? "/",
 }: Readonly<SiteHeaderProps>): React.ReactNode {
+  const navigation = resumeData.navItems.map((item) => {
+    const props = {
+      "aria-current": item.href === currentPath ? ("page" as const) : undefined,
+      className: `site-nav-link ${item.href === activeHref ? "site-nav-link-active" : ""}`,
+      href: item.href,
+    };
+    return (
+      <li key={item.href}>
+        {item.external === true ? (
+          <a {...props} target="_blank" rel="noopener noreferrer">
+            {item.label}
+          </a>
+        ) : (
+          <Link {...props} prefetch={false}>
+            {item.label}
+          </Link>
+        )}
+      </li>
+    );
+  });
   return (
-    <header className="bg-background font-ui text-foreground print:hidden">
+    <header className="bg-background font-sans text-foreground print:hidden">
       <div className="site-container py-6">
         <nav
           aria-label="Primary navigation"
@@ -27,7 +47,7 @@ export function SiteHeader({
             prefetch={false}
             aria-label={`${resumeData.person.name} home`}
             aria-current={currentPath === "/" ? "page" : undefined}
-            className="group flex items-center gap-3"
+            className="group flex min-h-11 items-center gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
           >
             <Image
               src={resumeData.person.image}
@@ -36,51 +56,14 @@ export function SiteHeader({
               height={40}
               width={40}
             />
-            <span className="hidden text-lg font-bold sm:block">
+            <span className="font-sans text-sm font-medium">
               {resumeData.person.name}
             </span>
           </Link>
           <div className="flex items-center gap-1">
-            <ul className="hidden items-center gap-1 md:flex">
-              {resumeData.navItems.map((item) => {
-                const isActive = item.href === activeHref;
-                const isCurrent = item.href === currentPath;
-                const className = `site-nav-link ${
-                  isActive ? "site-nav-link-active" : ""
-                }`;
-
-                return (
-                  <li key={item.href}>
-                    {item.external === true ? (
-                      <a
-                        href={item.href}
-                        aria-current={isCurrent ? "page" : undefined}
-                        className={className}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {item.label}
-                      </a>
-                    ) : (
-                      <Link
-                        href={item.href}
-                        prefetch={false}
-                        aria-current={isCurrent ? "page" : undefined}
-                        className={className}
-                      >
-                        {item.label}
-                      </Link>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
+            <ul className="hidden items-center gap-1 md:flex">{navigation}</ul>
             <ThemeToggle />
-            <SiteMobileMenu
-              activeHref={activeHref}
-              currentPath={currentPath}
-              navItems={resumeData.navItems}
-            />
+            <SiteMobileMenu>{navigation}</SiteMobileMenu>
           </div>
         </nav>
       </div>

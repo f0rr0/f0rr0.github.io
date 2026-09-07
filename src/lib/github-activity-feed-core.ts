@@ -1,3 +1,4 @@
+import { dateKey } from "@/lib/date";
 import type {
   PublicGitHubActivityDay,
   PublicGitHubActivityDestination,
@@ -37,9 +38,21 @@ export interface BuildPublicGitHubActivityDaysInput {
 
 interface MutableRepositoryGroup {
   activityAt: string;
-  items: { activityAt: string; item: PublicGitHubActivityItem }[];
+  items: PublicGitHubActivityItem[];
   repository: PublicGitHubActivityRepository;
 }
+
+export const getVisibleGitHubActivityDays = (
+  days: readonly PublicGitHubActivityDay[],
+  today: string
+) =>
+  days
+    .filter(
+      (day) =>
+        day.day <= today &&
+        day.repositories.some((group) => group.items.length > 0)
+    )
+    .toSorted((left, right) => right.day.localeCompare(left.day));
 
 const compareText = (left: string, right: string) =>
   left < right ? -1 : left > right ? 1 : 0;
@@ -77,7 +90,7 @@ const addRepositoryItem = (
   if (current === undefined) {
     groups.set(row.repository.key, {
       activityAt: row.activityAt,
-      items: [{ activityAt: row.activityAt, item }],
+      items: [item],
       repository: row.repository,
     });
     return;
@@ -89,14 +102,15 @@ const addRepositoryItem = (
   ) {
     throw new Error("A repository has conflicting public display evidence.");
   }
-  current.items.push({ activityAt: row.activityAt, item });
+  current.items.push(item);
   if (Date.parse(row.activityAt) > Date.parse(current.activityAt)) {
     current.activityAt = row.activityAt;
   }
 };
 
 export const buildPublicGitHubActivityDays = (
-  input: BuildPublicGitHubActivityDaysInput
+  input: BuildPublicGitHubActivityDaysInput,
+  timeZone = "UTC"
 ): readonly PublicGitHubActivityDay[] => {
   const requestedDays = new Set(input.days);
   if (
@@ -108,67 +122,82 @@ export const buildPublicGitHubActivityDays = (
   const rowsByDay = new Map<
     string,
     { issues: PublicGitHubIssueRow[]; workUnits: PublicGitHubWorkUnitRow[] }
-  >(input.days.map((day) => [day, { issues: [], workUnits: [] }]));
-  for (const row of input.workUnits) {
+  >();
+  for (const row of [...input.workUnits, ...input.issues]) {
     assertValidRow(row);
-    const target = rowsByDay.get(row.day);
-    if (target === undefined) {
-      throw new Error("A work unit belongs to an unrequested UTC day.");
+    if (!requestedDays.has(row.day)) {
+      throw new Error("An activity item belongs to an unrequested UTC day.");
     }
-    target.workUnits.push(row);
-  }
-  for (const row of input.issues) {
-    assertValidRow(row);
-    const target = rowsByDay.get(row.day);
-    if (target === undefined) {
-      throw new Error("An issue belongs to an unrequested UTC day.");
+    const day = dateKey(row.activityAt, timeZone);
+    const target = rowsByDay.get(day) ?? { issues: [], workUnits: [] };
+    if ("facts" in row) {
+      target.workUnits.push(row);
+    } else {
+      target.issues.push(row);
     }
-    target.issues.push(row);
+    rowsByDay.set(day, target);
   }
 
-  return input.days.flatMap((day) => {
-    const rows = rowsByDay.get(day);
-    if (rows === undefined) {
-      throw new Error("A requested activity day was not initialized.");
+  return [...rowsByDay]
+    .toSorted(([left], [right]) => right.localeCompare(left))
+    .flatMap(([day, rows]) => {
+      const groups = new Map<string, MutableRepositoryGroup>();
+      for (const row of rows.workUnits) {
+        addRepositoryItem(groups, row, {
+          activityAt: row.activityAt,
+          destination: row.destination,
+          facts: row.facts,
+          headline: row.headline,
+          id: row.id,
+          kind: row.kind,
+          summarizing: row.summarizing,
+          summary: row.summary,
+        });
+      }
+      for (const row of rows.issues) {
+        addRepositoryItem(groups, row, {
+          activityAt: row.activityAt,
+          destination: row.destination,
+          id: row.id,
+          kind: "issue-opened",
+          title: row.title,
+        });
+      }
+      const repositories = [...groups.values()]
+        .map((group) => ({
+          ...group,
+          items: group.items.toSorted(compareActivityRows),
+        }))
+        .toSorted(
+          (left, right) =>
+            Date.parse(right.activityAt) - Date.parse(left.activityAt) ||
+            compareText(left.repository.key, right.repository.key)
+        )
+        .map(({ items, repository }) => ({ items, repository }));
+      return repositories.length === 0 ? [] : [{ day, repositories }];
+    });
+};
+
+export const localizeGitHubActivityDays = (
+  days: readonly PublicGitHubActivityDay[],
+  timeZone: string
+) => {
+  const workUnits: PublicGitHubWorkUnitRow[] = [];
+  const issues: PublicGitHubIssueRow[] = [];
+  for (const day of days) {
+    for (const group of day.repositories) {
+      for (const item of group.items) {
+        const row = { ...item, day: day.day, repository: group.repository };
+        if (row.kind === "issue-opened") {
+          issues.push(row);
+        } else {
+          workUnits.push(row);
+        }
+      }
     }
-    const groups = new Map<string, MutableRepositoryGroup>();
-    for (const row of rows.workUnits) {
-      addRepositoryItem(groups, row, {
-        destination: row.destination,
-        facts: row.facts,
-        headline: row.headline,
-        id: row.id,
-        kind: row.kind,
-        summarizing: row.summarizing,
-        summary: row.summary,
-      });
-    }
-    for (const row of rows.issues) {
-      addRepositoryItem(groups, row, {
-        destination: row.destination,
-        id: row.id,
-        kind: "issue-opened",
-        title: row.title,
-      });
-    }
-    const repositories = [...groups.values()]
-      .map((group) => ({
-        ...group,
-        items: group.items
-          .toSorted((left, right) =>
-            compareActivityRows(
-              { activityAt: left.activityAt, id: left.item.id },
-              { activityAt: right.activityAt, id: right.item.id }
-            )
-          )
-          .map(({ item }) => item),
-      }))
-      .toSorted(
-        (left, right) =>
-          Date.parse(right.activityAt) - Date.parse(left.activityAt) ||
-          compareText(left.repository.key, right.repository.key)
-      )
-      .map(({ items, repository }) => ({ items, repository }));
-    return repositories.length === 0 ? [] : [{ day, repositories }];
-  });
+  }
+  return buildPublicGitHubActivityDays(
+    { days: days.map(({ day }) => day), issues, workUnits },
+    timeZone
+  );
 };

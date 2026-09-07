@@ -1,245 +1,189 @@
-import { ArrowDown, ArrowUpRight, Star } from "lucide-react";
+import { Star, GitFork } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Suspense } from "react";
 
 import { CodexStats } from "@/components/codex-stats";
 import { GitHubTimeline } from "@/components/github-timeline";
+import { LanguageIcon } from "@/components/language-icon";
+import { SiteMain, SiteSection } from "@/components/site-page";
 import { SiteShell } from "@/components/site-shell";
-import { featuredProjectNames, projectEditorial } from "@/content/home";
+import {
+  HoverCardGroup,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { WritingList } from "@/components/writing-list";
+import {
+  featuredProjectNames,
+  homeIntroduction,
+  projectEditorial,
+} from "@/content/home";
 import { resumeData } from "@/content/resume";
 import { getBlogPosts } from "@/lib/blog-utils";
 import { getPublicCodexStats } from "@/lib/codex/public-stats";
-import { formatDate } from "@/lib/date";
-import { getInitialGitHubActivity } from "@/lib/github-activity-feed";
 import { getGitHubProfile } from "@/lib/github-profile";
 import { publicUrl, siteConfig } from "@/lib/site";
 
 const { description } = siteConfig;
 const title = `${siteConfig.author.name} — ${siteConfig.author.role}`;
+const images = [
+  { alt: title, height: 630, url: "/opengraph-image", width: 1200 },
+];
 
 export const metadata: Metadata = {
-  alternates: {
-    canonical: "/",
-  },
+  alternates: { canonical: "/" },
   description,
   openGraph: {
     description,
-    images: [
-      {
-        alt: title,
-        height: 630,
-        url: "/opengraph-image",
-        width: 1200,
-      },
-    ],
+    images,
     locale: siteConfig.locale,
     siteName: siteConfig.name,
     title,
     type: "website",
     url: publicUrl("/"),
   },
-  title: {
-    absolute: title,
-  },
-  twitter: {
-    card: "summary_large_image",
-    description,
-    images: [
-      {
-        alt: title,
-        height: 630,
-        url: "/opengraph-image",
-        width: 1200,
-      },
-    ],
-    title,
-  },
+  title: { absolute: title },
+  twitter: { card: "summary_large_image", description, images, title },
 };
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
-  const [github, posts, activity, codexStats] = await Promise.all([
-    getGitHubProfile(),
-    getBlogPosts(),
-    getInitialGitHubActivity(),
-    getPublicCodexStats(),
-  ]);
-  const projectByName = new Map(
-    github.projects.map((project) => [project.name, project])
+function SectionLoading({
+  id,
+  label,
+}: Readonly<{ id: string; label: string }>) {
+  return (
+    <SiteSection className="home-section min-h-64" id={id} title={label}>
+      <p className="py-2.5 text-muted-foreground" role="status">
+        Loading…
+      </p>
+    </SiteSection>
   );
-  const featuredProjects = featuredProjectNames.flatMap((name) => {
-    const project = projectByName.get(name);
+}
+
+async function RecentWriting() {
+  const posts = await getBlogPosts();
+  return (
+    <SiteSection id="writing" title="Writing">
+      <WritingList posts={posts.slice(0, 3)} />
+    </SiteSection>
+  );
+}
+
+async function TokenLog() {
+  const codexStats = await getPublicCodexStats();
+  return codexStats === null ? (
+    <SiteSection id="token-log" title="Token log">
+      <p className="py-2.5 text-muted-foreground">
+        Token activity is unavailable right now.
+      </p>
+    </SiteSection>
+  ) : (
+    <CodexStats stats={codexStats} />
+  );
+}
+
+async function OpenSource() {
+  const github = await getGitHubProfile();
+  const projects = featuredProjectNames.flatMap((name) => {
+    const project = github.projects.find(
+      (candidate) => candidate.name === name
+    );
     return project === undefined ? [] : [project];
   });
-  const projects = featuredProjects.slice(0, 4);
-  const recentPosts = posts.slice(0, 3);
 
-  return (
-    <SiteShell currentPath="/" includeFooter>
-      <main className="site-container pb-20 pt-10 sm:pb-24 sm:pt-16">
-        <section
-          aria-labelledby="home-title"
-          className="relative grid min-h-[26rem] content-center sm:min-h-[30rem]"
-        >
-          <div>
-            <h1
-              className="max-w-[16ch] font-serif text-[2.5rem] font-bold leading-[1.08] tracking-[-0.035em] text-foreground sm:text-6xl sm:leading-[1.04]"
-              id="home-title"
-            >
-              {resumeData.person.name}
-            </h1>
-            <p className="mt-4 font-ui text-base text-muted-foreground sm:text-lg">
-              {resumeData.person.role} · {resumeData.person.location}
-            </p>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
-              At Namefi, I built an AI workflow that cuts buyer research from
-              days to about five minutes per domain. I also built Memorang’s CMS
-              and media recommender.
-            </p>
-            <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 font-ui text-sm font-medium">
-              <a
-                className="group inline-flex items-center gap-2 rounded-sm text-primary transition-colors hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                href="#timeline"
-              >
-                Work log
-                <ArrowDown
-                  aria-hidden="true"
-                  className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-y-0.5"
-                />
-              </a>
-              <Link
-                className="group inline-flex items-center gap-1.5 rounded-sm text-foreground transition-colors hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                href="/resume"
-                prefetch={false}
-              >
-                Résumé
-                <ArrowUpRight
-                  aria-hidden="true"
-                  className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                />
-              </Link>
-              <a
-                className="rounded-sm text-foreground transition-colors hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                href="https://namefi.io/r/en/blog/progressive-ai-buyer-discovery-method"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                How buyer discovery works
-              </a>
-            </div>
-          </div>
-        </section>
-
-        <section
-          aria-label="Open source and recent writing"
-          className="home-section grid gap-16 lg:grid-cols-2 lg:gap-16"
-        >
-          <div>
-            <div className="flex items-baseline justify-between gap-4">
-              <h2 className="font-serif text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                Open source
-              </h2>
-              <a
-                className="shrink-0 rounded-sm font-ui text-sm text-muted-foreground transition-colors hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                href={github.profileUrl}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                All on GitHub
-              </a>
-            </div>
-            <ol className="mt-6 divide-y divide-border border-y border-border">
-              {projects.map((project) => {
-                const editorial =
-                  projectEditorial[
-                    project.name as keyof typeof projectEditorial
-                  ];
-
-                return (
-                  <li key={project.name}>
-                    <a
-                      className="group block py-5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                      href={project.url}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
-                      <div className="flex items-baseline justify-between gap-4">
-                        <h3 className="font-serif text-lg font-bold tracking-tight text-foreground transition-colors group-hover:text-brand-hover">
-                          {project.name}
-                        </h3>
+  return projects.length === 0 ? null : (
+    <SiteSection id="open-source" title="Open source">
+      <HoverCardGroup>
+        <ol className="site-list">
+          {projects.map((project) => (
+            <li key={project.name}>
+              <HoverCardTrigger
+                payload={
+                  <HoverCardContent side="left">
+                    <div className="p-4">
+                      <p className="break-words">{project.name}</p>
+                      <p className="mt-2 text-muted-foreground">
+                        {projectEditorial[
+                          project.name as keyof typeof projectEditorial
+                        ]?.description ?? project.description}
+                      </p>
+                      <div className="site-row-meta mt-2 justify-start">
+                        {project.language === null ? null : (
+                          <LanguageIcon language={project.language} />
+                        )}
                         {project.stars === null ? null : (
-                          <span className="inline-flex shrink-0 items-center gap-1 font-mono text-xs text-muted-foreground">
-                            <Star aria-hidden="true" className="h-3 w-3" />
+                          <span
+                            className="inline-flex items-center gap-1"
+                            aria-label={`${project.stars} stars`}
+                          >
+                            <Star aria-hidden="true" className="size-3.5" />
                             {project.stars}
                           </span>
                         )}
-                      </div>
-                      <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                        {editorial?.description ?? project.description}
-                      </p>
-                      <div className="mt-3 flex items-center gap-3 font-ui text-[0.6875rem] uppercase tracking-[0.1em] text-muted-foreground">
-                        {editorial === undefined ? null : (
-                          <span className="text-primary">
-                            {editorial.bucket}
+                        {project.forks === null ? null : (
+                          <span
+                            className="inline-flex items-center gap-1"
+                            aria-label={`${project.forks} forks`}
+                          >
+                            <GitFork aria-hidden="true" className="size-3.5" />
+                            {project.forks}
                           </span>
                         )}
-                        {project.language === null ? null : (
-                          <span>{project.language}</span>
-                        )}
                       </div>
-                    </a>
-                  </li>
-                );
-              })}
-            </ol>
-          </div>
-
-          <div>
-            <div className="flex items-baseline justify-between gap-4">
-              <h2 className="font-serif text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                Recent writing
-              </h2>
-              <Link
-                className="shrink-0 rounded-sm font-ui text-sm text-muted-foreground transition-colors hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                href="/blog"
-                prefetch={false}
+                    </div>
+                  </HoverCardContent>
+                }
+                className="site-row group"
+                href={project.url}
+                rel="noopener noreferrer"
+                target="_blank"
               >
-                All notes
-              </Link>
-            </div>
-            <ol className="mt-6 divide-y divide-border border-y border-border">
-              {recentPosts.map((post) => (
-                <li key={post.slug}>
-                  <Link
-                    className="group block py-5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                    href={`/blog/${post.slug}`}
-                    prefetch={false}
+                <span className="site-row-title group-hover:underline">
+                  {project.name}
+                </span>
+                {project.stars === null ? null : (
+                  <span
+                    aria-label={`${String(project.stars)} GitHub stars`}
+                    className="site-row-meta"
                   >
-                    <h3 className="font-serif text-lg font-bold leading-snug tracking-tight text-foreground transition-colors group-hover:text-brand-hover">
-                      {post.metadata.title}
-                    </h3>
-                    <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-                      {post.metadata.summary}
-                    </p>
-                    <p className="mt-3 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-muted-foreground">
-                      <time dateTime={post.date.toISOString()}>
-                        {formatDate(post.date, siteConfig.language)}
-                      </time>
-                      <span aria-hidden="true"> · </span>
-                      {post.readingTime}
-                    </p>
-                  </Link>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
+                    <Star aria-hidden="true" className="size-3" />
+                    {project.stars}
+                  </span>
+                )}
+              </HoverCardTrigger>
+            </li>
+          ))}
+        </ol>
+      </HoverCardGroup>
+    </SiteSection>
+  );
+}
 
-        <GitHubTimeline initialPage={activity} preview />
+export default function Home() {
+  return (
+    <SiteShell currentPath="/">
+      <SiteMain>
+        <h1 className="sr-only">{resumeData.person.name}</h1>
+        <p>{homeIntroduction}</p>
 
-        {codexStats === null ? null : <CodexStats stats={codexStats} />}
-      </main>
+        <Suspense fallback={<SectionLoading id="writing" label="Writing" />}>
+          <RecentWriting />
+        </Suspense>
+
+        <GitHubTimeline preview />
+        <Suspense
+          fallback={<SectionLoading id="token-log" label="Token log" />}
+        >
+          <TokenLog />
+        </Suspense>
+
+        <Suspense
+          fallback={<SectionLoading id="open-source" label="Open source" />}
+        >
+          <OpenSource />
+        </Suspense>
+      </SiteMain>
     </SiteShell>
   );
 }

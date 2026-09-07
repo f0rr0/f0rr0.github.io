@@ -1,27 +1,33 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 
 import { JsonLd } from "@/components/json-ld";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { siteConfig } from "@/lib/site";
 import { buildRootJsonLd } from "@/lib/structured-data";
 
 import "./globals.css";
 
-const literata = localFont({
+const sans = Geist({
   display: "swap",
-  preload: true,
-  src: "./fonts/Literata-Latin.woff2",
-  variable: "--font-site-heading",
-  weight: "400 700",
+  subsets: ["latin"],
+  variable: "--font-geist",
 });
 
-const sourceSans = localFont({
+const mono = Geist_Mono({
   display: "swap",
-  preload: true,
-  src: "./fonts/SourceSans3-Latin.woff2",
-  variable: "--font-site-body",
-  weight: "400 700",
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+  weight: "400",
+});
+
+const serif = Instrument_Serif({
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-instrument-serif",
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -91,13 +97,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${literata.variable} ${sourceSans.variable} min-h-screen antialiased`}
-      >
+    <html
+      className={`${sans.variable} ${mono.variable} ${serif.variable}`}
+      lang="en"
+      suppressHydrationWarning
+    >
+      <body className="min-h-screen antialiased">
         <JsonLd data={buildRootJsonLd()} />
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          disableTransitionOnChange
+          enableSystem
+        >
+          <TooltipProvider>{children}</TooltipProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

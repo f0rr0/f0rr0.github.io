@@ -41,6 +41,9 @@ const nextConfig: NextConfig = {
     "/sitemap.xml": ["./src/content/**/*"],
   },
   reactCompiler: true,
+  redirects: async () => [
+    { source: "/resume", destination: "/journey", permanent: true },
+  ],
   rewrites: async () => [
     {
       destination: "/blog/:slug/markdown",

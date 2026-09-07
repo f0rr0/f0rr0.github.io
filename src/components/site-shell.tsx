@@ -2,25 +2,28 @@ import type { ReactNode } from "react";
 
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import type { SiteHeaderProps } from "@/components/site-header";
 
-interface SiteShellProps {
-  activeHref?: "/blog" | "/resume";
+interface SiteShellProps extends SiteHeaderProps {
   children: ReactNode;
-  currentPath?: "/" | "/blog" | "/resume" | "/work-log";
-  includeFooter?: boolean;
 }
 
 export function SiteShell({
   activeHref,
   children,
   currentPath = activeHref ?? "/",
-  includeFooter = false,
 }: Readonly<SiteShellProps>) {
   return (
-    <div className="min-h-screen bg-background font-sans text-foreground antialiased">
+    <div className="flex min-h-screen flex-col bg-background font-sans text-foreground antialiased">
+      <a
+        className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-50 focus:rounded-sm focus:bg-background focus:p-3 focus:outline-2 focus:outline-ring"
+        href="#main-content"
+      >
+        Skip to content
+      </a>
       <SiteHeader activeHref={activeHref} currentPath={currentPath} />
       {children}
-      {includeFooter ? <SiteFooter /> : null}
+      <SiteFooter />
     </div>
   );
 }

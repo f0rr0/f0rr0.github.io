@@ -27,7 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       lastModified: resumeUpdatedAt,
       priority: 0.9,
-      url: publicUrl("/resume"),
+      url: publicUrl("/journey"),
     },
     {
       changeFrequency: "daily",

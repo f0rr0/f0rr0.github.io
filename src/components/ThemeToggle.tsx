@@ -3,18 +3,12 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
-const TRANSITION_CLASS = "theme-transition";
-
 export default function ThemeToggle() {
   const { setTheme } = useTheme();
 
   const handleToggle = () => {
     const root = window.document.documentElement;
     const isDark = root.classList.contains("dark");
-    root.classList.add(TRANSITION_CLASS);
-    window.setTimeout(() => {
-      root.classList.remove(TRANSITION_CLASS);
-    }, 500);
     setTheme(isDark ? "light" : "dark");
   };
 

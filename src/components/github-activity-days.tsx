@@ -1,17 +1,26 @@
-import { ChevronRight, CircleDot, Code2, LockKeyhole } from "lucide-react";
+"use client";
+
+import { CircleDot, FolderGit2, LockKeyhole } from "lucide-react";
 import Image from "next/image";
 
+import { LanguageIcon } from "@/components/language-icon";
+import { LocalDateTime, useViewerTimeZone } from "@/components/local-date-time";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  DisclosureChevron,
 } from "@/components/ui/collapsible";
 import {
-  Tooltip,
   TooltipContent,
-  TooltipProvider,
+  TooltipGroup,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { dateKey, formatDate } from "@/lib/date";
+import {
+  getVisibleGitHubActivityDays,
+  localizeGitHubActivityDays,
+} from "@/lib/github-activity-feed-core";
 import type {
   PublicGitHubActivityDay,
   PublicGitHubActivityItem,
@@ -21,14 +30,6 @@ import type {
   PublicGitHubWorkUnitFacts,
 } from "@/lib/github-activity-types";
 
-const dayFormatter = new Intl.DateTimeFormat("en-US", {
-  day: "numeric",
-  month: "long",
-  timeZone: "UTC",
-  weekday: "long",
-  year: "numeric",
-});
-
 const countFormatter = new Intl.NumberFormat("en-US");
 const workUnitLabels = {
   branch: "Active branch work",
@@ -36,108 +37,62 @@ const workUnitLabels = {
   "pull-request": "Pull request",
 } as const;
 
-const languageIconSlugs: Readonly<Record<string, string>> = {
-  C: "c",
-  "C#": "sharp",
-  "C++": "cplusplus",
-  CSS: "css",
-  Dart: "dart",
-  Elixir: "elixir",
-  "F#": "fsharp",
-  Go: "go",
-  GraphQL: "graphql",
-  HTML: "html5",
-  Java: "openjdk",
-  JavaScript: "javascript",
-  Kotlin: "kotlin",
-  Lua: "lua",
-  MDX: "mdx",
-  PHP: "php",
-  "Protocol Buffers": "protobuf",
-  Python: "python",
-  R: "r",
-  Ruby: "ruby",
-  Rust: "rust",
-  SCSS: "sass",
-  SQL: "postgresql",
-  Scala: "scala",
-  Shell: "gnubash",
-  Svelte: "svelte",
-  Swift: "swift",
-  TypeScript: "typescript",
-  Vue: "vuedotjs",
-  Zig: "zig",
-};
-
 function RepositoryIdentity({
   repository,
 }: Readonly<{ repository: PublicGitHubActivityRepository }>) {
-  if (repository.label === null || repository.url === null) {
-    return (
-      <span className="inline-flex min-h-[1.375rem] min-w-0 items-center gap-2.5 font-mono text-xs text-muted-foreground">
-        {repository.avatarUrl === null ? (
-          <LockKeyhole aria-hidden="true" className="size-3" />
-        ) : (
-          <span
-            aria-hidden="true"
-            className="relative size-[1.375rem] flex-none"
-          >
-            <span className="block size-full overflow-hidden rounded-full bg-muted">
-              <Image
-                alt=""
-                className="size-full object-cover blur-[2px]"
-                height={22}
-                sizes="22px"
-                src={repository.avatarUrl}
-                unoptimized
-                width={22}
-              />
-            </span>
-            <span className="absolute -right-[0.175rem] -bottom-[0.175rem] grid size-3.5 place-items-center rounded-full bg-background text-muted-foreground shadow-[0_0_0_1px_var(--background)]">
-              <LockKeyhole className="size-2.5" />
-            </span>
-          </span>
-        )}
-        <span className="min-w-0 wrap-anywhere">
-          {repository.label ?? "Private"}
-        </span>
-      </span>
-    );
-  }
+  const isPrivate = repository.label === null || repository.url === null;
+  const Identity = isPrivate ? "span" : "a";
   return (
-    <a
-      className="inline-flex min-h-[1.375rem] min-w-0 items-center gap-2.5 font-mono text-xs text-muted-foreground transition-colors duration-150 hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring motion-reduce:transition-none"
-      href={repository.url}
-      rel="noopener noreferrer"
-      target="_blank"
+    <Identity
+      className="inline-flex min-h-7 min-w-0 items-center gap-2 rounded-sm text-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+      href={isPrivate ? undefined : (repository.url ?? undefined)}
+      rel={isPrivate ? undefined : "noopener noreferrer"}
+      target={isPrivate ? undefined : "_blank"}
     >
-      {repository.avatarUrl === null ? null : (
-        <span
-          aria-hidden="true"
-          className="size-[1.375rem] flex-none overflow-hidden rounded-full bg-muted"
-        >
+      <span
+        aria-hidden="true"
+        className="relative grid size-7 shrink-0 place-items-center"
+      >
+        {repository.avatarUrl === null ? (
+          isPrivate ? (
+            <LockKeyhole className="size-5" />
+          ) : (
+            <FolderGit2 className="size-5" />
+          )
+        ) : (
           <Image
             alt=""
-            className="size-full object-cover"
-            height={22}
-            sizes="22px"
+            className={`size-full rounded-full object-cover ${isPrivate ? "blur-[2px]" : ""}`}
+            height={28}
+            sizes="28px"
             src={repository.avatarUrl}
             unoptimized
-            width={22}
+            width={28}
           />
-        </span>
+        )}
+        {isPrivate && repository.avatarUrl !== null ? (
+          <span className="absolute -end-0.5 -bottom-0.5 grid size-3.5 place-items-center rounded-full bg-background ring-1 ring-background">
+            <LockKeyhole className="size-2.5" />
+          </span>
+        ) : null}
+      </span>
+      <span className="min-w-0 wrap-anywhere font-mono font-normal">
+        {repository.label ?? "Private"}
+      </span>
+      {isPrivate ? null : (
+        <span className="sr-only"> (opens on GitHub in a new tab)</span>
       )}
-      <span className="min-w-0 wrap-anywhere">{repository.label}</span>
-      <span className="sr-only"> (opens on GitHub in a new tab)</span>
-    </a>
+    </Identity>
   );
 }
 
 function DiffCounters({
   facts,
-}: Readonly<{ facts: PublicGitHubWorkUnitFacts }>) {
+}: Readonly<{
+  facts: Pick<PublicGitHubWorkUnitFacts, "additions" | "deletions">;
+}>) {
   return (
-    <span className="mt-[0.3125rem] inline-flex items-center gap-2 font-mono text-[0.6875rem] text-muted-foreground">
+    <span className="inline-flex items-center gap-2 text-xs text-muted-foreground tabular-nums">
       <span className="text-[light-dark(oklch(0.48_0.12_155),oklch(0.75_0.13_155))]">
         <span className="sr-only">Added </span>+
         {countFormatter.format(facts.additions)}
@@ -150,93 +105,69 @@ function DiffCounters({
   );
 }
 
-function WorkUnitDetails({
-  item,
-}: Readonly<{ item: PublicGitHubWorkUnitActivity }>) {
-  const headline = item.headline ?? workUnitLabels[item.kind];
-  const commits = `${countFormatter.format(item.facts.ownedCommitCount)} ${item.facts.ownedCommitCount === 1 ? "commit" : "commits"}`;
-  const files = `${countFormatter.format(item.facts.uniqueFileCount)} ${item.facts.uniqueFileCount === 1 ? "file" : "files"}`;
+function WorkUnitFacts({
+  facts,
+}: Readonly<{ facts: PublicGitHubWorkUnitFacts }>) {
+  const commits = `${countFormatter.format(facts.ownedCommitCount)} ${facts.ownedCommitCount === 1 ? "commit" : "commits"}`;
+  const files = `${countFormatter.format(facts.uniqueFileCount)} ${facts.uniqueFileCount === 1 ? "file" : "files"}`;
   return (
-    <Collapsible className="min-w-0">
-      <CollapsibleTrigger className="group/details grid min-h-6 w-full cursor-pointer grid-cols-[minmax(0,1fr)_auto_auto] items-start gap-3 text-start text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
-        <span className="truncate text-base leading-relaxed group-data-panel-open/details:overflow-visible group-data-panel-open/details:wrap-anywhere group-data-panel-open/details:text-clip group-data-panel-open/details:whitespace-normal">
-          {headline}
-        </span>
-        <DiffCounters facts={item.facts} />
-        <span className="mt-[0.3125rem] inline-flex items-center gap-1 text-muted-foreground">
-          <ChevronRight
-            aria-hidden="true"
-            className="size-4 transition-transform duration-150 group-data-panel-open/details:rotate-90 motion-reduce:transition-none"
-          />
-        </span>
-      </CollapsibleTrigger>
-      <CollapsibleContent hiddenUntilFound>
-        <div className="max-w-[50rem] pt-2 ps-0 text-sm leading-relaxed text-muted-foreground">
-          {item.summary === null ? null : (
-            <p className="wrap-anywhere">{item.summary}</p>
-          )}
-          <p className={item.summary === null ? undefined : "mt-2"}>
-            {commits} touching {files}
-            {item.facts.languages === null ||
-            item.facts.languages.length === 0 ? null : (
-              <TooltipProvider>
-                <span
-                  aria-label="Languages"
-                  className="relative -top-[0.5px] ms-1.5 inline-flex items-center gap-0.5 align-middle"
-                  role="group"
-                >
-                  {item.facts.languages.map((language) => {
-                    const slug = languageIconSlugs[language];
-                    return (
-                      <Tooltip key={language}>
-                        <TooltipTrigger
-                          render={
-                            <button
-                              aria-label={language}
-                              className="inline-flex size-6 cursor-help items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring"
-                              type="button"
-                            />
-                          }
-                        >
-                          {slug === undefined ? (
-                            <Code2 aria-hidden="true" className="size-3.5" />
-                          ) : (
-                            <Image
-                              alt=""
-                              className="size-3.5 opacity-[0.82] dark:invert"
-                              height={14}
-                              sizes="14px"
-                              src={`https://cdn.jsdelivr.net/npm/simple-icons@16.12.0/icons/${slug}.svg`}
-                              unoptimized
-                              width={14}
-                            />
-                          )}
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom">
-                          {language}
-                        </TooltipContent>
-                      </Tooltip>
-                    );
-                  })}
-                </span>
-              </TooltipProvider>
-            )}
-          </p>
-        </div>
-      </CollapsibleContent>
-    </Collapsible>
+    <div className="site-row-meta flex-wrap justify-start">
+      <span>
+        {commits} · {files}
+      </span>
+      {facts.languages?.map((language) => (
+        <LanguageIcon key={language} language={language} />
+      ))}
+    </div>
   );
 }
 
 function WorkUnitRow({
   item,
 }: Readonly<{ item: PublicGitHubWorkUnitActivity }>) {
+  const headline = item.headline ?? workUnitLabels[item.kind];
   return (
-    <li className="py-1.5">
-      <article>
-        <WorkUnitDetails item={item} />
-      </article>
-    </li>
+    <Collapsible className="min-w-0" render={<li />}>
+      <TooltipTrigger
+        payload={
+          <TooltipContent
+            className="space-y-2"
+            preview
+            side="left"
+            sideOffset={24}
+            align="start"
+          >
+            <p className="font-medium">{headline}</p>
+            {item.summary === null ? null : (
+              <p className="text-muted-foreground">{item.summary}</p>
+            )}
+            <WorkUnitFacts facts={item.facts} />
+          </TooltipContent>
+        }
+        render={
+          <CollapsibleTrigger className="site-row group cursor-pointer" />
+        }
+      >
+        <span className="site-row-title group-hover:underline">{headline}</span>
+        <span className="site-row-meta">
+          <DiffCounters facts={item.facts} />
+          <LocalDateTime
+            className="whitespace-nowrap"
+            dateTime={item.activityAt}
+            format="time"
+          />
+          <DisclosureChevron />
+        </span>
+      </TooltipTrigger>
+      <CollapsibleContent hiddenUntilFound>
+        <div className="space-y-2 pb-2.5 text-muted-foreground">
+          {item.summary === null ? null : (
+            <p className="wrap-anywhere">{item.summary}</p>
+          )}
+          <WorkUnitFacts facts={item.facts} />
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
 
@@ -245,24 +176,28 @@ function IssueRow({
 }: Readonly<{
   item: Extract<PublicGitHubActivityItem, { kind: "issue-opened" }>;
 }>) {
+  const Row = item.destination === null ? "div" : "a";
   return (
-    <li className="py-1.5">
-      <article className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
-        <p className="max-w-[50rem] wrap-anywhere text-base leading-relaxed text-foreground">
+    <li>
+      <Row
+        className="site-row group"
+        href={item.destination?.url}
+        rel={item.destination === null ? undefined : "noopener noreferrer"}
+        target={item.destination === null ? undefined : "_blank"}
+        title={item.title}
+      >
+        <span className="site-row-title group-hover:underline">
           {item.title}
-        </p>
-        {item.destination === null ? null : (
-          <a
-            aria-label={`Issue opened: ${item.destination.label}`}
-            className="mt-0.5 inline-flex size-6 items-center justify-center text-muted-foreground transition-colors duration-150 hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none"
-            href={item.destination.url}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <CircleDot aria-hidden="true" className="size-4" />
-          </a>
-        )}
-      </article>
+        </span>
+        <span className="site-row-meta">
+          <LocalDateTime
+            className="whitespace-nowrap"
+            dateTime={item.activityAt}
+            format="time"
+          />
+          <CircleDot aria-hidden="true" className="size-4" />
+        </span>
+      </Row>
     </li>
   );
 }
@@ -286,40 +221,39 @@ function RepositoryGroup({
     itemLimit === undefined ? group.items : group.items.slice(0, itemLimit);
   const hiddenItems = group.items.slice(visibleItems.length);
   return (
-    <li className="pt-4 pb-1.5 first:pt-0 last:pb-0">
-      <article aria-label={`${group.repository.label ?? "Private"} activity`}>
-        <header className="flex">
-          <RepositoryIdentity repository={group.repository} />
-        </header>
-        <ol className="pt-2.5">
-          {visibleItems.map((item) => (
-            <ActivityItem item={item} key={item.id} />
-          ))}
-        </ol>
-        {hiddenItems.length === 0 ? null : (
-          <Collapsible>
-            <CollapsibleContent>
-              <ol>
-                {hiddenItems.map((item) => (
-                  <ActivityItem item={item} key={item.id} />
-                ))}
-              </ol>
-            </CollapsibleContent>
-            <CollapsibleTrigger className="group/more inline-flex min-h-8 items-center gap-1.5 font-ui text-[0.8125rem] text-muted-foreground transition-colors duration-150 hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none">
-              <ChevronRight
-                aria-hidden="true"
-                className="-ms-1.5 size-4 transition-transform duration-150 group-data-panel-open/more:rotate-90 motion-reduce:transition-none"
-              />
+    <li className="pt-4">
+      <h4 className="site-row">
+        <RepositoryIdentity repository={group.repository} />
+      </h4>
+      <ol className="site-list">
+        {visibleItems.map((item) => (
+          <ActivityItem item={item} key={item.id} />
+        ))}
+      </ol>
+      {hiddenItems.length === 0 ? null : (
+        <Collapsible>
+          <CollapsibleContent>
+            <ol className="site-list border-t border-border">
+              {hiddenItems.map((item) => (
+                <ActivityItem item={item} key={item.id} />
+              ))}
+            </ol>
+          </CollapsibleContent>
+          <CollapsibleTrigger className="site-row group/more cursor-pointer pt-0">
+            <span className="site-row-title text-muted-foreground">
               <span className="group-data-panel-open/more:hidden">
                 Show {countFormatter.format(hiddenItems.length)} more
               </span>
               <span className="hidden group-data-panel-open/more:inline">
                 Show less
               </span>
-            </CollapsibleTrigger>
-          </Collapsible>
-        )}
-      </article>
+            </span>
+            <span className="site-row-meta">
+              <DisclosureChevron />
+            </span>
+          </CollapsibleTrigger>
+        </Collapsible>
+      )}
     </li>
   );
 }
@@ -346,15 +280,19 @@ function GitHubActivityDay({
   );
   return (
     <section aria-labelledby={`activity-day-${day.day}`}>
-      <header className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-y border-border py-3">
-        <h3 className="font-mono text-[0.6875rem] font-medium tracking-[0.11em] text-muted-foreground uppercase">
-          <time dateTime={day.day} id={`activity-day-${day.day}`}>
-            {dayFormatter.format(new Date(`${day.day}T00:00:00.000Z`))}
+      <header className="site-row work-log-day-header flex flex-wrap rounded-none border-y border-border py-2">
+        <h3 className="site-row-meta justify-start font-medium">
+          <time
+            className="work-log-date"
+            dateTime={day.day}
+            id={`activity-day-${day.day}`}
+          >
+            {formatDate(day.day, "weekday")}
           </time>
         </h3>
         <dl
           aria-label={`Totals for ${day.day}`}
-          className="ms-auto flex flex-wrap items-center justify-end gap-x-3 font-mono text-[0.6875rem] text-muted-foreground"
+          className="site-row-meta ms-auto whitespace-nowrap"
         >
           <div>
             <dt className="sr-only">Commits across repositories</dt>
@@ -367,20 +305,13 @@ function GitHubActivityDay({
           </div>
           <div>
             <dt className="sr-only">Authored line churn</dt>
-            <dd className="inline-flex items-center gap-2">
-              <span className="text-[light-dark(oklch(0.48_0.12_155),oklch(0.75_0.13_155))]">
-                <span className="sr-only">Added </span>+
-                {countFormatter.format(additions)}
-              </span>
-              <span className="text-[light-dark(oklch(0.52_0.16_25),oklch(0.76_0.13_25))]">
-                <span className="sr-only">Deleted </span>−
-                {countFormatter.format(deletions)}
-              </span>
+            <dd>
+              <DiffCounters facts={{ additions, deletions }} />
             </dd>
           </div>
         </dl>
       </header>
-      <ol aria-label={`Activity for ${day.day}`} className="mt-7">
+      <ol aria-label={`Activity for ${day.day}`}>
         {day.repositories.map((group) => (
           <RepositoryGroup
             group={group}
@@ -396,11 +327,25 @@ function GitHubActivityDay({
 export function GitHubActivityDays({
   days,
   itemLimit,
+  preview = false,
+  now,
 }: Readonly<{
   days: readonly PublicGitHubActivityDay[];
   itemLimit?: number;
+  preview?: boolean;
+  now: string;
 }>) {
-  return days.map((day) => (
-    <GitHubActivityDay day={day} itemLimit={itemLimit} key={day.day} />
-  ));
+  const timeZone = useViewerTimeZone();
+  const localDays =
+    timeZone === "UTC" ? days : localizeGitHubActivityDays(days, timeZone);
+  const today = dateKey(now, timeZone);
+  const activeDays = getVisibleGitHubActivityDays(localDays, today);
+  const visibleDays = preview ? activeDays.slice(0, 1) : activeDays;
+  return (
+    <TooltipGroup>
+      {visibleDays.map((day) => (
+        <GitHubActivityDay day={day} itemLimit={itemLimit} key={day.day} />
+      ))}
+    </TooltipGroup>
+  );
 }

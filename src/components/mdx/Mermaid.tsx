@@ -230,7 +230,7 @@ function createMermaidConfig({
       rankSpacing: 52,
       useMaxWidth: true,
     },
-    fontFamily: "var(--font-site-body), ui-sans-serif, sans-serif",
+    fontFamily: "var(--font-sans), ui-sans-serif, sans-serif",
     fontSize: 16,
     handDrawnSeed: seed,
     look: "handDrawn",

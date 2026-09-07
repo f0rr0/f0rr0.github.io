@@ -46,6 +46,7 @@ export interface ResumeRole {
 
 export interface ResumeExperience {
   company: string;
+  compactName?: string;
   displayName?: string;
   companyStage?: ResumeCompanyStage;
   logo: LogoAsset;
@@ -199,7 +200,8 @@ export const resumeData = {
   },
   navItems: [
     { href: "/blog", label: "Blog" },
-    { href: "/resume", label: "Résumé" },
+    { href: "/work-log", label: "Work log" },
+    { href: "/journey", label: "Journey" },
     { external: true, href: "https://github.com/f0rr0", label: "GitHub" },
   ] satisfies ResumeNavItem[],
   links: [
@@ -208,7 +210,7 @@ export const resumeData = {
     { href: "https://github.com/f0rr0", label: "github.com/f0rr0" },
   ] satisfies ResumeLink[],
   summary:
-    "Senior full-stack engineer based in Mumbai with 10+ years in web and mobile. Built Namefi’s AI buyer-research workflow, cutting days of manual work to about five minutes per domain, and Memorang’s CMS backend and editing interface.",
+    "Senior full-stack engineer based in Mumbai with 10+ years in web and mobile product engineering, and production experience building AI applications.",
   skills: [
     "TypeScript",
     "React",
@@ -396,6 +398,7 @@ export const resumeData = {
     },
     {
       company: "Earlier Consulting and Startup Work",
+      compactName: "Bridg",
       tagline: "Bridg, 1mg, HornOk, Volkno, Meriad, and self-employed work.",
       logo: bridgLogo,
       roles: [

@@ -130,7 +130,7 @@
   #block[
     #set par(leading: 0.625em)
     #t(
-      "Senior full-stack engineer based in Mumbai with 10+ years in web and mobile. Built Namefi's AI buyer-research workflow, cutting days of manual work to about five minutes per domain, and Memorang's CMS backend and editing interface.",
+      "Senior full-stack engineer based in Mumbai with 10+ years in web and mobile product engineering, and production experience building AI applications.",
       fill: muted,
       font: "Source Sans 3",
       size: 10pt,

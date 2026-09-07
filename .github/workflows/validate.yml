@@ -26,5 +26,12 @@ jobs:
       - name: Type check
         run: bun run typecheck
 
+      - name: Type check deployment source
+        run: |
+          deployment_dir=$(mktemp -d)
+          rsync -a --exclude-from=.vercelignore --exclude=.git --exclude=.next --exclude=node_modules --exclude='*.tsbuildinfo' ./ "$deployment_dir/"
+          ln -s "$GITHUB_WORKSPACE/node_modules" "$deployment_dir/node_modules"
+          bunx tsgo --noEmit --incremental false --project "$deployment_dir/tsconfig.json"
+
       - name: Test
-        run: bun test
+        run: bun run test

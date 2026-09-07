@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "bun scripts/migrate-production-database.ts && next build && bun scripts/configure-supabase-cron.ts --production-build",
     "start": "next start",
-    "test": "bun test",
+    "test": "bun test ./tests",
     "typecheck": "tsgo --noEmit",
     "lint": "ultracite check && oxlint .",
     "lint:ox": "oxlint .",

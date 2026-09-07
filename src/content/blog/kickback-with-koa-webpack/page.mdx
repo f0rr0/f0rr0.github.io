@@ -93,7 +93,7 @@ if (module.hot) {
 There wasn't much to the callback because the work happened through the imported formatter. The server accepted updates to `stats`, and the next request could use the replacement. The listening socket didn't need to go anywhere.
 
 ```mermaid
-flowchart LR
+flowchart TD
   accTitle: Updating a running server
   accDescr: Editing the stats module makes Webpack build an update. The running server's hot module runtime accepts that dependency, so the next request uses the new formatter while the server keeps listening.
   Edit["Edit stats.js"] --> Build["Webpack builds update"]

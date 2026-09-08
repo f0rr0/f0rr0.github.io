@@ -60,7 +60,7 @@ function HoverCardTrigger(props: HoverCardPrimitive.Trigger.Props) {
 function HoverCardContent({
   className,
   children,
-  side = "right",
+  side = "left",
   ...props
 }: HoverCardPrimitive.Popup.Props &
   Pick<HoverCardPrimitive.Positioner.Props, "side">) {

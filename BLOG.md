@@ -4,6 +4,13 @@ Use `.rulesync/skills/blog-writing/SKILL.md` for voice and story, and
 `.rulesync/skills/site-seo/SKILL.md` for site/blog SEO, agent discovery and
 publication checks. Both include reusable prompts and researched references.
 
+For images on an already-written post, use the
+[blog-images skill](.rulesync/skills/blog-images/SKILL.md). It covers image
+selection, exact insertion points, a shared illustration style, generation
+prompts, and desktop/mobile/social crops. Its
+[practitioner research](docs/blog-images-research.md)
+extends the earlier writing research with actual AI-media workflows.
+
 Public identity URLs always use `https://f0rr0.dev`; preview deployments return
 `noindex`. The sitemap lists intended search destinations, while alternate
 Markdown and profile exports remain discoverable through links and `llms.txt`.

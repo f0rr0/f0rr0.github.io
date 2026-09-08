@@ -92,3 +92,13 @@ The resulting instructions live in the [blog-writing skill](../.rulesync/skills/
 - [Xamfonos, Technical Writing Best Practices skill](https://github.com/Xamfonos/technical-writing-best-practices/blob/main/SKILL.md): concepts need context, transitions need reasons, and solutions should follow an understood problem. Rejected its requirement to visibly substantiate every claim and its compulsory arc: those would recreate the audit-like tone this skill is meant to remove.
 - [haowjy, Creative Writing Craft — Prose Writing](https://github.com/haowjy/creative-writing-skills/blob/main/skills/creative-writing-craft/resources/prose-writing.md): vary rhythm and narrative distance; concentrate detail at moments that matter and summarise routine activity. Adapted to nonfiction, where details and inner reactions must come from the author.
 - [haowjy, Creative Writing Craft — Scene Construction](https://github.com/haowjy/creative-writing-skills/blob/main/skills/creative-writing-craft/resources/scene-construction.md): enter a scene with something underway, vary pace, and keep transitions oriented. Borrowed movement and pacing, not fictional dialogue or imposed dramatic stakes.
+
+## Follow-up: consistent AI illustrations and social images
+
+The September 8 [image-production research](blog-images-research.md)
+follows the visual leads above and examines Every's actual article-image practice,
+Why Try AI's style experiments, stylegen's source, and other firsthand workflows.
+It distinguishes publishing evidence from audience-growth claims and records which
+techniques transfer to this site. The resulting [blog-images skill](../.rulesync/skills/blog-images/SKILL.md)
+covers finished-post image selection, insertion points, a maintained house style,
+reference-guided generation, deterministic typography, and inspected social crops.

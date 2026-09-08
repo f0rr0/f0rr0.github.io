@@ -1,0 +1,4 @@
+interface:
+  display_name: "Blog Images"
+  short_description: "Illustrate finished posts with a consistent visual style"
+  default_prompt: "Use $blog-images to choose, create, and place illustrations and a matching Open Graph image for this finished post."

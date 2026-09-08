@@ -55,4 +55,6 @@ Finalise the title and standalone summary after the story settles. Explore disti
 
 Choose assets by purpose: explanatory figure, screenshot, illustration or social card. Inspect the actual rendered article and feed-size card for legibility, crop, contrast, overflow and working links. A hero image is not automatically a good social crop. Keep title, summary, social metadata and article structured data consistent.
 
+For a finished post that needs images, use `blog-images` to choose subjects and insertion points, apply the shared illustration style, and create matching social artwork. It owns visual production; preserve this skill's narrative and voice decisions.
+
 For drafting, voice calibration, editing and visual briefs, use [prompts.md](references/prompts.md). Read the project's `BLOG.md` for its publishing mechanics. Use `site-seo` when the task includes discovery, metadata validation, indexing or search measurement; its checks support the narrative rather than dictating its structure.

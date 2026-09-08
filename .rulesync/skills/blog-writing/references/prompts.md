@@ -1,6 +1,6 @@
 # Starting prompts for personal technical blogging
 
-These are original prompts adapted for Sid's workflow. Use the one that matches the work; they are not a mandatory pipeline. Load the main skill first, and replace the bracketed material with real input. Keep working notes separate from the article.
+Use the prompt that matches the task and replace bracketed material with real input. Keep working notes separate from the article.
 
 ## Draw out missing personal material
 

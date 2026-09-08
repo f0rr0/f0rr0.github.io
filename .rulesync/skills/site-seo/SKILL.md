@@ -7,6 +7,8 @@ description: Audit and improve website and blog search discoverability, metadata
 
 Make the site's content easy to find, understand, share and cite. Reuse its content model, metadata APIs, image renderer, feeds and deployment checks. Pair with `blog-writing` for Sid's articles; search optimisation should support the personal narrative.
 
+For Sid's repository, keep research reports, per-post prompts, and production briefs transient unless explicitly requested. Do not create a research archive; reserve `docs/` for maintained implementation and usage documentation.
+
 ## Select the relevant checks
 
 - **Publishing an article:** final title/description, author/dates, representative social image, article schema, internal links, feeds, sitemap and alternate content. Read [publishing.md](references/publishing.md).

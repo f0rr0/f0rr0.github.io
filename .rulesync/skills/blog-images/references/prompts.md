@@ -1,6 +1,6 @@
 # Briefs and prompting recipes
 
-These are original templates for this blog, informed by the project's `docs/blog-images-research.md`. Fill them from the finished post. Use GPT Image 2 (`gpt-image-2`), selected through the generation interface rather than named only in the prompt. They are instructions for the assistant/art director; send only the relevant visual brief to the image generator, not the entire publishing checklist.
+These are reusable templates for this blog. Fill them from the finished post. Use GPT Image 2 (`gpt-image-2`), selected through the generation interface rather than named only in the prompt. They are instructions for the assistant/art director; send only the relevant visual brief to the image generator, not the entire publishing checklist.
 
 ## Plan visuals from a finished article
 
@@ -106,5 +106,3 @@ For a local defect, make a local edit. If the whole result has drifted into a di
 ## Review the set, not just the individual images
 
 > Compare [selected images] beside the accepted house reference at the same displayed width. Check palette temperature, paper-edge character, shadow depth, texture density, viewpoint, and visual complexity. Then inspect each at its actual article/social size. Report only specific defects and correct those that affect meaning, readability, or family resemblance. Keep deliberate differences in subject and framing. Do not continue generating variants after the requirements pass.
-
-Save the final brief and reference identities in the post's production notes under `docs/blog-images/`, with the selected asset path. If the tool exposes model/version/settings, record them; otherwise mark them unavailable. Keep a short reason for any deliberate style exception so the next post does not accidentally adopt it as the new default.

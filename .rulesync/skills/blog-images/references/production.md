@@ -96,7 +96,7 @@ Before integrating a custom card, inspect:
 - `src/app/(blog)/blog/[slug]/page.tsx`: explicitly declares the share-image URL for both social fields and BlogPosting's image.
 - The adjacent `opengraph-image.tsx` and `twitter-image.tsx` routes: also generate file-based metadata. Resolve their interaction by examining final HTML; don't assume adding `twitter-image.png` alone selects it everywhere. Framework metadata precedence and version changes make source filenames insufficient evidence. [Next metadata documentation](https://nextjs.org/docs/app/api-reference/functions/generate-metadata).
 
-Keep Markdown production notes in `docs/blog-images/<slug>.md`, outside `src/content/blog`. The current broad dynamic imports enumerate the article tree; a co-located `image-notes.md` is picked up as an unsupported module by a fresh Turbopack compile. Keep only runtime article modules and supported assets there.
+Keep only runtime article modules and supported assets in `src/content/blog`. Its broad dynamic imports can pick up co-located Markdown notes as unsupported modules. Do not persist transient image-production notes elsewhere in the repository either.
 
 Keep one custom 1200 × 630 image by default. Do not invent `metadata.hero`, `metadata.ogImage`, or an artwork prop on the fallback renderer. A custom static file is the smallest existing override for finished art. A requested deterministic illustrated card may use the existing co-located image-module convention; reuse the renderer's treatment without redesigning all articles.
 

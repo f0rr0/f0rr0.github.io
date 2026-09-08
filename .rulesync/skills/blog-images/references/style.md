@@ -48,7 +48,7 @@ Judge the scene before judging its finish. Could a reader describe the visible a
 3. Keep the stable style paragraph below in each prompt. Vary only the article-specific scene and its composition.
 4. For a local defect, edit the selected result while stating what must remain. For later posts, return to the original accepted anchor rather than repeatedly inheriting an imperfect edit.
 5. Compare the new image and reference at equal displayed widths. Check material, temperature, shadows, focal hierarchy, and complexity. Inspect the mobile version before adding detail.
-6. Record the style version, reference path, final brief, actual dimensions, and generation route in `docs/blog-images/<slug>.md`. Change this guide when the author establishes a new recurring preference.
+6. Update this guide when the author establishes a new recurring preference; keep per-image decisions transient.
 
 A seed is not a style system. References improve repeatability but do not guarantee identical rendering across models or versions. Reuse an existing piece of artwork when exact identity matters.
 

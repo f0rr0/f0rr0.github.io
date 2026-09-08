@@ -47,9 +47,11 @@ Use lowercase public campaign slugs:
 | Distribution                           | Example                                                                                |
 | -------------------------------------- | -------------------------------------------------------------------------------------- |
 | LinkedIn article post                  | `utm_source=linkedin&utm_medium=social&utm_campaign=article-slug&utm_content=post-1`   |
-| GitHub profile link                    | `utm_source=github&utm_medium=referral&utm_campaign=profile&utm_content=bio`           |
+| GitHub profile link                    | Clean `https://f0rr0.dev`; use referrer attribution when available                     |
 | Newsletter                             | `utm_source=newsletter&utm_medium=email&utm_campaign=2026-09&utm_content=article-slug` |
 | A second headline for the same article | Keep source/medium/campaign; change `utm_content=headline-b`                           |
+
+Keep visible profile website fields clean. Referrer attribution can identify GitHub traffic when supplied, but does not distinguish a bio from a README. Add placement tags only when that distinction answers a concrete question; do not display a long UTM query in the profile.
 
 Do not use UTMs on internal links; placement already describes internal context. Do not put personal names, emails, prompts, or arbitrary text in campaign parameters. Search queries and ad click IDs are intentionally unavailable. AI referral traffic measures humans arriving from those services, not model training, citations, impressions, or bot fetches. Pair this with Search Console impressions/clicks/queries and separate HTTP crawler logs if investigating discovery; never combine bot hits and browser pageviews as one traffic metric.
 

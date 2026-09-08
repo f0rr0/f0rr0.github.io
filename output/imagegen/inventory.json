@@ -1263,5 +1263,30 @@
     "path": "tmp/imagegen/face-motion-reference-parity/redo-keyed/transition-right-bottom-right-3.webp",
     "bytes": 8068,
     "sha256": "fe39f02a5cd83762b38176467d9574f9d267e9afa338440caa2055c3d318d272"
+  },
+  {
+    "path": "output/imagegen/face-motion-exact-transfer/builtin-closeup-lock/center-bottom-2-landmarks.png",
+    "bytes": 1883163,
+    "sha256": "3ab8f2a65262235d681552396cfe8a9d1decc1bacb135c178369b9fbde551b24"
+  },
+  {
+    "path": "output/imagegen/face-motion-exact-transfer/builtin-closeup-lock/center-bottom-2-overshoot.png",
+    "bytes": 1884191,
+    "sha256": "c0d813cdee068d7841b81eb9f037173faf32776168177eaa617d4e2aa3f2f0ad"
+  },
+  {
+    "path": "output/imagegen/face-motion-exact-transfer/builtin-closeup-lock/center-top-2.png",
+    "bytes": 1890504,
+    "sha256": "528c0fb4437813bd7b8873d494e5d22472e0d56472cf72ddd5d3c4fc8530d440"
+  },
+  {
+    "path": "output/imagegen/face-motion-exact-transfer/builtin-closeup-lock/center.png",
+    "bytes": 1970429,
+    "sha256": "53b213154036398aba5fb9aa664442295e350f8e0c67519e817a8f3ab604a6a1"
+  },
+  {
+    "path": "output/imagegen/face-motion-exact-transfer/builtin-closeup-lock/comparison.png",
+    "bytes": 150181,
+    "sha256": "94f2d3153072eac1181670e03176bcc57b619ab3e82b0c0ae9c2d5d295fe2426"
   }
 ]

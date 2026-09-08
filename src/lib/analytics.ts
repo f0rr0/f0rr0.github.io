@@ -25,7 +25,7 @@ export function track<Event extends keyof AnalyticsEvents>(
   event: Event,
   properties: AnalyticsEvents[Event]
 ) {
-  // An absent configuration (including every preview) is a deliberate no-op.
+  // Initialization is disabled for previews, development and privacy opt-outs.
   if (!posthog.__loaded) {
     return;
   }

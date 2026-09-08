@@ -7,18 +7,13 @@ const privacyPreference =
   (navigator as Navigator & { globalPrivacyControl?: boolean })
     .globalPrivacyControl === true;
 
-const projectToken = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
-const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST;
+// Public browser configuration for the portfolio PostHog project.
+const projectToken = "phc_xUiLFUMwb6jrSMxM8yL2iEDPGQZcVMKfWVp4RBsvfmCa";
+const posthogHost = "https://us.i.posthog.com";
 
 if (
   process.env.NODE_ENV === "production" &&
   location.hostname === "f0rr0.dev" &&
-  projectToken !== undefined &&
-  projectToken.length > 0 &&
-  posthogHost !== undefined &&
-  ["https://us.i.posthog.com", "https://eu.i.posthog.com"].includes(
-    posthogHost
-  ) &&
   !privacyPreference
 ) {
   posthog.init(projectToken, {

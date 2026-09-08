@@ -6,17 +6,10 @@ const optionalString = z.string().trim().min(1).optional();
 export const env = createEnv({
   client: {
     NEXT_PUBLIC_PORT: optionalString,
-    NEXT_PUBLIC_POSTHOG_HOST: z
-      .enum(["https://us.i.posthog.com", "https://eu.i.posthog.com"])
-      .optional(),
-    NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: optionalString,
   },
   emptyStringAsUndefined: true,
   experimental__runtimeEnv: {
     NEXT_PUBLIC_PORT: process.env.NEXT_PUBLIC_PORT,
-    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-    NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN:
-      process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN,
   },
   server: {
     CRON_SECRET: z.string().min(32).optional(),

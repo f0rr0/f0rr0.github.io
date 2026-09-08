@@ -41,6 +41,27 @@ building. Cron configuration follows a successful build; it is not a
 post-deployment hook. Local operations remain `bun run db:migrate` and
 `bun run supabase:cron`.
 
+## Updating an existing deployment
+
+Move the existing per-account token values into one `GITHUB_TOKENS` JSON object,
+keyed by the logins in `src/content/site.ts`. The same tokens can be reused; no
+new tokens or account IDs are required. Set this variable in Vercel and set the
+same repository secret for the manual backfill Action. Keep the old token
+variables until the new deployment has been verified, then remove them.
+
+Keep the existing database, webhook, cron, cursor-signing and OpenAI credentials.
+To retain analytics, set `NEXT_PUBLIC_POSTHOG_KEY` to the existing project's public
+capture key; `NEXT_PUBLIC_POSTHOG_REGION` defaults to `us`.
+
+For the database-backed installation, set the Build Command above before deploying
+this change. It applies migration `0022`, builds against the updated schema, then
+updates cron configuration. Migration `0022` only replaces seven username
+allowlists with valid-login checks; it adds no tables or columns and rewrites no
+stored history. Leave older applied migrations intact.
+
+Vercel supplies the production hostname when system environment variables are
+exposed. No manually maintained site URL or blog asset URL is needed.
+
 ## Customize once
 
 - `src/content/resume.ts`: identity, social profiles, career, education and PDF paths.
@@ -84,9 +105,6 @@ project configuration still needs an owner-side restrictions/retirement review.
 Report credential exposure privately through GitHub's security reporting feature
 when enabled. Otherwise, use the maintainer contact in `src/content/resume.ts`;
 never paste credentials into a public issue.
-
-The [audit checklist](docs/open-source-readiness.md) records completed work and
-remaining owner decisions.
 
 ## Reuse status
 

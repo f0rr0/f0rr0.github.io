@@ -161,7 +161,7 @@ export const buildBlogCollectionJsonLd = (
   posts: BlogPost[]
 ): WithContext<CollectionPage> => ({
   "@context": "https://schema.org",
-  "@id": publicUrl("/blog#collection"),
+  "@id": publicUrl("/writing#collection"),
   "@type": "CollectionPage",
   description: `Notes on what ${resumeData.person.name} is building across product design, engineering, AI, and creative development.`,
   inLanguage: "en-US",
@@ -176,12 +176,12 @@ export const buildBlogCollectionJsonLd = (
       (post, index): ListItem => ({
         "@type": "ListItem",
         item: {
-          "@id": publicUrl(`/blog/${post.slug}#article`),
+          "@id": publicUrl(`/writing/${post.slug}#article`),
           "@type": "BlogPosting",
           datePublished: post.date.toISOString(),
           headline: post.metadata.title,
           name: post.metadata.title,
-          url: publicUrl(`/blog/${post.slug}`),
+          url: publicUrl(`/writing/${post.slug}`),
         },
         name: post.metadata.title,
         position: index + 1,
@@ -189,6 +189,6 @@ export const buildBlogCollectionJsonLd = (
     ),
     numberOfItems: posts.length,
   } satisfies ItemList,
-  name: "Sid Jain Blog",
-  url: publicUrl("/blog"),
+  name: "Sid Jain Writing",
+  url: publicUrl("/writing"),
 });

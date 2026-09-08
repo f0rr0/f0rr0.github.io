@@ -260,7 +260,7 @@ const buildWritingSection = (
     .slice(0, limit)
     .map(
       (post) =>
-        `- [${post.metadata.title}](${localProfileUrl(`/blog/${post.slug}.md`)}) — ${post.date.toISOString().slice(0, 10)}. ${post.metadata.summary}`
+        `- [${post.metadata.title}](${localProfileUrl(`/writing/${post.slug}.md`)}) — ${post.date.toISOString().slice(0, 10)}. ${post.metadata.summary}`
     );
 
   return links.length === 0 ? "" : `## Writing\n\n${links.join("\n")}\n\n`;
@@ -294,8 +294,8 @@ ${resumeData.links.map((link) => `- [${link.label}](${link.href})`).join("\n")}
 ## Optional
 
 - [PDF résumé](${localProfileUrl("/resume/sid-jain-resume.pdf")}): Downloadable résumé.
-- [Work Log](${localProfileUrl("/work-log")}): Recent code activity.
-- [Blog](${localProfileUrl("/blog")}): All published articles; each article is also available at /blog/{slug}.md.
+- [Work](${localProfileUrl("/work")}): Recent code activity.
+- [Writing](${localProfileUrl("/writing")}): All published articles; each article is also available at /writing/{slug}.md.
 - [RSS](${localProfileUrl("/rss.xml")}): Article feed.
 `;
 
@@ -427,7 +427,7 @@ ${publicReferences.map(markdownLink).join("\n")}
 
 ## Optional
 
-- [Blog](${localProfileUrl("/blog")}): Technical writing.
+- [Writing](${localProfileUrl("/writing")}): Technical writing.
 - [RSS](${localProfileUrl("/rss.xml")}): Subscribe to new articles.
 `;
 };

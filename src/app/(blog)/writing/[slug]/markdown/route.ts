@@ -24,7 +24,7 @@ export async function GET(
   }
 
   const body = await getBlogPostSource(post.importPath);
-  const canonicalUrl = publicUrl(`/blog/${slug}`);
+  const canonicalUrl = publicUrl(`/writing/${slug}`);
   const markdown = buildBlogPostMarkdown({ body, canonicalUrl, post });
 
   return new Response(markdown, {

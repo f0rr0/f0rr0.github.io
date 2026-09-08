@@ -32,7 +32,7 @@ export async function GET() {
   });
 
   for (const post of posts) {
-    const url = publicUrl(`/blog/${post.slug}`);
+    const url = publicUrl(`/writing/${post.slug}`);
     feed.addItem({
       author: [{ name: post.metadata.author }],
       category: post.metadata.tags?.map((tag) => ({ name: tag })),

@@ -40,11 +40,11 @@ const nextConfig: NextConfig = {
   },
   outputFileTracingIncludes: {
     "/": ["./src/content/**/*"],
-    "/blog/[slug]": ["./src/content/**/*"],
-    "/blog/[slug]/markdown": ["./src/content/**/*"],
-    "/blog/[slug]/opengraph-image": ["./src/content/**/*"],
-    "/blog/[slug]/share-image": ["./src/content/**/*"],
-    "/blog/[slug]/twitter-image": ["./src/content/**/*"],
+    "/writing/[slug]": ["./src/content/**/*"],
+    "/writing/[slug]/markdown": ["./src/content/**/*"],
+    "/writing/[slug]/opengraph-image": ["./src/content/**/*"],
+    "/writing/[slug]/share-image": ["./src/content/**/*"],
+    "/writing/[slug]/twitter-image": ["./src/content/**/*"],
     "/llms.txt": ["./src/content/**/*"],
     "/llms-full.txt": ["./src/content/**/*"],
     "/rss.xml": ["./src/content/**/*"],
@@ -52,12 +52,18 @@ const nextConfig: NextConfig = {
   },
   reactCompiler: true,
   redirects: async () => [
+    { source: "/blog/:path*", destination: "/writing/:path*", permanent: true },
+    {
+      source: "/work-log/:path*",
+      destination: "/work/:path*",
+      permanent: true,
+    },
     { source: "/resume", destination: "/journey", permanent: true },
   ],
   rewrites: async () => [
     {
-      destination: "/blog/:slug/markdown",
-      source: "/blog/:slug.md",
+      destination: "/writing/:slug/markdown",
+      source: "/writing/:slug.md",
     },
   ],
 };

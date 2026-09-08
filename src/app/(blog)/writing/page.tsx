@@ -11,7 +11,7 @@ const description = `Notes on what ${siteConfig.author.name} is building and lea
 
 export const metadata: Metadata = {
   alternates: {
-    canonical: "/blog",
+    canonical: "/writing",
     types: {
       "application/rss+xml": "/rss.xml",
     },
@@ -22,16 +22,16 @@ export const metadata: Metadata = {
     images: [siteConfig.author.image],
     locale: siteConfig.locale,
     siteName: siteConfig.name,
-    title: "Sid Jain Blog",
+    title: "Sid Jain Writing",
     type: "website",
-    url: publicUrl("/blog"),
+    url: publicUrl("/writing"),
   },
-  title: "Blog",
+  title: "Writing",
   twitter: {
     card: "summary",
     description,
     images: [siteConfig.author.image],
-    title: "Sid Jain Blog",
+    title: "Sid Jain Writing",
   },
 };
 
@@ -42,7 +42,7 @@ export default async function BlogIndexPage() {
     <>
       <JsonLd data={buildBlogCollectionJsonLd(posts)} />
       <SiteMain>
-        <h1 className="sr-only">Blog</h1>
+        <h1 className="sr-only">Writing</h1>
         <WritingList posts={posts} />
       </SiteMain>
     </>

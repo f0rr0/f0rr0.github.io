@@ -1,6 +1,6 @@
 # Publishing checks and crawler controls
 
-Reviewed 2026-09-07. Recheck provider guidance before changing crawler policy or implementing a newly supported search feature.
+Verify current provider guidance before changing crawler policy or implementing a newly supported search feature.
 
 ## Canonical pages and indexing
 

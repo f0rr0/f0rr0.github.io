@@ -4,7 +4,7 @@
 
 Use shell HTTP requests for headers/raw HTML/XML, an available browser for rendered content and visual checks, the repository's tests/build for regressions, and existing authenticated analytics tools for outcomes. Search available tool descriptions before proposing a new integration. Do not install an entire SEO suite to check a small Next.js blog.
 
-For this repository the native stack already supplies metadata routes, server-rendered JSON-LD, a shared PNG social renderer, Mermaid, RSS, and Markdown exports. Run commands through `rtk`, as required by its local instructions. Canonical sources live in `.rulesync/skills`; keep agent-visible copies in sync when editing a skill.
+Run the existing TypeScript checks through `bun run test`, `bun run lint` and `bun run typecheck`; use `bun run build` to validate rendering. The `validate` GitHub workflow runs the tests. Use the repository’s required `rtk` command prefix. Add regression checks to the existing test suite when fixing publishing behaviour.
 
 ## Search Console with an authenticated tool or API
 

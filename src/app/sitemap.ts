@@ -11,7 +11,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await getBlogPosts();
   const resumeUpdatedAt = new Date(resumeData.lastUpdated);
   const latestPostDate =
-    newestDate(posts.map((post) => post.date)) ?? resumeUpdatedAt;
+    newestDate(posts.map((post) => post.updatedAt ?? post.date)) ??
+    resumeUpdatedAt;
   const siteUpdatedAt =
     newestDate([resumeUpdatedAt, latestPostDate]) ?? resumeUpdatedAt;
 
@@ -36,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: publicUrl("/writing"),
     },
     ...posts.map((post) => ({
-      lastModified: post.date,
+      lastModified: post.updatedAt ?? post.date,
       url: publicUrl(`/writing/${post.slug}`),
     })),
   ];

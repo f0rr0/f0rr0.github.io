@@ -126,6 +126,7 @@ export const buildBlogPostingJsonLd = ({
       name: post.metadata.author,
       url: publicUrl("/journey"),
     },
+    dateModified: (post.updatedAt ?? post.date).toISOString(),
     datePublished: post.date.toISOString(),
     description: post.metadata.summary,
     headline: post.metadata.title,

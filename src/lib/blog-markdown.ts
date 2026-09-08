@@ -56,17 +56,12 @@ export const buildBlogPostMarkdown = ({
   post: BlogPost;
 }) => {
   const { metadata } = post;
-  const dates = [`Published ${isoDate(post.date)}`];
-
-  if (post.updatedAt !== undefined) {
-    dates.push(`updated ${isoDate(post.updatedAt)}`);
-  }
 
   return `# ${metadata.title}
 
 > ${metadata.summary}
 
-${metadata.author} · ${dates.join(" · ")}
+${metadata.author} · ${isoDate(post.date)}
 
 Canonical post: ${canonicalUrl}
 

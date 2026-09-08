@@ -40,19 +40,18 @@ export const metadata = {
   author: "Your Name",
   summary: "Short description used for listings + meta tags.",
   tags: ["tag", "tag"], // optional
-  updated: "2025-02-12", // optional
   draft: false, // optional (true hides from production)
 };
 ```
 
 Gotchas:
 
-- `date` / `updated` must be valid ISO or `YYYY-MM-DD`. Invalid dates fail builds.
+- `date` must be valid ISO or `YYYY-MM-DD`. Invalid dates fail builds.
 - `summary` is required and used for SEO + RSS.
 - Write the summary after the article settles. It should make sense on its own
   in a feed or search result; avoid a keyword list or a generic teaser.
-- Preserve original dates and slugs. Use `updated` for an actual substantive
-  revision, never to make an old article appear newly published.
+- Each article has one publication date. Do not add separate updated dates.
+- Preserve original dates and slugs unless explicitly instructed otherwise.
 - Drafts remain visible locally and on Vercel preview deployments for review.
 - Production excludes drafts from direct routes, listings, RSS, sitemap, and
   `llms.txt`.

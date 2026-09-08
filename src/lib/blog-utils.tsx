@@ -22,7 +22,6 @@ const metadataSchema = z.object({
   summary: z.string(),
   tags: z.array(z.string()).optional(),
   title: z.string(),
-  updated: z.string().optional(),
 });
 
 interface BlogPostEntry {
@@ -35,7 +34,6 @@ export type BlogPostMetadata = z.infer<typeof metadataSchema>;
 export type BlogPost = BlogPostEntry & {
   metadata: BlogPostMetadata;
   date: Date;
-  updatedAt?: Date;
   readingTime: string;
   wordCount: number;
 };
@@ -232,10 +230,6 @@ export const getBlogPosts = cache(async (): Promise<BlogPost[]> => {
       const metadata = parseBlogPostMetadata(mod.metadata);
       const stats = await getPostStats(importPath);
       const date = toDate(metadata.date, slug);
-      const updatedAt =
-        metadata.updated === undefined
-          ? undefined
-          : toDate(metadata.updated, slug);
 
       return {
         date,
@@ -243,7 +237,6 @@ export const getBlogPosts = cache(async (): Promise<BlogPost[]> => {
         metadata,
         readingTime: stats.readingTime,
         slug,
-        updatedAt,
         wordCount: stats.wordCount,
       };
     })

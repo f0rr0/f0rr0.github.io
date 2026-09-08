@@ -31,11 +31,9 @@ describe("blog Markdown", () => {
           date: "2026-08-01",
           summary: "A concise summary.",
           title: "A post",
-          updated: "2026-08-04",
         },
         readingTime: "1 min read",
         slug: "a-post",
-        updatedAt: new Date("2026-08-04T00:00:00.000Z"),
         wordCount: 20,
       },
     });
@@ -44,7 +42,7 @@ describe("blog Markdown", () => {
 
 > A concise summary.
 
-Sid Jain · Published 2026-08-01 · updated 2026-08-04
+Sid Jain · 2026-08-01
 
 Canonical post: https://f0rr0.dev/writing/a-post
 

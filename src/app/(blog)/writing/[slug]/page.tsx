@@ -42,7 +42,7 @@ export async function generateMetadata({
     return {};
   }
 
-  const { metadata, date, updatedAt } = post;
+  const { metadata, date } = post;
   const url = publicUrl(`/writing/${slug}`);
   const shareImageUrl = publicUrl(`/writing/${slug}/share-image`);
 
@@ -61,7 +61,6 @@ export async function generateMetadata({
       description: metadata.summary,
       locale: siteConfig.locale,
       images: [{ alt: metadata.title, url: shareImageUrl }],
-      modifiedTime: updatedAt?.toISOString(),
       publishedTime: date.toISOString(),
       siteName: siteConfig.name,
       title: metadata.title,

@@ -11,7 +11,7 @@ const newestDate = (dates: Date[]) =>
 
 export async function GET() {
   const posts = await getBlogPosts();
-  const updated = newestDate(posts.map((post) => post.updatedAt ?? post.date));
+  const updated = newestDate(posts.map((post) => post.date));
 
   const feed = new Feed({
     author: {

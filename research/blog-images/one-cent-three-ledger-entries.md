@@ -16,7 +16,7 @@ Route: built-in image generator, backend model unverified. Revisions used the ap
 
 The original visual family used `/home/sid/.codex/skills/blog-images/assets/cut-paper-reference.png` for material and lighting and `/home/sid/.codex/skills/blog-images/assets/cut-paper-scene-reference.webp` for richer scene density. Their subjects were excluded. The first selected workshop illustration supplied the reference for subsequent scenes.
 
-Final assets are beside the article. Originals remain outside the published content tree. These notes live in `docs/blog-images/` so the article importer does not treat them as a runtime module.
+Final assets are beside the article. Originals remain outside the published content tree. These notes live in `research/blog-images/` so the article importer does not treat them as a runtime module.
 
 ## Exports
 

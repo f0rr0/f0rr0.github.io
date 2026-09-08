@@ -8,7 +8,7 @@ For images on an already-written post, use the
 [blog-images skill](.rulesync/skills/blog-images/SKILL.md). It covers image
 selection, exact insertion points, a shared illustration style, generation
 prompts, and desktop/mobile/social crops. Its
-[practitioner research](docs/blog-images-research.md)
+[practitioner research](research/blog-images-research.md)
 extends the earlier writing research with actual AI-media workflows.
 
 Public identity URLs always use `https://f0rr0.dev`; preview deployments return
@@ -157,5 +157,5 @@ Canonical URLs are derived from Vercel system environment variables when deploye
    RSS, sitemap and Markdown export after deployment. Article publication does
    not automatically include sending social posts or email.
 
-The [research landscape](docs/blog-writing-landscape.md) explains the workflow
+The [research landscape](research/blog-writing-landscape.md) explains the workflow
 choices; the skill includes [starting prompts](.rulesync/skills/blog-writing/references/prompts.md).

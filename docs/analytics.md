@@ -38,6 +38,18 @@ Cookieless is a technical choice, not a universal consent exemption. Applicable 
 
 Suggested notice text to adapt: “I use PostHog to understand where visits come from and which writing and projects people explore. Analytics uses no cookies or browser storage and does not create named profiles. It records page visits, selected interactions, browser information and referrer/campaign information. PostHog uses network information to generate a daily anonymous identifier. Do Not Track and Global Privacy Control disable this collection.” Add the selected hosting region, retention period and contact details after project setup.
 
+## First-party proxy and route choice
+
+The SDK sends requests through `https://f0rr0.dev/_r7k2/*`. This opaque, stable namespace reserves no useful page name and requires no additional DNS or service. Only that exact prefix belongs to PostHog; future routes with similar names remain independent. Keep the initializer, proxy matcher and tests synchronized if changing it. Do not use Next.js-owned namespaces such as `/_next` or rotate the path per request/build.
+
+The reviewed public examples use `/ingest` ([Next.js discussion with implementation](https://github.com/vercel/next.js/discussions/71487)), `/resources/ingest` ([React Router implementation](https://gist.github.com/arpitdalal/ccc807fa6a15638b86a128d9b7ac51a1)), `/ph` ([smoll-url](https://github.com/tashifkhan/smoll-url)), or a short subdomain such as `e.example.com` ([nginx proxy example](https://github.com/algomo/posthog-proxy)). These are examples, not a prevalence survey. PostHog's current [Next.js guidance](https://posthog.com/docs/advanced/proxy/nextjs) recommends app-specific names instead of obvious analytics keywords; its [Railway template](https://railway.com/deploy/posthog-proxy) also discourages `/ingest`. Our opaque prefix follows that advice without taking a meaningful product route.
+
+A first-party path reduces exposure to provider-domain and generic-path block rules; it is neither secret nor unblockable. Requests, SDK code and payloads remain inspectable. DNT/GPC suppression stays in place. There is no script obfuscation or custom transport protocol.
+
+The native Next.js proxy forwards to fixed US ingestion and asset hosts, preserving methods, bodies, queries and collector trailing slashes. It strips Cookie, Authorization and Referer request headers: same-origin referrers can otherwise expose full page queries despite event-body redaction. Request overrides use `request: { headers }`. Normal page trailing slashes still receive a 308 canonical redirect. The proxy matcher skips ordinary slashless pages. See [PostHog's proxy-file guide](https://posthog.com/docs/advanced/proxy/nextjs-middleware).
+
+Proxy requests consume hosting requests and bandwidth. With replay disabled, this stays limited to the selected analytics traffic; inspect actual Vercel usage after release. A managed proxy or separate worker becomes relevant if hosting cost warrants another service. Verify forwarded client IP handling and cookieless session behavior on the deployed platform; local routing tests cannot establish production identity accuracy.
+
 ## Acquisition: keep the useful context
 
 Use PostHog’s built-in Web Analytics channel classification, including its AI referral channel. Do not maintain another classifier. Analyze the **session entry** source/medium/campaign alongside landing page and downstream actions; validate the ingested session fields first. “Direct” means there was no usable source, which also includes messaging apps and stripped referrers. It does not prove a bookmark or brand recall. [Channel types](https://posthog.com/docs/data/channel-type), [UTM segmentation](https://posthog.com/docs/data/utm-segmentation).
@@ -86,7 +98,7 @@ Budget example, not a traffic forecast: 10,000 pageviews plus roughly 10,000 exi
 
 ## Release and validation
 
-- The public project token and US ingestion host are source configuration in `src/instrumentation-client.ts`. No PostHog environment variables are required. These values identify the website project; personal API keys remain secrets and must never be committed.
+- The public project token and first-party proxy path are source configuration in `src/instrumentation-client.ts`; US upstream hosts are fixed in `src/proxy.ts`. No PostHog environment variables are required. These values identify the website project; personal API keys remain secrets and must never be committed.
 - Enable project-side cookieless hashing and select a retention/spend policy. Development and preview hosts remain excluded by the initializer. Changing the source configuration requires a rebuild.
 - Confirm one initial and one navigation pageview; no hash-only duplicates. Test keyboard, middle click, portaled AI links, dynamically loaded work, close/reopen, and browser find reveal. Confirm prompt/query redaction in outgoing requests.
 - Verify no PostHog cookies/local/session storage, no replay/flag/survey calls, and no capture for DNT/GPC, localhost or preview hosts. Block the analytics network and verify navigation/disclosures still work.
@@ -105,7 +117,8 @@ The wizard’s default initializer removed the explicit anonymous/cookieless opt
 
 ## Validation evidence
 
-- Repository suite: **312 passing tests, zero failures**. Focused analytics checks cover redaction, retained campaign/page context, AI/Markdown/PDF/outbound classification, malformed URLs and depth geometry. Lint and production TypeScript checks pass.
+- Repository suite: **314 passing tests, zero failures**. Focused analytics checks cover redaction, retained campaign/page context, AI/Markdown/PDF/outbound classification, malformed URLs and depth geometry. Lint and production TypeScript checks pass.
+- Proxy checks cover regional asset/collector routing, stripped request headers, namespace boundaries, and canonical slash redirects. The running production server returned 200 for a proxied public SDK asset, 308 for a slash-suffixed Journey URL, and 404 for a neighboring unreserved path. Chromium analytics requests used only `/_r7k2/e/`; direct PostHog requests would fail the check.
 - Production Next build succeeds. Existing dynamic filesystem-tracing warnings remain; unauthenticated GitHub preview fetches returned 403 and used the existing content fallback. No production database migration or cron configuration was performed.
 - A Chromium smoke test served the production build under an intercepted `f0rr0.dev` origin. It captured initial/SPA pageviews, two user Journey opens (including keyboard activation), all four article milestones, Markdown and GitHub middle-clicks and a portaled ChatGPT choice. A hash-only change did not add a pageview. No PostHog cookies were set; site local storage and session storage were empty. DNT, GPC and a preview hostname produced no analytics. Requests were intercepted locally; no synthetic traffic was sent to the project.
 - Payload inspection confirmed that `utm_source=linkedin`, medium and campaign survive SPA navigation, while a test email query is removed. Article events share the article `$pageview_id`; the next pageview carries the previous page’s duration and ID. Server-assigned session IDs and ingestion remain unverified until the production project is enabled.

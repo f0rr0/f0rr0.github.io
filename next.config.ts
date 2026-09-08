@@ -51,6 +51,8 @@ const nextConfig: NextConfig = {
     "/sitemap.xml": ["./src/content/**/*"],
   },
   reactCompiler: true,
+  // The proxy preserves collector slashes and redirects ordinary page slashes.
+  skipTrailingSlashRedirect: true,
   redirects: async () => [
     { source: "/blog/:path*", destination: "/writing/:path*", permanent: true },
     {

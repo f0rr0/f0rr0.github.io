@@ -9,7 +9,7 @@ const privacyPreference =
 
 // Public browser configuration for the portfolio PostHog project.
 const projectToken = "phc_xUiLFUMwb6jrSMxM8yL2iEDPGQZcVMKfWVp4RBsvfmCa";
-const posthogHost = "https://us.i.posthog.com";
+const posthogHost = "/_r7k2";
 
 if (
   process.env.NODE_ENV === "production" &&
@@ -18,6 +18,7 @@ if (
 ) {
   posthog.init(projectToken, {
     api_host: posthogHost,
+    ui_host: "https://us.posthog.com",
     defaults: "2026-08-30",
     cookieless_mode: "always",
     persistence: "memory",

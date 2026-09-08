@@ -16,7 +16,7 @@ type MDXImageProps = Omit<
   loading?: "lazy" | "eager";
 };
 
-const DEFAULT_SIZES = "(min-width: 1024px) 896px, 100vw";
+const DEFAULT_SIZES = "(min-width: 768px) 672px, calc(100vw - 32px)";
 
 const parseDimension = (value?: number | string) => {
   if (typeof value === "number") {
@@ -88,6 +88,8 @@ export default function MDXImage({
         alt={alt ?? ""}
         loading={loading ?? "lazy"}
         decoding="async"
+        width={parsedWidth}
+        height={parsedHeight}
         className={className}
         {...rest}
       />

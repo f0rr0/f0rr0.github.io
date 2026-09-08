@@ -132,10 +132,10 @@ export default async function BlogPostPage({ params }: { params: PageParams }) {
             )}
           </p>
           <div
-            className="grid border-y border-border sm:grid-cols-[1fr_auto]"
+            className="flex items-center justify-between gap-3 border-y border-border whitespace-nowrap"
             data-slot="blog-post-rail"
           >
-            <div className="flex min-h-11 items-center gap-3 text-xs text-muted-foreground">
+            <div className="flex min-h-11 shrink-0 items-center gap-2 text-xs text-muted-foreground sm:gap-3">
               <time dateTime={date.toISOString()}>{formatDate(date)}</time>
               <Separator orientation="vertical" />
               <span>{readingTime}</span>

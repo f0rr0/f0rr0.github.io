@@ -46,15 +46,16 @@ export function BlogPostActions({
   return (
     <nav
       aria-label="Post actions"
-      className="flex items-center gap-4 border-t border-border sm:border-t-0"
+      className="flex shrink-0 items-center sm:gap-4"
     >
       <DropdownMenu>
         <DropdownMenuTrigger
           aria-label={`Ask AI about ${title}`}
-          className="site-text-link inline-flex min-h-11 items-center gap-1.5 rounded-sm text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
+          title="Ask AI"
+          className="[&_.disclosure-chevron]:hidden sm:[&_.disclosure-chevron]:block site-text-link inline-flex min-h-11 w-11 items-center justify-center gap-1.5 rounded-sm sm:w-auto text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
         >
           <SparklesIcon aria-hidden="true" className="size-3.5" />
-          Ask AI
+          <span className="hidden sm:inline">Ask AI</span>
           <DisclosureChevron />
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -119,13 +120,14 @@ export function BlogPostActions({
       </DropdownMenu>
 
       <a
-        className="site-text-link inline-flex min-h-11 items-center gap-1.5 rounded-sm text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
+        className="site-text-link inline-flex min-h-11 w-11 items-center justify-center gap-1.5 rounded-sm sm:w-auto text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
         aria-label="View this post as Markdown"
+        title="View as Markdown"
         href={markdownHref}
         {...externalLinkProps}
       >
         <FileTextIcon aria-hidden="true" className="size-3.5" />
-        Markdown
+        <span className="hidden sm:inline">Markdown</span>
       </a>
     </nav>
   );

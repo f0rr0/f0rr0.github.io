@@ -1,6 +1,10 @@
 import { describe, expect, test } from "bun:test";
 
-import { dedentCode, parseGitHubUrl } from "../src/lib/remark-embed-github.mjs";
+import {
+  dedentCode,
+  githubTransformer,
+  parseGitHubUrl,
+} from "../src/lib/remark-embed-github.mjs";
 
 const commit = "3e5eed1208b9b444830febcfeecb82a8f3259a3d";
 describe("GitHub code reference embeds", () => {
@@ -65,4 +69,40 @@ describe("GitHub code reference embeds", () => {
       )
     ).toBeNull();
   });
+});
+
+test("GitHub previews preserve PR states, numbers, and escaped remote content", async () => {
+  const originalFetch = globalThis.fetch;
+  const url = "https://github.com/example/repository/pull/3086";
+  try {
+    for (const [state, draft, merged, label] of [
+      ["open", false, false, "Open"],
+      ["open", true, false, "Draft"],
+      ["closed", true, false, "Closed"],
+      ["closed", false, true, "Merged"],
+    ] as const) {
+      globalThis.fetch = (async () =>
+        Response.json({
+          state,
+          draft,
+          merged_at: merged ? "2026-03-11T00:00:00Z" : null,
+          updated_at: "2026-03-11T00:00:00Z",
+          number: 3086,
+          title: "Handle <files> & media",
+          user: { login: "author" },
+          additions: 20,
+          deletions: 3,
+          changed_files: 1,
+        })) as unknown as typeof fetch;
+      const html = await githubTransformer.getHTML(url);
+      expect(html).toContain(`#3086`);
+      expect(html).not.toContain("#3,086");
+      expect(html).toContain(`</svg>${label}</span>`);
+      expect(html).toContain("Handle &lt;files&gt; &amp; media");
+      expect(html).toContain(`href="${url}"`);
+      expect(html).toContain("1 file changed");
+    }
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });

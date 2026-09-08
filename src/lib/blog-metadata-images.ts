@@ -82,7 +82,7 @@ export const resolveMetadataImageResponse = async (
   const buffer = await fs.readFile(asset.filePath);
   return new Response(buffer, {
     headers: {
-      "Cache-Control": "public, max-age=31536000, immutable",
+      "Cache-Control": "public, max-age=0, must-revalidate",
       "Content-Type": asset.contentType ?? "application/octet-stream",
     },
   });

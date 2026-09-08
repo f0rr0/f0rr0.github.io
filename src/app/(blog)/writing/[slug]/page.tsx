@@ -58,7 +58,7 @@ export async function generateMetadata({
     description: metadata.summary,
     keywords: metadata.tags,
     openGraph: {
-      authors: [metadata.author],
+      authors: [publicUrl("/journey")],
       description: metadata.summary,
       locale: siteConfig.locale,
       images: [{ alt: metadata.title, url: shareImageUrl }],

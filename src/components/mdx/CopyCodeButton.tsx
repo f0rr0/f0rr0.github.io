@@ -9,6 +9,7 @@ import {
   TooltipGroup,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { track } from "@/lib/analytics";
 
 type CopyStatus = "copied" | "error" | "idle";
 
@@ -63,6 +64,7 @@ export default function CopyCodeButton({
       }
 
       await navigator.clipboard.writeText(code);
+      track("code_copied", { language });
       setStatus("copied");
     } catch {
       setStatus("error");

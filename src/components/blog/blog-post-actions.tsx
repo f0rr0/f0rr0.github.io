@@ -45,6 +45,7 @@ export function BlogPostActions({
 
   return (
     <nav
+      data-analytics-placement="article-actions"
       aria-label="Post actions"
       className="flex shrink-0 items-center sm:gap-4"
     >
@@ -67,6 +68,7 @@ export function BlogPostActions({
           <DropdownMenuLinkItem
             aria-label="Open this post in ChatGPT"
             closeOnClick
+            data-analytics-placement="article-actions"
             href={links.chatGpt}
             {...externalLinkProps}
           >
@@ -83,6 +85,7 @@ export function BlogPostActions({
           <DropdownMenuLinkItem
             aria-label="Open this post in Claude"
             closeOnClick
+            data-analytics-placement="article-actions"
             href={links.claude}
             {...externalLinkProps}
           >
@@ -99,6 +102,7 @@ export function BlogPostActions({
           <DropdownMenuLinkItem
             aria-label="Copy the prompt and open this post in Gemini"
             closeOnClick
+            data-analytics-placement="article-actions"
             href={links.gemini}
             onClick={() => void copyPromptForGemini()}
             {...externalLinkProps}

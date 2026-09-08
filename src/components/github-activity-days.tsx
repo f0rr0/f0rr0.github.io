@@ -129,7 +129,11 @@ function WorkUnitRow({
 }: Readonly<{ item: PublicGitHubWorkUnitActivity }>) {
   const headline = item.headline ?? workUnitLabels[item.kind];
   return (
-    <Collapsible className="min-w-0" render={<li />}>
+    <Collapsible
+      analytics={{ section: "work", item_kind: item.kind }}
+      className="min-w-0"
+      render={<li />}
+    >
       <TooltipTrigger
         payload={
           <TooltipContent

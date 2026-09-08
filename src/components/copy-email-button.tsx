@@ -2,7 +2,10 @@
 
 import { toast } from "sonner";
 
+import { track } from "@/lib/analytics";
+
 export async function copyEmail(email: string) {
+  const method = navigator.clipboard === undefined ? "fallback" : "clipboard";
   try {
     if (navigator.clipboard === undefined) {
       // HTTP previews lack the Clipboard API; keep this fallback synchronous.
@@ -27,6 +30,7 @@ export async function copyEmail(email: string) {
     } else {
       await navigator.clipboard.writeText(email);
     }
+    track("email_copied", { method });
     toast.success("Copied");
   } catch {
     toast.error("Copy failed");

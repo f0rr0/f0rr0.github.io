@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ComponentType } from "react";
 
+import { ArticleAnalytics } from "@/components/blog/article-analytics";
 import { ArticleProse } from "@/components/blog/article-prose";
 import { BlogPostActions } from "@/components/blog/blog-post-actions";
 import { JsonLd } from "@/components/json-ld";
@@ -133,6 +134,7 @@ export default async function BlogPostPage({ params }: { params: PageParams }) {
             />
           </div>
         </header>
+        <ArticleAnalytics slug={slug} />
         <ArticleProse>
           <Content components={mdxComponents} />
         </ArticleProse>

@@ -39,7 +39,7 @@ There is no image-per-word quota. Add a visual when it explains, substantiates, 
 
 ## Direct and make
 
-Read [style.md](references/style.md) for the author-selected **editorial cut-paper** treatment, richer narrative composition, broader palette, reference strategy, and allowed variation. The selected material anchor is `assets/cut-paper-reference.png`; `assets/cut-paper-scene-reference.webp` demonstrates the current grounded scene treatment. Read [prompts.md](references/prompts.md) when preparing generation or editing briefs. For dimensions, crop geometry, social typography, accessibility, and exports, read the relevant sections of [production.md](references/production.md). The project's `research/blog-images-research.md` records the research behind these choices.
+Read [style.md](references/style.md) for the author-selected **editorial cut-paper** treatment, richer narrative composition, broader palette, reference strategy, and allowed variation. The selected material anchor is `assets/cut-paper-reference.png`; `assets/cut-paper-scene-reference.webp` demonstrates the current grounded scene treatment. Read [prompts.md](references/prompts.md) when preparing generation or editing briefs. For dimensions, crop geometry, social typography, accessibility, and exports, read the relevant sections of [production.md](references/production.md).
 
 Use **GPT Image 2** (`gpt-image-2`) for conceptual bitmap art, as requested by the author, following the installed `imagegen` skill. Select the model through an exposed model control; writing its name in a prompt does not select it. When the built-in tool cannot verify the model, the bundled CLI supports explicit `--model gpt-image-2` and requires a locally configured `OPENAI_API_KEY`. Do not claim an unverified backend is GPT Image 2 or silently substitute another model. The author has explicitly authorised the built-in generator for this workflow even when its backend model is unverified; use it directly unless they restore a strict model requirement. Keep GPT Image 2 as the preferred model when selection is exposed. Use native editable sources for diagrams and exact typography.
 
@@ -51,7 +51,7 @@ Use text sparingly. Default to letting action, gesture, objects, and composition
 
 ## Integrate and review
 
-Save selected assets inside the project and preserve editable sources or generation briefs. For a post receiving new artwork, keep compact production notes at `research/blog-images/<slug>.md` outside the imported article tree with the final prompts, reference roles and paths, style version, actual output dimensions, capture/source attribution, and placements. Do not store rejected generations or private captures in the published content directory. Copying an asset should not silently replace unrelated existing artwork.
+Save final selected assets in the project. Keep per-post prompts, generation settings, research, and production briefs transient; do not create repository notes or archives unless explicitly requested. Keep reusable style guidance in this skill. Do not store rejected generations or private captures in the published content directory. Copying an asset should not silently replace unrelated existing artwork.
 
 Use the site's normal image/figure support, its existing spacing, and natural aspect ratios. Add useful captions and context-sensitive alt text. Keep the author's title, slug, dates, claims, and draft status unless the request includes changing them.
 

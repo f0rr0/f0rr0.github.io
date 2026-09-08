@@ -7,6 +7,8 @@ description: Write and revise Sid Jain's personal technical blog posts in his vo
 
 Write a personal account of something the author did, noticed, or came to understand. The prose should reward reading, with the curiosity and specificity of a conversation between people who build things. Accuracy belongs in the editing process; the article should not sound like testimony about what a repository proves.
 
+For Sid's repository, keep research reports, per-post prompts, and production briefs transient unless explicitly requested. Do not create a research archive; reserve `docs/` for maintained implementation and usage documentation.
+
 ## Find the material that can carry a story
 
 Read the draft, the author's context, and the relevant artifacts. Find the human reason for the work and the discovery worth telling. Preserve the author's anecdotes, opinions, jokes and turns of phrase where they work. When context is missing, ask the smallest question that would reveal what happened or what surprised them; don't require an interview when the supplied material already carries the story.

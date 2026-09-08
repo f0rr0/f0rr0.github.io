@@ -4,6 +4,7 @@ import remarkEmbedderModule from "@remark-embedder/core";
 import { codeToHtml } from "shiki";
 
 import { env } from "../env.ts";
+import { githubIconPaths } from "./github-icons.ts";
 
 function resolveDefaultExport(value) {
   if (typeof value === "function") {
@@ -82,13 +83,12 @@ const compactNumberFormatter = new Intl.NumberFormat("en", {
 
 const fullNumberFormatter = new Intl.NumberFormat("en");
 
-const icons = {
-  branch: `<svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><line x1="6" x2="6" y1="3" y2="15"></line><circle cx="18" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M18 9a9 9 0 0 1-9 9"></path></svg>`,
-  fork: `<svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><circle cx="18" cy="6" r="3"></circle><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"></path><path d="M12 12v3"></path></svg>`,
-  issue: `<svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12.01" x2="12.01" y1="16" y2="16"></line></svg>`,
-  pullRequest: `<svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><circle cx="18" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><path d="M13 6h3a2 2 0 0 1 2 2v7"></path><line x1="6" x2="6" y1="9" y2="21"></line></svg>`,
-  star: `<svg aria-hidden="true" fill="none" viewBox="0 0 24 24"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2Z"></path></svg>`,
-};
+const icons = Object.fromEntries(
+  Object.entries(githubIconPaths).map(([name, path]) => [
+    name,
+    `<svg aria-hidden="true" viewBox="0 0 16 16" fill="currentColor"><path d="${path}"></path></svg>`,
+  ])
+);
 
 function escapeHtml(value) {
   return String(value)
@@ -359,63 +359,88 @@ async function renderCodeReference(parsed, data) {
 }
 
 function renderShell({ content, href, label }) {
-  return `<a aria-label="${escapeHtml(label)}" class="github-embed flex min-w-0 min-h-48 flex-col [gap:0.7rem] overflow-hidden [border:1px_solid_color-mix(in_oklab,_var(--border)_88%,_var(--foreground))] [border-radius:0.875rem] [background:radial-gradient(_circle_at_100%_0%,_color-mix(in_oklab,_var(--primary)_10%,_transparent),_transparent_42%_),_color-mix(in_oklab,_var(--card)_95%,_var(--muted))] [box-shadow:0_1px_2px_rgb(41_37_36_/_8%),_0_18px_42px_-34px_rgb(41_37_36_/_34%)] [padding:1.1rem] [color:inherit] [text-decoration:none] [transition:border-color_150ms_ease,_box-shadow_150ms_ease,_transform_150ms_ease] dark:[box-shadow:0_1px_2px_rgb(0_0_0_/_30%),_0_18px_42px_-30px_rgb(0_0_0_/_80%)] [&:hover]:[border-color:color-mix(in_oklab,_var(--primary)_58%,_var(--border))] [&:hover]:[box-shadow:0_2px_4px_rgb(41_37_36_/_10%),_0_22px_46px_-32px_rgb(41_37_36_/_42%)] [&:hover]:[transform:translateY(-1px)] [&:focus-visible]:border-ring [&:focus-visible]:[outline:2px_solid_color-mix(in_oklab,_var(--ring)_38%,_transparent)] [&:focus-visible]:outline-offset-3 [&_svg]:fill-none [&_svg]:stroke-current [&_svg]:[stroke-linecap:round] [&_svg]:[stroke-linejoin:round]" href="${escapeHtml(href)}" rel="noreferrer noopener" target="_blank">${content}</a>`;
+  return `<a aria-label="${escapeHtml(label)}" class="github-embed flex min-w-0 flex-col gap-3 overflow-hidden rounded-lg border p-4 font-sans text-sm font-normal leading-5 no-underline bg-card border-border text-card-foreground hover:border-control-border-hover focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-3 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:fill-current [&_.github-embed-title]:font-medium [&_.github-embed-title]:leading-5 [&_.github-embed-description]:text-sm [&_.github-embed-description]:leading-5 [&_.github-embed-description]:text-muted-foreground [&_.github-embed-stats]:mt-auto [&_.github-embed-stats]:flex [&_.github-embed-stats]:flex-wrap [&_.github-embed-stats]:gap-4 [&_.github-embed-stats]:text-xs [&_.github-embed-stats]:leading-5 [&_.github-embed-stats]:text-muted-foreground [&_.github-embed-stats_>_span]:inline-flex [&_.github-embed-stats_>_span]:items-center [&_.github-embed-stats_>_span]:gap-1" href="${escapeHtml(href)}" rel="noreferrer noopener" target="_blank">${content}</a>`;
+}
+
+// Align Geist’s visible lettering with the Octicon, not only its line box.
+function renderHeader(content, badge = "") {
+  return `<span class="github-embed-header flex min-w-0 items-center gap-2 text-muted-foreground">
+    ${icons.repository}
+    <span class="github-embed-repository min-w-0 -translate-y-px truncate text-sm font-medium leading-5 text-foreground">${content}</span>
+    ${badge === "" ? "" : `<span class="shrink-0 rounded-full border px-2 text-xs leading-5 border-border">${badge}</span>`}
+    <span class="ms-auto shrink-0 ps-2 text-foreground [&_svg]:size-5" title="GitHub">${icons.mark}</span>
+  </span>`;
 }
 
 function renderPullRequest(parsed, data) {
   const status =
-    data.merged_at === null ? (data.draft ? "draft" : data.state) : "merged";
+    data.merged_at === null
+      ? data.state === "closed"
+        ? "closed"
+        : data.draft
+          ? "draft"
+          : "open"
+      : "merged";
   const statusDate = data.merged_at ?? data.updated_at ?? data.created_at;
   const fileLabel = data.changed_files === 1 ? "file" : "files";
+  const statusIconColors = {
+    closed: "[&_svg]:text-destructive",
+    draft: "",
+    merged: "[&_svg]:text-[#8250df] dark:[&_svg]:text-[#b69af0]",
+    open: "[&_svg]:[color:light-dark(#1a7f37,#3fb950)]",
+  };
 
   return renderShell({
     content: `
-      <span class="github-embed-header flex items-center justify-between gap-3">
-        <span class="github-embed-repository flex items-center min-w-0 [gap:0.45rem] overflow-hidden text-muted-foreground font-sans [font-size:0.75rem] font-semibold text-ellipsis whitespace-nowrap [&_svg]:w-4 [&_svg]:h-4 [&_svg]:flex-none [&_svg]:[stroke-width:1.8]">${icons.branch}<span>${escapeHtml(parsed.owner)} / ${escapeHtml(parsed.repo)}</span></span>
-        <span class="github-embed-status flex items-center flex-none [gap:0.3rem] [border:1px_solid_color-mix(in_oklab,_currentColor_34%,_transparent)] rounded-full [padding:0.28rem_0.55rem] font-sans [font-size:0.75rem] font-bold [line-height:1] capitalize [&_svg]:w-3 [&_svg]:h-3 [&_svg]:[stroke-width:2.2] github-embed-status-${status}">${icons.pullRequest}${escapeHtml(status)}</span>
+      ${renderHeader(`${escapeHtml(parsed.owner)} / ${escapeHtml(parsed.repo)}`)}
+      <span class="github-embed-title">${escapeHtml(data.title)} #${data.number}</span>
+      <span class="github-embed-meta flex flex-wrap items-center gap-2 text-xs leading-5 text-muted-foreground">
+        <span class="github-embed-status github-embed-status-${status} inline-flex h-7 shrink-0 items-center gap-1 rounded-full bg-muted px-2 font-normal text-muted-foreground ${statusIconColors[status]}">${icons[status]}${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+        <span>${escapeHtml(data.user.login)} · <time datetime="${escapeHtml(statusDate)}">${dateFormatter.format(new Date(statusDate))}</time></span>
       </span>
-      <span class="github-embed-title [display:-webkit-box] overflow-hidden text-foreground font-serif [font-size:0.875rem] font-normal [line-height:1.35] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">${escapeHtml(data.title)}</span>
-      <span class="github-embed-meta flex items-center [gap:0.45rem] text-muted-foreground font-sans [font-size:0.75rem] [line-height:1.35]">
-        <span>#${fullNumberFormatter.format(data.number)} by ${escapeHtml(data.user.login)}</span>
-        <span aria-hidden="true">·</span>
-        <time datetime="${escapeHtml(statusDate)}">${dateFormatter.format(new Date(statusDate))}</time>
-      </span>
-      <span aria-label="Pull request changes" class="github-embed-stats flex items-center min-h-5 [margin-top:auto] flex-wrap gap-3 text-muted-foreground font-sans [font-size:0.75rem] tabular-nums font-semibold [line-height:1] [&_>_span]:inline-flex [&_>_span]:items-center [&_>_span]:[gap:0.3rem] [&_svg]:w-3.5 [&_svg]:h-3.5 [&_svg]:[stroke-width:1.8]">
-        <span class="github-embed-additions [color:light-dark(oklch(42%_0.14_145),_oklch(78%_0.15_145))]">+${fullNumberFormatter.format(data.additions)}</span>
-        <span class="github-embed-deletions [color:light-dark(oklch(48%_0.18_25),_oklch(75%_0.16_25))]">−${fullNumberFormatter.format(data.deletions)}</span>
-        <span>${fullNumberFormatter.format(data.changed_files)} ${fileLabel}</span>
+      <span aria-label="Pull request changes" class="github-embed-stats tabular-nums">
+        <span><span class="[color:light-dark(#1a7f37,#3fb950)]">+${fullNumberFormatter.format(data.additions)}</span><span class="[color:light-dark(#cf222e,#f85149)]">−${fullNumberFormatter.format(data.deletions)}</span></span>
+        <span>${fullNumberFormatter.format(data.changed_files)} ${fileLabel} changed</span>
       </span>`,
-    href: data.html_url,
+    href: parsed.href,
     label: `Open pull request ${parsed.owner}/${parsed.repo} #${data.number} on GitHub`,
   });
 }
 
 function renderRepository(data) {
-  const archivedStatus = data.archived
-    ? '<span class="github-embed-status flex items-center flex-none [gap:0.3rem] [border:1px_solid_color-mix(in_oklab,_currentColor_34%,_transparent)] rounded-full [padding:0.28rem_0.55rem] font-sans [font-size:0.75rem] font-bold [line-height:1] capitalize [&_svg]:w-3 [&_svg]:h-3 [&_svg]:[stroke-width:2.2] github-embed-status-archived">Archived</span>'
-    : "";
+  const visibility = data.archived
+    ? "Public archive"
+    : data.private
+      ? "Private"
+      : "Public";
   const description =
     data.description === null
       ? ""
-      : `<span class="github-embed-description [display:-webkit-box] overflow-hidden text-muted-foreground [font-size:0.875rem] [line-height:1.5] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">${escapeHtml(data.description)}</span>`;
+      : `<span class="github-embed-description">${escapeHtml(data.description)}</span>`;
+  // GitHub Linguist's colors for common languages; unknown languages stay neutral.
+  const languageColors = {
+    JavaScript: "#f1e05a",
+    TypeScript: "#3178c6",
+    Rust: "#dea584",
+    Python: "#3572A5",
+    Go: "#00ADD8",
+    CSS: "#563d7c",
+    HTML: "#e34c26",
+    Shell: "#89e051",
+  };
   const language =
     data.language === null
       ? ""
-      : `<span class="github-embed-language flex items-center [gap:0.35rem] [&_>_span]:[width:0.55rem] [&_>_span]:[height:0.55rem] [&_>_span]:[border:1px_solid_color-mix(in_oklab,_var(--primary)_72%,_var(--foreground))] [&_>_span]:rounded-full [&_>_span]:bg-primary"><span aria-hidden="true"></span>${escapeHtml(data.language)}</span>`;
+      : `<span><span aria-hidden="true" class="size-3 rounded-full" style="background:${languageColors[data.language] ?? "#9198a1"}"></span>${escapeHtml(data.language)}</span>`;
 
   return renderShell({
     content: `
-      <span class="github-embed-header flex items-center justify-between gap-3">
-        <span class="github-embed-repository flex items-center min-w-0 [gap:0.45rem] overflow-hidden text-muted-foreground font-sans [font-size:0.75rem] font-semibold text-ellipsis whitespace-nowrap [&_svg]:w-4 [&_svg]:h-4 [&_svg]:flex-none [&_svg]:[stroke-width:1.8]">${icons.branch}GitHub repository</span>
-        ${archivedStatus}
-      </span>
-      <span class="github-embed-title [display:-webkit-box] overflow-hidden text-foreground font-serif [font-size:0.875rem] font-normal [line-height:1.35] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">${escapeHtml(data.full_name)}</span>
+      ${renderHeader(escapeHtml(data.full_name), visibility)}
       ${description}
-      <span aria-label="Repository statistics" class="github-embed-stats flex items-center min-h-5 [margin-top:auto] flex-wrap gap-3 text-muted-foreground font-sans [font-size:0.75rem] tabular-nums font-semibold [line-height:1] [&_>_span]:inline-flex [&_>_span]:items-center [&_>_span]:[gap:0.3rem] [&_svg]:w-3.5 [&_svg]:h-3.5 [&_svg]:[stroke-width:1.8]">
+      <span aria-label="Repository statistics" class="github-embed-stats tabular-nums">
         ${language}
-        <span>${icons.star}${compactNumberFormatter.format(data.stargazers_count)}</span>
-        <span>${icons.fork}${compactNumberFormatter.format(data.forks_count)}</span>
-        <span>${icons.issue}${compactNumberFormatter.format(data.open_issues_count)}</span>
+        <span aria-label="${fullNumberFormatter.format(data.stargazers_count)} stars">${icons.star}${compactNumberFormatter.format(data.stargazers_count)}</span>
+        <span aria-label="${fullNumberFormatter.format(data.forks_count)} forks">${icons.fork}${compactNumberFormatter.format(data.forks_count)}</span>
       </span>`,
     href: data.html_url,
     label: `Open ${data.full_name} on GitHub`,
@@ -435,12 +460,7 @@ function renderFallback(parsed) {
       : `View this ${parsed.kind === "pull" ? "pull request" : "repository"} on GitHub.`;
 
   return renderShell({
-    content: `
-      <span class="github-embed-header flex items-center justify-between gap-3">
-        <span class="github-embed-repository flex items-center min-w-0 [gap:0.45rem] overflow-hidden text-muted-foreground font-sans [font-size:0.75rem] font-semibold text-ellipsis whitespace-nowrap [&_svg]:w-4 [&_svg]:h-4 [&_svg]:flex-none [&_svg]:[stroke-width:1.8]">${icons.branch}GitHub</span>
-      </span>
-      <span class="github-embed-title [display:-webkit-box] overflow-hidden text-foreground font-serif [font-size:0.875rem] font-normal [line-height:1.35] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">${escapeHtml(label)}</span>
-      <span class="github-embed-description [display:-webkit-box] overflow-hidden text-muted-foreground [font-size:0.875rem] [line-height:1.5] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">${escapeHtml(description)}</span>`,
+    content: `${renderHeader(escapeHtml(label))}<span class="github-embed-description">${escapeHtml(description)}</span>`,
     href: parsed.href,
     label: `Open ${label} on GitHub`,
   });

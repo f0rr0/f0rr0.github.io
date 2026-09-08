@@ -3,35 +3,105 @@ export const metadata = {
   date: "2025-02-01",
   author: "F0RR0",
   summary:
-    "A tour of the MDX blog features: headings, code, images, tables, diagrams, and links.",
+    "The article element reference: typography, code, photography, screenshots, GitHub embeds, tables, diagrams, and footnotes.",
   tags: ["mdx", "blog", "demo"],
-  updated: "2025-02-10",
+  updated: "2026-09-07",
   draft: true,
 };
 
 ## Table of contents
 
-- [Quickstart](#quickstart)
+- [Typography](#typography)
+- [Lists](#lists)
+- [Blockquotes](#blockquotes)
 - [Code blocks](#code-blocks)
 - [Images](#images)
+- [GitHub embeds](#github-embeds)
 - [Tables](#tables)
 - [Mermaid diagrams](#mermaid-diagrams)
-- [Links](#links)
+- [Links and dates](#links-and-dates)
 - [Footnotes](#footnotes)
 
-## Quickstart
+## Typography
 
-Create a folder, add `page.mdx`, and drop assets next to it.
+An article should feel comfortable to read, whether it contains a short update
+or a detailed technical explanation. This paragraph shows the default reading
+size, line length, and spacing alongside **strong emphasis**, _italic emphasis_,
+**_both together_**, and ~~deleted text~~.
 
-1. `src/content/blog/my-post/page.mdx`
-2. `src/content/blog/my-post/opengraph-image.png`
-3. Add `opengraph-image.png` next to the post
+Inline code such as `next.config.ts` should sit naturally in a sentence. A longer
+identifier like `createSyntaxHighlightedBlogPostPreview` should wrap without
+pushing the page sideways. You can also combine [a link with **emphasis**](/blog)
+and a [`code-formatted link`](https://nextjs.org/docs).
 
-> Tip: keep `draft: true` until you are ready to publish.
+### A third-level heading
+
+Use subsections to keep a longer explanation easy to scan.
+
+#### A fourth-level heading
+
+Smaller sections still need a clear relationship to the text around them.
+
+##### A fifth-level heading
+
+This is a deeper level in the document outline.
+
+###### A sixth-level heading
+
+The post title supplies the page’s first-level heading. This page exercises every
+remaining Markdown heading level.
+
+An explicit line break stays within the same paragraph:<br />
+This is the next line.
+
+A thematic break separates a change of subject:
+
+---
+
+## Lists
+
+### Unordered and nested
+
+- A short item.
+- An item with **emphasis**, a [link](/blog), and `inline code`.
+- An item with a nested explanation:
+  - Keep related points together.
+  - Let a longer sentence wrap to show how indentation and line spacing work
+    when the text spans more than one line on a narrow screen.
+
+### Ordered
+
+1. Create a folder in `src/content/blog`.
+2. Add a `page.mdx` file.
+   1. Write the metadata.
+   2. Add the article body.
+3. Keep `draft: true` until the post is ready.
+
+### Task list
+
+- [x] Write the first draft.
+- [x] Add images and code examples.
+- [ ] Review the post before publishing.
+
+## Blockquotes
+
+> Good documentation makes the next step feel obvious.
+
+A longer quote can contain multiple paragraphs and nested elements:
+
+> Keep the explanation close to the example. Readers should not have to hold
+> several paragraphs in memory before seeing what they describe.
+>
+> Use **emphasis** sparingly, and keep `inline code` readable inside the quote.
+>
+> - Show the important detail.
+> - Explain the consequence.
+>
+> > A nested quote keeps the same quiet treatment.
 
 ## Code blocks
 
-Use fenced blocks with a language for syntax highlighting.
+### Highlighted lines
 
 ```ts {9-15}
 type Post = {
@@ -50,18 +120,31 @@ const canonicalUrl = new URL(
 ).toString();
 ```
 
-Highlighted lines call attention to the part being discussed. Inline code like
-`next.config.ts` is styled too, including longer names such as
-`createSyntaxHighlightedBlogPostPreview`.
+### Highlighted words
 
-This shell command is intentionally kept on one line to exercise horizontal
-scrolling without widening the page:
+```js /published/
+const published = posts.filter((post) => !post.draft);
+console.log(published.length);
+```
+
+### Short command
+
+```bash
+bun run dev
+```
+
+### Horizontal scrolling
+
+This command stays on one line. Scroll the code, including with the arrow keys,
+without widening the article:
 
 ```bash
 curl --request GET --header "Accept: text/html" "http://127.0.0.1:3000/blog/kitchen-sink?preview=true&source=src/content/blog&theme=system&layout=article&syntax-highlighter=shiki"
 ```
 
-Blocks without a language use a readable fallback:
+### Plain text
+
+Unlabelled fences retain the same controls and a readable fallback:
 
 ```
 src/content/blog/my-post/page.mdx
@@ -69,28 +152,125 @@ src/content/blog/my-post/page.mdx
 
 ## Images
 
-Markdown images work with relative paths:
+### Relative Markdown image
 
-![Inline image](./inline.png)
+This photograph lives next to this post and uses a relative Markdown path:
 
-You can also use the MDX `<Image />` component for optimized images:
+![Snow-covered mountains above a forested valley beneath a blue, cloudy sky](./mountains.jpg)
 
-<Image src="./inline.png" width={800} height={450} alt="Inline preview" />
+[Original photograph on Unsplash](https://images.unsplash.com/photo-1464822759023-fed622ff2c3b).
+
+### Remote Markdown image
+
+This photograph loads directly from its remote URL:
+
+![Sunlit granite cliffs rising above an evergreen forest](https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1200&h=800&q=85)
+
+[Remote photograph on Unsplash](https://images.unsplash.com/photo-1472396961693-142e6e269027).
+
+### Optimized image and caption
+
+The same local image can use the explicit `<Image />` component inside a figure:
+
+<figure>
+  <Image src="./mountains.jpg" width={1200} height={800} alt="A wide mountain valley framed by evergreen trees" />
+  <figcaption>A local photograph with its natural proportions and a caption close to the image.</figcaption>
+</figure>
+
+### Portrait screenshot
+
+<figure className="article-screenshot">
+  <Image src="../building-on-zeroclaw/meal-preferences.png" alt="A chat recording household meal preferences" />
+  <figcaption>A portrait screenshot from the ZeroClaw article, kept at a comfortable reading size.</figcaption>
+</figure>
+
+### Screenshot pair
+
+<div className="article-screenshot-grid">
+  <figure>
+    <Image src="../building-on-zeroclaw/pantry-from-order-history.png" alt="A chat building a pantry list from grocery order history" />
+    <figcaption>Order history becomes a pantry estimate.</figcaption>
+  </figure>
+  <figure>
+    <Image src="../building-on-zeroclaw/pantry-freshness-check.png" alt="A chat checking the purchase date and freshness of chicken" />
+    <figcaption>A freshness check retains the original purchase date.</figcaption>
+  </figure>
+</div>
+
+### Vector image
+
+The image renderer also supports SVG diagrams without rasterizing them:
+
+![Top artists from the 2018 music review](../2018-music-in-review/artists.svg)
+
+### Animated image
+
+<details>
+  <summary>Show the animated development walkthrough</summary>
+
+![A terminal walkthrough of bootstrapping the Koa and webpack example](../kickback-with-koa-webpack/bootstrap.gif)
+
+Close this disclosure to hide the animation.
+
+</details>
+
+## GitHub embeds
+
+Standalone GitHub URLs become cards or source excerpts. A GitHub link within a
+sentence stays an ordinary link, such as [the Next.js repository](https://github.com/vercel/next.js).
+
+### Repository card
+
+https://github.com/vercel/next.js
+
+### Pull request card
+
+https://github.com/zeroclaw-labs/zeroclaw/pull/3086
+
+### Card pair
+
+<div className="github-embed-grid grid gap-4 my-7 sm:grid-cols-2">
+
+https://github.com/zeroclaw-labs/zeroclaw/pull/3086
+
+https://github.com/zeroclaw-labs/zeroclaw/pull/3715
+
+</div>
+
+### Code excerpt with source and line numbers
+
+A commit-pinned permalink embeds the exact selected lines, with a source link,
+language icon, and copy control:
+
+https://github.com/f0rr0/zeroclaw/blob/3e5eed1208b9b444830febcfeecb82a8f3259a3d/src/meal/store.rs#L603-L631
 
 ## Tables
 
-GFM tables are enabled:
+A table can contain aligned numbers, links, emphasis, and code:
 
-| Feature             | Support |
-| ------------------- | ------- |
-| GFM tables          | Yes     |
-| Syntax highlighting | Yes     |
-| Mermaid diagrams    | Yes     |
+| Element                                  |       Example       | Count |
+| :--------------------------------------- | :-----------------: | ----: |
+| **Code**                                 |     `page.mdx`      |    12 |
+| Links                                    | [Blog index](/blog) |     3 |
+| Longer text that wraps on narrow screens |      Supported      |   128 |
 
 ## Mermaid diagrams
 
-Mermaid diagrams use a deterministic hand-drawn treatment. Dense generated
-flowcharts can opt into ELK layout while remaining plain-text source:
+### Flowchart
+
+A small diagram should be readable without scrolling:
+
+```mermaid
+flowchart TD
+  accTitle: Publishing an article
+  accDescr: Draft, review, and publish form a short sequence.
+  Draft[Write a draft] --> Review[Review the article]
+  Review --> Publish[Publish]
+```
+
+### Wide flowchart with ELK layout
+
+A larger diagram keeps readable labels, horizontal scrolling, zoom, and full-screen controls:
 
 ```mermaid
 ---
@@ -98,48 +278,64 @@ config:
   layout: elk
 ---
 flowchart LR
-  accTitle: From a rough idea to a dependable release
-  accDescr: A product idea branches through research and technical discovery, converges in a prototype, and continues through review, release, and observation.
-
-  Idea([Rough idea]) --> Question{Worth exploring?}
+  accTitle: From an idea to a release
+  accDescr: Research and a technical spike converge into a prototype, followed by review and release.
+  Idea([Idea]) --> Question{Worth exploring?}
   Question -->|User signal| Research[Research the problem]
   Question -->|Technical signal| Spike[Run a technical spike]
-  Research --> Sketch[Sketch the smallest useful flow]
-  Spike --> Sketch
-  Sketch --> Prototype[Build a focused prototype]
-  Prototype --> Review{Ready to learn from?}
-  Review -->|Not yet| Sketch
-  Review -->|Yes| Ship[Release behind a guardrail]
-  Ship --> Observe[Observe real usage]
-  Observe --> Learn[Feed learning into the next idea]
+  Research --> Prototype[Build a focused prototype]
+  Spike --> Prototype
+  Prototype --> Review{Ready to learn?}
+  Review -->|Not yet| Prototype
+  Review -->|Yes| Ship[Release]
 ```
 
-Specialized diagram types retain their native geometry while sharing the same
-paper-like surface, colors, responsive scrolling, and controls:
+### Sequence diagram
 
 ```mermaid
 sequenceDiagram
-  accTitle: Rendering a generated diagram in an article
-  accDescr: The reader opens an article, Next.js serves the page, and Mermaid turns generated source into a themed SVG.
-
+  accTitle: Rendering a diagram
+  accDescr: The reader opens the article and Mermaid renders its source.
   actor Reader
-  participant Blog as Next.js article
+  participant Blog as Article
   participant Renderer as Mermaid
-
   Reader->>Blog: Open article
-  Blog-->>Reader: Show the article shell
-  Blog->>Renderer: Send generated diagram source
-  Renderer-->>Reader: Draw the themed SVG
+  Blog-->>Reader: Show content
+  Blog->>Renderer: Send diagram source
+  Renderer-->>Reader: Draw themed SVG
 ```
 
-## Links
+### State diagram
 
-Internal links stay client-side: [Blog index](/blog)
+The ZeroClaw article uses this diagram family to explain a decision’s lifecycle:
 
-External links open in a new tab: [Next.js](https://nextjs.org)
+```mermaid
+stateDiagram-v2
+  accTitle: A meal decision
+  accDescr: A suggestion moves through discussion to a decision, with an option to rethink it.
+  [*] --> Suggested
+  Suggested --> Discussing
+  Discussing --> Decided
+  Decided --> Discussing: Rethink
+  Decided --> [*]
+```
+
+## Links and dates
+
+- [Internal navigation](/blog)
+- [External documentation](https://nextjs.org/docs)
+- [An anchor on this page](#typography)
+- Automatic URL linking: https://nextjs.org/docs
+- A localized date: <time dateTime="2026-09-07T12:00:00Z" />
 
 ## Footnotes
 
-Here is a footnote reference.[^1]
+A short footnote provides context without interrupting the paragraph.[^short]
+A longer footnote can include several paragraphs and a link.[^long]
+The same note can be referenced again.[^short]
 
-[^1]: Footnotes are provided by `remark-gfm`.
+[^short]: This is a short footnote with `inline code`.
+
+[^long]: This is the first paragraph of a longer note.
+
+    A second paragraph includes a [reference link](https://nextjs.org/docs).

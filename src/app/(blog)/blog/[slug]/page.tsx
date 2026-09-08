@@ -1,6 +1,5 @@
 import type { MDXComponents } from "mdx/types";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ComponentType } from "react";
 
@@ -118,19 +117,6 @@ export default async function BlogPostPage({ params }: { params: PageParams }) {
           <h1 className="section-title mb-4 font-serif text-2xl font-normal text-foreground text-balance">
             {metadata.title}
           </h1>
-          <p className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-            <Link className="hover:underline" href="/journey" rel="author">
-              {metadata.author}
-            </Link>
-            {post.updatedAt && (
-              <span>
-                Updated{" "}
-                <time dateTime={post.updatedAt.toISOString()}>
-                  {formatDate(post.updatedAt)}
-                </time>
-              </span>
-            )}
-          </p>
           <div
             className="flex items-center justify-between gap-3 border-y border-border whitespace-nowrap"
             data-slot="blog-post-rail"

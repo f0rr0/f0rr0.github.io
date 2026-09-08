@@ -25,7 +25,7 @@ export function track<Event extends keyof AnalyticsEvents>(
   event: Event,
   properties: AnalyticsEvents[Event]
 ) {
-  // Initialization is disabled for previews, development and privacy opt-outs.
+  // Initialization is disabled for previews and development.
   if (!posthog.__loaded) {
     return;
   }

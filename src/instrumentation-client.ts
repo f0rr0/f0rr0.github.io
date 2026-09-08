@@ -2,19 +2,13 @@ import { posthog } from "posthog-js";
 
 import { captureLink, sanitizeProperties } from "@/lib/analytics";
 
-const privacyPreference =
-  navigator.doNotTrack === "1" ||
-  (navigator as Navigator & { globalPrivacyControl?: boolean })
-    .globalPrivacyControl === true;
-
 // Public browser configuration for the portfolio PostHog project.
 const projectToken = "phc_xUiLFUMwb6jrSMxM8yL2iEDPGQZcVMKfWVp4RBsvfmCa";
 const posthogHost = "/_r7k2";
 
 if (
   process.env.NODE_ENV === "production" &&
-  location.hostname === "f0rr0.dev" &&
-  !privacyPreference
+  location.hostname === "f0rr0.dev"
 ) {
   posthog.init(projectToken, {
     api_host: posthogHost,
@@ -35,7 +29,6 @@ if (
     capture_performance: false,
     advanced_disable_flags: true,
     disable_external_dependency_loading: true,
-    respect_dnt: true,
     before_send: (event) =>
       event === null
         ? null

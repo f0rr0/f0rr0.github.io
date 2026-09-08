@@ -1,0 +1,21 @@
+Use case: identity-preserve
+Asset type: one frame in a 240x240 interactive portrait motion sequence
+
+Input images and authority:
+- Image 1 is the EDIT TARGET and TARGET POSE TEMPLATE. Edit this image in place. Preserve its exact pose geometry and pixel registration. It is authoritative for the exact camera viewpoint, body framing, crop, face size, head position, shoulder position, pitch, yaw, roll, eye line, chin direction, and rotation required in the output.
+- Image 2 is the closest existing Sid transition frame for this exact motion position. It is the sole authoritative subject reference for Sid's identity, face, beard, dense hair, round sunglasses, black overshirt, white T-shirt, clothing construction, lighting, and photographic treatment. Its pose and framing are only approximate and must not override Image 1.
+
+Primary request:
+Edit Image 1 in place by replacing only the depicted person's identity and wardrobe with SID, the person in Image 2. Do not compose a fresh portrait. Do not reframe, zoom, recrop, recenter, or redraw the underlying pose geometry. The result must look like Image 1 with its subject replaced by Sid while every spatial landmark remains registered.
+
+Exact pose-transfer requirement:
+Preserve Image 1 exactly for camera distance, head scale, face bounding box, face center, hair-top position, shoulder width and height, bottom crop, head pitch, head yaw, head roll, neck angle, gaze direction, eye line, nose direction, chin direction, visible-ear balance, facial foreshortening, and torso rotation. The hair begins near the top edge, the face is a close crop that dominates the frame, and only the upper shoulders enter near the bottom. Do not output the medium chest-up portrait or large amount of torso visible in Image 2. Do not merely make a generic directional pose. Do not exaggerate or soften the pose. The output must occupy the same silhouette envelope and register to Image 1 when overlaid at equal size.
+
+Subject invariants:
+Use only Sid's identity and appearance from Image 2. Preserve his exact facial structure, skin tone, dense side and crown hair volume, beard shape, round dark sunglasses with thin metal rims, black overshirt, white crew-neck T-shirt, buttons, pocket placement, collar construction, and realistic studio lighting. Keep shirt construction and button/pocket sides physically consistent across the sequence.
+
+Reference exclusion:
+Do not transfer the person in Image 1, his identity, face, hair style, glasses design, facial hair, expression, clothing, monochrome styling, or body proportions. Preserve only Image 1's spatial pose geometry and framing. Image 2 does not control crop, zoom, camera distance, or pose.
+
+Background and output:
+Render on a perfectly flat solid #ff00ff chroma-key background. The background must be one uniform color with no gradient, texture, shadows, halo, floor, reflection, or lighting variation. Do not use #ff00ff anywhere on Sid. Keep clean subject edges, including hair and glasses. No text, watermark, border, extra objects, or extra people.

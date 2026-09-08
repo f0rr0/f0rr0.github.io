@@ -1,0 +1,17 @@
+Use case: identity-preserve
+Asset type: three-frame portrait animation sprite strip
+Input images:
+- Image 1: exact START portrait of Sid looking right at 0%.
+- Image 2: exact END portrait of Sid looking bottom-right at 100%.
+
+Primary request: Generate Sid at exactly 25%, 50%, and 75% of the small head-pitch change from Image 1 to Image 2. The yaw is already nearly the same in both endpoints and must remain inside their actual yaw envelope. The total downward pitch change is intentionally subtle. Use only the real angular difference visible between Images 1 and 2; do not invent a larger bottom-right pose.
+
+Panel 1 must be one quarter of the endpoint pitch delta, panel 2 exactly halfway, and panel 3 three quarters. The lens-to-ear height, crown/forehead exposure, nose angle, and chin-to-collar gap must each advance monotonically in three small equal steps. Every value in every panel must remain between its value in Images 1 and 2. Panel 3 must still be visibly less downward than Image 2. No panel may equal or exceed the end pose.
+
+Output geometry: one 3072×1024 horizontal sprite strip split into exactly three equal 1024×1024 panels. Panel 1 is 25%, panel 2 is 50%, panel 3 is 75%. Place panel boundaries exactly at x=1024 and x=2048. No gutters, borders, dividers, labels, text, repeated panels, or extra subjects.
+
+Scene/backdrop: perfectly flat solid #ff00ff chroma-key background in every panel, with no shadows, gradients, texture, floor plane, or lighting variation. Do not use #ff00ff in the subject.
+
+Composition/framing: exactly one waist-up Sid portrait centered in each square panel. Match the endpoint camera distance, shoulder position, head scale, torso framing, placement, and bottom crop. Only the small head pitch and eye direction should progress.
+
+Constraints: preserve Sid's exact identity, full dense side hair, sunglasses, beard, dark overshirt, white T-shirt, screen-right pocket, screen-left placket and buttons, lighting, texture, and anatomy; no morphing; no clothing-side swap; no zoom; no body lean; no expression change; no watermark.

@@ -1,0 +1,7 @@
+Use case: identity-preserve
+Asset type: single portrait animation frame
+Input images: Image 1 is Sid's exact RIGHT start endpoint at 0%. Image 2 is Sid's exact BOTTOM-RIGHT end endpoint at 100%.
+
+Generate exactly one square portrait of Sid at 50% of the real, intentionally small downward head-pitch change between Images 1 and 2. Keep yaw, lens-to-ear height, crown/forehead exposure, nose angle, gaze, and chin-to-collar gap exactly halfway between the two actual endpoint values. Do not invent a larger bottom-right pose. Every pose landmark must remain inside the endpoint envelope.
+
+Preserve Sid's identity, full side-hair volume, sunglasses, beard, dark overshirt, white T-shirt, pocket/button sides, lighting, body scale, shoulder position, placement, and bottom crop. Flat solid #ff00ff background. Exactly one waist-up subject. No zoom, body lean, expression change, text, watermark, or clothing-side swap. Output 1280×1280.

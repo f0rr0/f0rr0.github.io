@@ -1,0 +1,5 @@
+Use case: identity-preserve
+Create one 816x816 portrait animation frame.
+Image 1 is the exact target photograph: match its framing, head position, facial landmark placement, camera perspective, yaw, pitch, roll, and neck/shoulder position. Image 2 supplies only Sid's identity, natural warm skin, voluminous dark hair, beard, thin gold round sunglasses and black overshirt over a white T-shirt.
+Replace the man in image 1 with Sid. This is a very tight headshot, NOT a chest portrait. Keep the target's head scale: hair almost touches the top, chin near the bottom three-quarters, neckline near the bottom edge, very little shirt visible. Preserve Sid's own face and hair shape but at the target's camera scale and orientation. Do not shrink the head to fit more torso. Do not copy the other man's features, glasses or hairstyle. Keep Sid's neutral expression and consistent lighting. Do not mirror any clothing details.
+Uniform solid #FF00FF background, no text, no shadows on the background. One image only, no panels.

@@ -1,0 +1,142 @@
+[
+  {
+    "edge": "center-top",
+    "end": "public/resume/face-motion/v13/top.webp",
+    "from": "center",
+    "out": "output/imagegen/face-motion-reference-parity/graded-sequences/center-top.png",
+    "prompt": "tmp/imagegen/face-motion-reference-parity/graded-sequences/prompts/center-top.txt",
+    "start": "public/resume/face-motion/v13/center.webp",
+    "strip": "tmp/imagegen/face-motion-reference-parity/graded-sequences/reference-strips/center-top.png",
+    "to": "top"
+  },
+  {
+    "edge": "center-top-right",
+    "end": "public/resume/face-motion/v13/top-right.webp",
+    "from": "center",
+    "out": "output/imagegen/face-motion-reference-parity/graded-sequences/center-top-right.png",
+    "prompt": "tmp/imagegen/face-motion-reference-parity/graded-sequences/prompts/center-top-right.txt",
+    "start": "public/resume/face-motion/v13/center.webp",
+    "strip": "tmp/imagegen/face-motion-reference-parity/graded-sequences/reference-strips/center-top-right.png",
+    "to": "top-right"
+  },
+  {
+    "edge": "center-bottom-right",
+    "end": "public/resume/face-motion/v13/bottom-right.webp",
+    "from": "center",
+    "out": "output/imagegen/face-motion-reference-parity/graded-sequences/center-bottom-right.png",
+    "prompt": "tmp/imagegen/face-motion-reference-parity/graded-sequences/prompts/center-bottom-right.txt",
+    "start": "public/resume/face-motion/v13/center.webp",
+    "strip": "tmp/imagegen/face-motion-reference-parity/graded-sequences/reference-strips/center-bottom-right.png",
+    "to": "bottom-right"
+  },
+  {
+    "edge": "center-bottom",
+    "end": "public/resume/face-motion/v13/bottom.webp",
+    "from": "center",
+    "out": "output/imagegen/face-motion-reference-parity/graded-sequences/center-bottom.png",
+    "prompt": "tmp/imagegen/face-motion-reference-parity/graded-sequences/prompts/center-bottom.txt",
+    "start": "public/resume/face-motion/v13/center.webp",
+    "strip": "tmp/imagegen/face-motion-reference-parity/graded-sequences/reference-strips/center-bottom.png",
+    "to": "bottom"
+  },
+  {
+    "edge": "center-bottom-left",
+    "end": "public/resume/face-motion/v13/bottom-left.webp",
+    "from": "center",
+    "out": "output/imagegen/face-motion-reference-parity/graded-sequences/center-bottom-left.png",
+    "prompt": "tmp/imagegen/face-motion-reference-parity/graded-sequences/prompts/center-bottom-left.txt",
+    "start": "public/resume/face-motion/v13/center.webp",
+    "strip": "tmp/imagegen/face-motion-reference-parity/graded-sequences/reference-strips/center-bottom-left.png",
+    "to": "bottom-left"
+  },
+  {
+    "edge": "center-top-left",
+    "end": "public/resume/face-motion/v13/top-left.webp",
+    "from": "center",
+    "out": "output/imagegen/face-motion-reference-parity/graded-sequences/center-top-left.png",
+    "prompt": "tmp/imagegen/face-motion-reference-parity/graded-sequences/prompts/center-top-left.txt",
+    "start": "public/resume/face-motion/v13/center.webp",
+    "strip": "tmp/imagegen/face-motion-reference-parity/graded-sequences/reference-strips/center-top-left.png",
+    "to": "top-left"
+  },
+  {
+    "edge": "top-top-right",
+    "end": "public/resume/face-motion/v13/top-right.webp",
+    "from": "top",
+    "out": "output/imagegen/face-motion-reference-parity/graded-sequences/top-top-right.png",
+    "prompt": "tmp/imagegen/face-motion-reference-parity/graded-sequences/prompts/top-top-right.txt",
+    "start": "public/resume/face-motion/v13/top.webp",
+    "strip": "tmp/imagegen/face-motion-reference-parity/graded-sequences/reference-strips/top-top-right.png",
+    "to": "top-right"
+  },
+  {
+    "edge": "top-right-right",
+    "end": "public/resume/face-motion/v13/right.webp",
+    "from": "top-right",
+    "out": "output/imagegen/face-motion-reference-parity/graded-sequences/top-right-right.png",
+    "prompt": "tmp/imagegen/face-motion-reference-parity/graded-sequences/prompts/top-right-right.txt",
+    "start": "public/resume/face-motion/v13/top-right.webp",
+    "strip": "tmp/imagegen/face-motion-reference-parity/graded-sequences/reference-strips/top-right-right.png",
+    "to": "right"
+  },
+  {
+    "edge": "right-bottom-right",
+    "end": "public/resume/face-motion/v13/bottom-right.webp",
+    "from": "right",
+    "out": "output/imagegen/face-motion-reference-parity/graded-sequences/right-bottom-right.png",
+    "prompt": "tmp/imagegen/face-motion-reference-parity/graded-sequences/prompts/right-bottom-right.txt",
+    "start": "public/resume/face-motion/v13/right.webp",
+    "strip": "tmp/imagegen/face-motion-reference-parity/graded-sequences/reference-strips/right-bottom-right.png",
+    "to": "bottom-right"
+  },
+  {
+    "edge": "bottom-right-bottom",
+    "end": "public/resume/face-motion/v13/bottom.webp",
+    "from": "bottom-right",
+    "out": "output/imagegen/face-motion-reference-parity/graded-sequences/bottom-right-bottom.png",
+    "prompt": "tmp/imagegen/face-motion-reference-parity/graded-sequences/prompts/bottom-right-bottom.txt",
+    "start": "public/resume/face-motion/v13/bottom-right.webp",
+    "strip": "tmp/imagegen/face-motion-reference-parity/graded-sequences/reference-strips/bottom-right-bottom.png",
+    "to": "bottom"
+  },
+  {
+    "edge": "bottom-bottom-left",
+    "end": "public/resume/face-motion/v13/bottom-left.webp",
+    "from": "bottom",
+    "out": "output/imagegen/face-motion-reference-parity/graded-sequences/bottom-bottom-left.png",
+    "prompt": "tmp/imagegen/face-motion-reference-parity/graded-sequences/prompts/bottom-bottom-left.txt",
+    "start": "public/resume/face-motion/v13/bottom.webp",
+    "strip": "tmp/imagegen/face-motion-reference-parity/graded-sequences/reference-strips/bottom-bottom-left.png",
+    "to": "bottom-left"
+  },
+  {
+    "edge": "bottom-left-left",
+    "end": "public/resume/face-motion/v13/left.webp",
+    "from": "bottom-left",
+    "out": "output/imagegen/face-motion-reference-parity/graded-sequences/bottom-left-left.png",
+    "prompt": "tmp/imagegen/face-motion-reference-parity/graded-sequences/prompts/bottom-left-left.txt",
+    "start": "public/resume/face-motion/v13/bottom-left.webp",
+    "strip": "tmp/imagegen/face-motion-reference-parity/graded-sequences/reference-strips/bottom-left-left.png",
+    "to": "left"
+  },
+  {
+    "edge": "left-top-left",
+    "end": "public/resume/face-motion/v13/top-left.webp",
+    "from": "left",
+    "out": "output/imagegen/face-motion-reference-parity/graded-sequences/left-top-left.png",
+    "prompt": "tmp/imagegen/face-motion-reference-parity/graded-sequences/prompts/left-top-left.txt",
+    "start": "public/resume/face-motion/v13/left.webp",
+    "strip": "tmp/imagegen/face-motion-reference-parity/graded-sequences/reference-strips/left-top-left.png",
+    "to": "top-left"
+  },
+  {
+    "edge": "top-left-top",
+    "end": "public/resume/face-motion/v13/top.webp",
+    "from": "top-left",
+    "out": "output/imagegen/face-motion-reference-parity/graded-sequences/top-left-top.png",
+    "prompt": "tmp/imagegen/face-motion-reference-parity/graded-sequences/prompts/top-left-top.txt",
+    "start": "public/resume/face-motion/v13/top-left.webp",
+    "strip": "tmp/imagegen/face-motion-reference-parity/graded-sequences/reference-strips/top-left-top.png",
+    "to": "top"
+  }
+]

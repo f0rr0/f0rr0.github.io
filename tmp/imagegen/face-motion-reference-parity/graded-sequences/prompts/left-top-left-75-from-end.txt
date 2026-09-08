@@ -1,0 +1,7 @@
+Use case: identity-preserve
+Asset type: single portrait animation frame
+Input images: Image 1 is Sid's exact TOP-LEFT end endpoint at 100% and is the primary edit anchor. Image 2 is Sid's exact LEFT start endpoint at 0%.
+
+Starting from Image 1, reduce the upward head pitch by exactly one quarter of the small difference toward Image 2. The result is the 75% frame from LEFT to TOP-LEFT: it must remain very close to Image 1 but be visibly and slightly less upward. Keep every yaw, lens-to-ear height, underside-of-chin visibility, forehead exposure, nose angle, gaze, and chin-to-collar value strictly between Images 1 and 2. Never exceed Image 1's top-left pose.
+
+Preserve Sid's identity, full side-hair volume, sunglasses, beard, dark overshirt, white T-shirt, pocket/button sides, lighting, body scale, shoulder position, placement, and bottom crop. Flat solid #ff00ff background. Exactly one waist-up subject. No zoom, body lean, expression change, text, watermark, or clothing-side swap. Output 1280×1280.

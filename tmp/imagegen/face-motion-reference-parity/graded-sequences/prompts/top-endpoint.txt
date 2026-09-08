@@ -1,0 +1,16 @@
+Use case: identity-preserve
+Asset type: single compass-pose portrait endpoint
+Input images:
+- Image 1: authoritative current TOP portrait of Sid. Preserve this exact person, hair volume and silhouette, sunglasses, beard, clothing construction, body scale, crop, lighting, and rendering style; replace only the insufficient upward head pitch and gaze.
+- Image 2: authoritative CENTER portrait of Sid for exact frontal yaw, centered alignment, identity, body framing, and scale.
+- Image 3: authoritative TOP-RIGHT portrait of Sid for identity, hair, clothing, and diagonal upward-pitch context.
+- Image 4: authoritative TOP-LEFT portrait of Sid for identity, hair, clothing, and symmetric diagonal upward-pitch context.
+- Image 5: original-site TOP pose reference featuring another person. Copy only its pure vertical head pitch, upward gaze, frontal yaw, and landmark geometry. Do not copy its identity, face, hair, glasses, expression, clothing, monochrome treatment, or framing.
+
+Primary request: Regenerate Sid's TOP endpoint as the true 100% pure-up compass pose. Keep yaw exactly 0° and roll exactly 0° so the nose, philtrum, chin, and sternum remain on one vertical centerline. Apply a clearly stronger upward head pitch and gaze than both diagonal portraits in Images 3 and 4, matching the pose mechanics of Image 5. The underside of the chin should become more visible, the chin-to-collar gap should open naturally, the lenses should tilt consistently with the upward head angle, and the visible forehead/crown relationship should change naturally. This must read unmistakably as UP at 120×120, not as center or either diagonal.
+
+Scene/backdrop: perfectly flat solid #ff00ff chroma-key background with no shadows, gradients, texture, floor plane, or lighting variation. Do not use #ff00ff in the subject.
+
+Composition/framing: exactly one waist-up Sid portrait centered on a 1280×1280 square canvas. Match the shoulder position, subject scale, torso framing, and crop of Images 1 and 2. Keep the torso upright and front-facing; only the head pitch and eye direction change.
+
+Constraints: preserve Sid's identity and facial proportions; preserve the full dense side hair volume without flattening or abrupt creases; preserve the exact round sunglasses, beard, dark overshirt, white T-shirt, pocket and button placement; preserve realistic anatomy; no yaw; no body lean; no zoom; no expression change; no clothing-side swaps; no extra subject; no text; no watermark.

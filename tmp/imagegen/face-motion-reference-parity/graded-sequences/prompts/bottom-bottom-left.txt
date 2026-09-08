@@ -1,0 +1,20 @@
+Use case: identity-preserve
+Asset type: three-frame portrait animation sprite strip
+Input images:
+- Image 1: authoritative START portrait of Sid at 0%. Preserve this exact person, hair volume and silhouette, sunglasses, facial hair, clothing construction, body scale, crop, lighting, and rendering style.
+- Image 2: authoritative END portrait of Sid at 100%. Preserve this exact person and endpoint pose target, with the same invariants as Image 1.
+- Image 3: authoritative five-frame POSE AND PACING reference strip from another person, ordered START 0%, STEP 1 25%, STEP 2 50%, STEP 3 75%, END 100%. Copy only its head rotation, vertical head pitch, eye direction, and evenly graded progression. Do not copy its identity, face, hair, glasses, expression, clothing, monochrome treatment, or framing.
+
+Primary request: Render Sid from Images 1 and 2 at the three missing intermediate poses for bottom to bottom-left. The three panels must be visibly and monotonically graded at exactly 25%, 50%, and 75% of the motion demonstrated by Image 3. Each panel must advance by one equal quarter-step from the previous pose. No two panels may have the same head pitch, gaze elevation, lens perspective, or chin angle. Where the path changes yaw, no two panels may have the same yaw or nose/ear relationship; on a pure vertical path, yaw must instead remain exactly zero. Avoid front-loading the motion in panel 1 or postponing it until panel 3.
+
+Mandatory per-panel pose plan: Panel 1: yaw 8° toward screen-left and strong downward pitch. Panel 2: yaw 16° toward screen-left and medium-strong downward pitch. Panel 3: yaw 24° toward screen-left and moderate downward pitch.
+
+Hard endpoint envelope (higher priority than any approximate angle language above): Image 1 is the exact 0% pose and Image 2 is the exact 100% pose for Sid. Rescale all yaw and pitch magnitudes to those actual endpoints. Panel 1 must be exactly one quarter of the way from Image 1 to Image 2, panel 2 exactly halfway, and panel 3 exactly three quarters. Every intermediate yaw, pitch, gaze, lens perspective, nose offset, ear visibility, and chin angle must remain strictly between the corresponding values in Images 1 and 2. Never overshoot either endpoint. Panel 1 must not repeat Image 1, panel 3 must not equal or exceed Image 2, and the transition from panel 3 to Image 2 must continue in the same direction without snapping back.
+
+Output geometry: one 3072×1024 horizontal sprite strip split into exactly three equal 1024×1024 panels. Panel 1 is 25%, panel 2 is 50%, panel 3 is 75%. Place panel boundaries exactly at x=1024 and x=2048. No gutters, borders, dividers, labels, text, repeated panels, or extra subjects.
+
+Scene/backdrop: perfectly flat solid #ff00ff chroma-key background in every panel, with no shadows, gradients, texture, floor plane, or lighting variation. Do not use #ff00ff in the subject.
+
+Composition/framing: exactly one waist-up Sid portrait centered in each square panel; keep shoulder position, subject scale, torso framing, canvas position, and crop consistent across all three panels and matched to Images 1 and 2. Only the head pose and eye direction should progress.
+
+Constraints: preserve Sid's identity and facial proportions; preserve the full dense side hair volume without flattening or abrupt creases; preserve the same sunglasses, beard, dark overshirt, white T-shirt, pocket and button placement in every panel; preserve realistic anatomy; no morphing; no clothing-side swaps; no zoom; no body lean; no expression change; no watermark. The progression in Image 3 is absolute pose authority and must remain visibly readable when the panels are viewed in sequence.

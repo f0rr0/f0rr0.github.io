@@ -1070,6 +1070,36 @@
     "sha256": "0fbea54e320d5a33af7f5724dbcc07fd1883ac608c2441b9441ad39e7e9457c9"
   },
   {
+    "path": "output/imagegen/review/original-reference/motion-sheets/motion-sheet-1.png",
+    "bytes": 496020,
+    "sha256": "ceac1c34651003557677b61ebc4199e18ba2430649d38f3518366242263289ea"
+  },
+  {
+    "path": "output/imagegen/review/original-reference/motion-sheets/motion-sheet-2.png",
+    "bytes": 503106,
+    "sha256": "c0f223280a2faaedfacb1917d3d252c6d437b9801b929f31225ae06726a19acc"
+  },
+  {
+    "path": "output/imagegen/review/original-reference/motion-sheets/motion-sheet-3.png",
+    "bytes": 492592,
+    "sha256": "7fb29eae4667757a3eb0831817cfbcf818c676a7dbad101bb3852a26159c8176"
+  },
+  {
+    "path": "output/imagegen/review/original-reference/motion-sheets/motion-sheet-4.png",
+    "bytes": 502836,
+    "sha256": "b16ac47c124219b1791820883d3ace50734502d7754d1f2fdbb22b95ee3236f5"
+  },
+  {
+    "path": "output/imagegen/review/original-reference/reference-atlas-contact-sheet.png",
+    "bytes": 2187195,
+    "sha256": "85744dd61b2cfa9a6bedd4b820e713cdb3ac21aeadece218d72f46e4d1b9ed14"
+  },
+  {
+    "path": "output/imagegen/review/runtime-atlas-contact-sheet.png",
+    "bytes": 2196596,
+    "sha256": "5305785dbb6bd3010ff9691f7a6c048be08908a218d0c3012f87bdb5c46b0f45"
+  },
+  {
     "path": "tmp/imagegen/face-motion-exact-transfer/pose-refs/sid-closeup-identity.png",
     "bytes": 902800,
     "sha256": "82b939c97d99dcad7cfd7bd0a44b60c1b3e24c7fd5170f8fbfb9b7529a5fe044"

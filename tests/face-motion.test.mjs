@@ -424,6 +424,36 @@ describe("V13 latest-target state machine", () => {
     expect(frames).not.toContain("left");
   });
 
+  test("continues a clockwise turn when the target moves ahead of the active edge", () => {
+    const machine = new CompassFaceMachine({
+      initialPose: "right",
+      intermediates: 3,
+    });
+    machine.setTarget("bottom-right");
+    expect(machine.advance()).toBe("right_to_bottomright_1");
+    machine.setTarget("bottom");
+    expect(machine.advance()).toBe("right_to_bottomright_2");
+    expect(machine.advance()).toBe("right_to_bottomright_3");
+    expect(machine.advance()).toBe("bottom-right");
+    expect(machine.advance()).toBe("bottomright_to_bottom_1");
+  });
+
+  test("reverses even a late edge when the pointer returns to its starting pose", () => {
+    const machine = new CompassFaceMachine({
+      initialPose: "right",
+      intermediates: 3,
+    });
+    machine.setTarget("bottom-right");
+    machine.advance();
+    machine.advance();
+    expect(machine.advance()).toBe("right_to_bottomright_3");
+    machine.setTarget("right");
+    expect(machine.advance()).toBe("right_to_bottomright_2");
+    expect(machine.advance()).toBe("right_to_bottomright_1");
+    expect(machine.advance()).toBe("right");
+    expect(machine.isSettled()).toBe(true);
+  });
+
   test("supports the V13 build without inventing blended frames", () => {
     const machine = new CompassFaceMachine({
       intermediates: (from, to) => faceMotionEdgeSources(from, to).length,

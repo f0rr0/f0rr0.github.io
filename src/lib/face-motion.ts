@@ -420,8 +420,22 @@ export class CompassFaceMachine {
       return;
     }
 
-    const distanceFrom = this.edge.step;
-    const distanceTo = this.edge.intermediates + 1 - this.edge.step;
+    const remainingSteps = (pose: FaceMotionPose) => {
+      const path = shortestPosePath(pose, target);
+      return path
+        .slice(1)
+        .reduce(
+          (steps, next, index) =>
+            steps + this.getIntermediateCount(path[index], next) + 1,
+          0
+        );
+    };
+    const distanceFrom = this.edge.step + remainingSteps(this.edge.from);
+    const distanceTo =
+      this.edge.intermediates +
+      1 -
+      this.edge.step +
+      remainingSteps(this.edge.to);
 
     if (distanceFrom < distanceTo) {
       this.edge = {

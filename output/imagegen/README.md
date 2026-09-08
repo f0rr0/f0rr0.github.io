@@ -13,3 +13,5 @@ Earlier published Sid endpoint/transition versions remain in this PR's commit hi
 The previous ignored `build/` contact sheets and browser recordings were not present in the recovery snapshot. They can be regenerated from the preserved sources; they are not claimed as recovered originals.
 
 `inventory.json` records the archived image paths, byte sizes and SHA-256 hashes. Original generated pixels are preserved. No credentials or API logs belong in this archive.
+
+Historical one-off generator and sheet-builder source is preserved with a `.txt` suffix so the app does not compile or lint these archived experiments as runtime code.

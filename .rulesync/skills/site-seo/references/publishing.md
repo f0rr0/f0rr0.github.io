@@ -57,6 +57,8 @@ Google may select page text instead of the supplied description, and has no fixe
 
 ## Images, diagrams, and page experience
 
+Use `blog-images` for image selection, placement, consistent illustration style, generation briefs, and final social crops. Its researched production guide distinguishes platform specifications from house padding and size defaults; this guide covers discovery and publishing checks.
+
 Keep social cards, illustrative art and explanatory figures distinct. The existing 1200×630 renderer is a practical social-card default, not a Google ranking requirement. Preserve custom overrides and verify PNG/JPEG bytes and dimensions. Prefer a representative image when available; a title card guarantees a usable fallback, not Discover placement.
 
 For Discover-oriented images, Google's current guidance recommends relevant large images at least 1200 px wide, over 300,000 total pixels, with a considered landscape crop and `max-image-preview:large`. Do not stretch a portrait screenshot or replace useful article art with a generic logo. Narrative quality and original insight remain useful here. [Discover guidance](https://developers.google.com/search/docs/appearance/google-discover).

@@ -19,6 +19,15 @@ https://github.com/f0rr0/tranquilo
 
 There were two parts to that request. “An hour tomorrow after six” needed interpretation. “Keep looking” needed something that would still remember the request after I'd closed the conversation. The second part turned out to be the more interesting one.
 
+<figure id="paper-illustration">
+  <Image
+    src="./an-evening-back.webp"
+    alt="A person reads in an armchair while a phone notification sits beside an open laptop on the side table."
+    sizes="(min-width: 1024px) 672px, (min-width: 768px) 704px, (min-width: 640px) calc(100vw - 64px), calc(100vw - 32px)"
+  />
+  <figcaption>The watch could keep looking while I got on with my evening.</figcaption>
+</figure>
+
 ## After six means after six
 
 I began with finding a useful appointment. My preferences had an order: an evening slot mattered more than a slightly better duration, and tomorrow mattered more than an attractive time three days away.
@@ -90,6 +99,27 @@ So choosing a slot starts with another availability check for that exact time an
 Even then, Pronto can return `SLOT_OVERBOOKED`. The response sends the flow back to fresh availability. The remote service gets the final say about whether there is still a place in the queue.
 
 I kept that operation separate from watching. A watch can tell me about a slot; preparing a booking changes the cart and can create a payment order. Payment approval stays in my terminal. These are useful boundaries for the tool because they match the decisions I actually want to make: find something, choose it, then pay.
+
+```mermaid
+---
+config:
+  flowchart:
+    nodeSpacing: 12
+    rankSpacing: 28
+    padding: 6
+    diagramPadding: 4
+---
+flowchart TB
+  accTitle: Finding a slot does not reserve it
+  accDescr: A notification returns the choice to the user. Choosing triggers a fresh check of the exact slot. If it is still available, the tool updates and rereads the cart before preparing checkout. SLOT_OVERBOOKED returns to fresh availability. Payment still needs the user's approval.
+  Notice["Slot found"] --> Choose["I choose<br/>the slot"]
+  Choose --> Check["Recheck<br/>exact slot"]
+  Check -->|"Available"| Cart["Update +<br/>reread cart"]
+  Check -->|"Gone"| Fresh["Refresh<br/>availability"]
+  Cart --> Checkout["Prepare<br/>checkout"]
+  Checkout -->|"Overbooked"| Fresh
+  Checkout --> Me["I approve<br/>payment"]
+```
 
 The division also made the agent's job pleasantly small. It could understand “after six” and save the request. It didn't need my payment URI in its reply, or permission to act on every good result it found.
 

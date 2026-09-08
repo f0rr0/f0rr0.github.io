@@ -17,6 +17,15 @@ I started with Brave Core `1.51.40`, on Chromium `111.0.5563.64`. The immediate 
 
 Brave offered a great deal that would have been wasteful to reproduce: Chromium integration, selected privacy infrastructure, and years of decisions about carrying a browser downstream. It also arrived as a product with assumptions of its own. Before we invested in Veera's product surface, I needed to know whether a small team could separate those assumptions from the platform beneath them and understand what remained.
 
+<figure id="paper-illustration">
+  <Image
+    src="./browser-teardown.webp"
+    alt="Paper hands lift browser interface panels to reveal layered pages and source documents beneath."
+    sizes="(min-width: 1024px) 672px, (min-width: 768px) 704px, (min-width: 640px) calc(100vw - 64px), calc(100vw - 32px)"
+  />
+  <figcaption>Taking features out exposed the paths that assembled the browser.</figcaption>
+</figure>
+
 ## Taking Brave apart
 
 The first thing to understand was how Brave sits on top of Chromium. [Brave Core](https://github.com/brave/brave-core) is an overlay: a set of changes applied to an upstream browser. It pins an upstream revision, applies patches, adds its own [GN](https://gn.googlesource.com/gn/+/main/docs/quick_start.md) targets, and substitutes selected source files during compilation. Brave's own [patching and `chromium_src` documentation](https://github.com/brave/brave-core/blob/master/docs/patching_and_chromium_src.md) is the best concise explanation of this arrangement.
@@ -86,6 +95,24 @@ I grew quite fond of failures with an address. The harder cases were the ones wh
 One of the more unsettling results was a successful build after a downstream source override had disappeared.
 
 Brave's source-redirection mechanism can select a downstream implementation instead of Chromium's file at the same path. Remove the downstream file and the build may quietly return to Chromium's implementation. Nothing is necessarily missing from the linker's point of view. The browser compiles, but it may no longer contain the behaviour we thought we had preserved.
+
+```mermaid
+---
+config:
+  flowchart:
+    nodeSpacing: 12
+    rankSpacing: 28
+    padding: 6
+    diagramPadding: 4
+---
+flowchart TB
+  accTitle: Two successful builds can contain different implementations
+  accDescr: With a downstream override present, source redirection can choose the Brave implementation. After its removal, the same source path can resolve to Chromium. Both builds can succeed, so success alone does not identify the runtime behaviour.
+  Before["Override<br/>present"] --> Brave["Brave<br/>code"]
+  After["Override<br/>removed"] --> Chromium["Chromium<br/>code"]
+  Brave --> Built["Build succeeds"]
+  Chromium --> Built
+```
 
 Sometimes returning to Chromium was exactly what I wanted. But I needed to know when it had happened. I began following the runtime path after a subtraction, checking which implementation the browser actually used. Green is a lovely colour, but it can be a bit of a liar.
 

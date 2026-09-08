@@ -3,10 +3,32 @@
 import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible";
 import { ChevronRight } from "lucide-react";
 
+import { track } from "@/lib/analytics";
+import type { DetailProperties } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
-function Collapsible({ ...props }: CollapsiblePrimitive.Root.Props) {
-  return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />;
+function Collapsible({
+  analytics,
+  onOpenChange,
+  ...props
+}: CollapsiblePrimitive.Root.Props & { analytics?: DetailProperties }) {
+  return (
+    <CollapsiblePrimitive.Root
+      data-slot="collapsible"
+      {...props}
+      onOpenChange={(open, details) => {
+        onOpenChange?.(open, details);
+        if (
+          open &&
+          !details.isCanceled &&
+          details.reason === "trigger-press" &&
+          analytics
+        ) {
+          track("details_opened", analytics);
+        }
+      }}
+    />
+  );
 }
 
 function CollapsibleTrigger({ ...props }: CollapsiblePrimitive.Trigger.Props) {

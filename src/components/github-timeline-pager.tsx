@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 
 import { GitHubActivityDays } from "@/components/github-activity-days";
 import { useGitHubActivityLive } from "@/components/github-activity-status";
+import { track } from "@/lib/analytics";
 import { publicActivityHeadFrom } from "@/lib/github-activity-status";
 import type { PublicGitHubActivityPage } from "@/lib/github-activity-types";
 
@@ -73,6 +74,7 @@ export function GitHubTimelinePager({
         }
         setPages((current) => [...current, page]);
         setCursor(page.nextCursor);
+        track("github_activity_loaded", { days_loaded: page.days.length });
         setStatus(
           `Loaded ${page.days.length} earlier ${page.days.length === 1 ? "day" : "days"}.`
         );

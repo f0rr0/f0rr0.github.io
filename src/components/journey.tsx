@@ -24,6 +24,7 @@ import {
   resumeRoleMarkerLabels,
 } from "@/content/resume";
 import type { LogoAsset, ResumeExperience, ResumeRole } from "@/content/resume";
+import { track } from "@/lib/analytics";
 
 const layoutTransition = {
   type: "spring",
@@ -416,6 +417,9 @@ export function Journey({
   }, [height, reducedMotion]);
 
   const toggle = () => {
+    if (!expanded) {
+      track("details_opened", { section: "journey" });
+    }
     setExpanded((value) => !value);
   };
   return (

@@ -4,6 +4,7 @@ import { and, eq, sql } from "drizzle-orm";
 
 import { getDatabase } from "@/db/client";
 import { githubPublicFeedHead } from "@/db/schema";
+import { trackedGitHubUserIds } from "@/lib/github-commits-core";
 import { GITHUB_WORK_UNIT_SUMMARY_POLICY_DIGEST } from "@/lib/github-work-unit-summary";
 
 type Database = ReturnType<typeof getDatabase>;
@@ -18,6 +19,7 @@ const PROJECTION_POLICY =
 const PIPELINE_POLICY_DIGEST = createHash("sha256")
   .update(
     JSON.stringify({
+      authors: Object.values(trackedGitHubUserIds()).toSorted(),
       projection: PROJECTION_POLICY,
       summary: GITHUB_WORK_UNIT_SUMMARY_POLICY_DIGEST,
     })
@@ -69,11 +71,18 @@ export const ensureGitHubWorkUnitProjectionRequest = async () =>
 export const completeGitHubWorkUnitProjectionRequest = async (
   token: string
 ) => {
+  // Author changes can alter issue-only pages even when no work unit changes.
+  const policyChanged = sql`${githubPublicFeedHead.summaryPolicyDigest} IS DISTINCT FROM ${PIPELINE_POLICY_DIGEST}`;
+  const revisionIncrement = sql`CASE WHEN ${policyChanged} THEN 1 ELSE 0 END`;
   const [cleared] = await getDatabase()
     .update(githubPublicFeedHead)
     .set({
       projectionRequestToken: null,
       summaryPolicyDigest: PIPELINE_POLICY_DIGEST,
+      feedRevision: sql`${githubPublicFeedHead.feedRevision} + ${revisionIncrement}`,
+      headContentRevision: sql`${githubPublicFeedHead.headContentRevision} + ${revisionIncrement}`,
+      orderingRevision: sql`${githubPublicFeedHead.orderingRevision} + ${revisionIncrement}`,
+      lastPublishedAt: sql`CASE WHEN ${policyChanged} THEN now() ELSE ${githubPublicFeedHead.lastPublishedAt} END`,
     })
     .where(
       and(

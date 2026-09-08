@@ -1,6 +1,7 @@
-import "server-only";
 import { unstable_cache } from "next/cache";
+import "server-only";
 
+import { primaryGitHubProfile } from "@/content/resume";
 import { fetchGitHub, githubApiUrl } from "@/lib/github-api";
 import {
   createUnavailableGitHubProfile,
@@ -10,7 +11,7 @@ import type { GitHubProfile } from "@/lib/github-profile-core";
 
 export type { GitHubProfile, GitHubProject } from "@/lib/github-profile-core";
 
-const GITHUB_LOGIN = "f0rr0";
+const GITHUB_LOGIN = primaryGitHubProfile.username;
 const GITHUB_CACHE_SECONDS = 60 * 60 * 12;
 
 const fetchGitHubProfile = async (): Promise<GitHubProfile> => {

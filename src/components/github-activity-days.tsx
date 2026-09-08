@@ -299,7 +299,9 @@ function GitHubActivityDay({
           >
             {formatDate(day.day, "weekday")}
           </time>
-          <span title="Days are grouped in India Standard Time">IST</span>
+          <span title={`Days are grouped in ${WORK_LOG_TIME_ZONE}`}>
+            {WORK_LOG_TIME_ZONE}
+          </span>
         </h3>
         <dl
           aria-label={`Totals for ${day.day}`}

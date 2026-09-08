@@ -1,3 +1,5 @@
+import { githubAccounts } from "./site";
+
 export interface LogoAsset {
   alt: string;
   bulletImageClassName?: string;
@@ -46,6 +48,7 @@ export interface ResumeRole {
 
 export interface ResumeExperience {
   company: string;
+  url?: string;
   compactName?: string;
   displayName?: string;
   companyStage?: ResumeCompanyStage;
@@ -185,29 +188,66 @@ const dpsLogo: LogoAsset = {
   tileClassName: "bg-[#016b2f]",
 };
 
+const person = {
+  profiles: [
+    ...githubAccounts.map(({ login }) => ({
+      network: "GitHub",
+      url: `https://github.com/${login}`,
+    })),
+    { network: "LinkedIn", url: "https://linkedin.com/in/f0rr0" },
+  ],
+  avatarImage: "/resume/sid-jain-profile-avatar.png",
+  email: "sid_26@outlook.com",
+  image: "/resume/sid-jain-profile.png",
+  location: "Based in Mumbai",
+  address: { city: "Mumbai", region: "Maharashtra", countryCode: "IN" },
+  name: "Sid Jain",
+  role: "Senior Full-Stack Engineer",
+  targetPositioning:
+    "senior full-stack engineer, frontend-focused product engineer, and AI product engineer",
+};
+
+export const socialProfiles = person.profiles.map((profile) => {
+  const username = new URL(profile.url).pathname
+    .split("/")
+    .filter(Boolean)
+    .at(-1);
+  if (username === undefined) {
+    throw new Error("Social profile URLs must include a username.");
+  }
+  return { ...profile, username };
+});
+const githubProfile = socialProfiles.find(
+  (profile) => profile.network === "GitHub"
+);
+if (githubProfile === undefined) {
+  throw new Error("Configure a public GitHub profile in resume.ts.");
+}
+export const primaryGitHubProfile = githubProfile;
+
 export const resumeData = {
   lastUpdated: "2026-09-06",
   person: {
-    alternateNames: ["f0rr0", "yuppiestechdev"],
-    avatarImage: "/resume/sid-jain-profile-avatar.png",
-    email: "sid_26@outlook.com",
-    image: "/resume/sid-jain-profile.png",
-    location: "Based in Mumbai",
-    name: "Sid Jain",
-    role: "Senior Full-Stack Engineer",
-    targetPositioning:
-      "senior full-stack engineer, frontend-focused product engineer, and AI product engineer",
+    ...person,
+    alternateNames: [
+      ...new Set(socialProfiles.map(({ username }) => username)),
+    ],
   },
   navItems: [
     { href: "/writing", label: "Writing" },
     { href: "/work", label: "Work" },
     { href: "/journey", label: "Journey" },
-    { external: true, href: "https://github.com/f0rr0", label: "GitHub" },
+    { external: true, href: primaryGitHubProfile.url, label: "GitHub" },
   ] satisfies ResumeNavItem[],
   links: [
-    { href: "mailto:sid_26@outlook.com", label: "sid_26@outlook.com" },
-    { href: "https://linkedin.com/in/f0rr0", label: "linkedin.com/in/f0rr0" },
-    { href: "https://github.com/f0rr0", label: "github.com/f0rr0" },
+    { href: `mailto:${person.email}`, label: person.email },
+    ...socialProfiles
+      .filter(
+        (profile, index, profiles) =>
+          profiles.findIndex((other) => other.network === profile.network) ===
+          index
+      )
+      .map(({ url }) => ({ href: url, label: url.replace("https://", "") })),
   ] satisfies ResumeLink[],
   summary:
     "Senior full-stack engineer based in Mumbai with 10+ years in web and mobile product engineering, and production experience building AI applications.",
@@ -418,6 +458,7 @@ export const resumeData = {
   education: [
     {
       company: "University of California, Los Angeles",
+      url: "https://www.ucla.edu/",
       tagline: "Bachelor of Science.",
       logo: uclaLogo,
       roles: [
@@ -430,6 +471,7 @@ export const resumeData = {
     },
     {
       company: "Delhi Public School, R. K. Puram",
+      url: "https://dpsrkp.net/",
       tagline: "High School.",
       logo: dpsLogo,
       roles: [
@@ -789,8 +831,8 @@ export const resumeData = {
         note: "Announcement of Withings’s acquisition of the fitness and nutrition app.",
       },
       {
-        href: "https://github.com/f0rr0",
-        label: "GitHub profile: f0rr0",
+        href: primaryGitHubProfile.url,
+        label: `GitHub profile: ${primaryGitHubProfile.username}`,
         note: "Source code and open-source projects.",
       },
     ] satisfies PublicReference[],
@@ -826,6 +868,6 @@ export const resumeData = {
   pdf: {
     generatedTypstPath: "career/generated/sid-jain-resume-dark.typ",
     outputPath: "public/resume/sid-jain-resume.pdf",
-    title: "Sid Jain Resume",
+    title: `${person.name} Resume`,
   },
 } as const;

@@ -555,6 +555,7 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit projection store", () => {
   });
 
   test("atomically swaps public facts, revisions, and summary eligibility", async () => {
+    const [before] = await database.select().from(schema.githubPublicFeedHead);
     const first = await refreshGitHubWorkUnitProjection(observedAt);
     expect(first).toMatchObject({
       changed: true,
@@ -578,9 +579,9 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit projection store", () => {
     expect(unit.summaryInputDigest).toMatch(/^[a-f0-9]{64}$/u);
     expect(unit.summaryEvaluatedDigest).toMatch(/^[a-f0-9]{64}$/u);
     expect(head).toMatchObject({
-      feedRevision: 1,
-      headContentRevision: 1,
-      orderingRevision: 1,
+      feedRevision: before.feedRevision + 1,
+      headContentRevision: before.headContentRevision + 1,
+      orderingRevision: before.orderingRevision + 1,
     });
     expect(attempts).toHaveLength(1);
     expect(attempts[0]).toMatchObject({
@@ -603,9 +604,9 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit projection store", () => {
       summaryAttemptsQueued: 0,
     });
     expect(unchangedHead).toMatchObject({
-      feedRevision: 1,
-      headContentRevision: 1,
-      orderingRevision: 1,
+      feedRevision: before.feedRevision + 1,
+      headContentRevision: before.headContentRevision + 1,
+      orderingRevision: before.orderingRevision + 1,
     });
   });
 
@@ -1725,6 +1726,98 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit projection store", () => {
       pullRequestSignals: { claimed: 0 },
       pullRequests: { claimed: 0 },
     });
+    expect(await ensureGitHubWorkUnitProjectionRequest()).toBeNull();
+  });
+  test("credential changes preserve the persisted projection and checkpoints without discovery", async () => {
+    const originalEnvironment = {
+      GITHUB_TOKENS: env.GITHUB_TOKENS,
+      GITHUB_TOKEN: env.GITHUB_TOKEN,
+      GH_TOKEN: env.GH_TOKEN,
+    };
+    const originalFetch = globalThis.fetch;
+    try {
+      delete env.GITHUB_TOKEN;
+      delete env.GH_TOKEN;
+      globalThis.fetch = Object.assign(
+        () => {
+          throw new Error("Unexpected GitHub request during projection");
+        },
+        { preconnect: originalFetch.preconnect }
+      );
+      await refreshGitHubWorkUnitProjection(new Date());
+      const snapshot = async () => ({
+        units: await database
+          .select({
+            identity: schema.githubWorkUnits.identityKey,
+            membership: schema.githubWorkUnits.membershipDigest,
+            facts: schema.githubWorkUnits.factsDigest,
+          })
+          .from(schema.githubWorkUnits)
+          .orderBy(schema.githubWorkUnits.identityKey),
+        checkpoints: await database
+          .select()
+          .from(schema.githubAccountCheckpoints)
+          .orderBy(schema.githubAccountCheckpoints.account),
+        commits: await database
+          .select({
+            sha: schema.githubCommits.sha,
+            author: schema.githubCommits.authorUserId,
+          })
+          .from(schema.githubCommits)
+          .orderBy(schema.githubCommits.repositoryId, schema.githubCommits.sha),
+      });
+      const before = await snapshot();
+      expect(before.units.length).toBeGreaterThan(0);
+      for (const credentials of [
+        { f0rr0: "first", yuppiestechdev: "second" },
+        { yuppiestechdev: "second", f0rr0: "rotated" },
+        { yuppiestechdev: "second" },
+        {},
+      ]) {
+        env.GITHUB_TOKENS = JSON.stringify(credentials);
+        await refreshGitHubWorkUnitProjection(new Date());
+        expect(await snapshot()).toEqual(before);
+      }
+      const { syncGitHubAccounts, reconcileGitHubRefs } =
+        await import("../src/lib/github-commits");
+      expect(await syncGitHubAccounts()).toMatchObject({
+        accounts: 0,
+        failedAccounts: [],
+      });
+      expect(
+        await reconcileGitHubRefs({
+          kind: "head",
+          repositoryLimit: 1,
+          deadlineAt: Date.now() + 1000,
+        })
+      ).toMatchObject({ accounts: 0, failedAccounts: [] });
+      expect(await runGitHubActivityWorker()).toMatchObject({
+        commits: { claimed: 0 },
+        observations: { claimed: 0 },
+      });
+      expect(await snapshot()).toEqual(before);
+    } finally {
+      Object.assign(env, originalEnvironment);
+      globalThis.fetch = originalFetch;
+    }
+  });
+  test("an author-policy rebuild invalidates feed caches and cursors even without changed work units", async () => {
+    await database
+      .update(schema.githubPublicFeedHead)
+      .set({
+        summaryPolicyDigest: "0".repeat(64),
+        projectionRequestToken: null,
+      })
+      .where(eq(schema.githubPublicFeedHead.id, true));
+    const [before] = await database.select().from(schema.githubPublicFeedHead);
+    const token = await ensureGitHubWorkUnitProjectionRequest();
+    assert.ok(token !== null);
+    expect(await completeGitHubWorkUnitProjectionRequest(token)).toBe(true);
+    const [after] = await database.select().from(schema.githubPublicFeedHead);
+    expect(after.feedRevision).toBe(before.feedRevision + 1);
+    expect(after.headContentRevision).toBe(before.headContentRevision + 1);
+    expect(after.orderingRevision).toBe(before.orderingRevision + 1);
+    expect(await completeGitHubWorkUnitProjectionRequest(token)).toBe(false);
     expect(await ensureGitHubWorkUnitProjectionRequest()).toBeNull();
   });
 });

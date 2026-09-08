@@ -26,6 +26,7 @@ import {
 } from "@/db/schema";
 import { env } from "@/env";
 import { PUBLIC_GITHUB_ACTIVITY_DAY_PAGE_SIZE } from "@/lib/github-activity-store";
+import { trackedGitHubUserIds } from "@/lib/github-commits-core";
 import { GITHUB_SUMMARY_REQUEST_BUDGET } from "@/lib/github-cron-config";
 import { acquireGitHubWorkUnitProjectionLock } from "@/lib/github-work-unit-projection-state";
 import {
@@ -644,11 +645,17 @@ async function readInitialPageDays(transaction: SummaryTransaction) {
         eq(githubIssues.repositoryId, githubRepositories.id)
       )
       .where(
-        inArray(githubRepositories.visibility, [
-          "public",
-          "private",
-          "internal",
-        ])
+        and(
+          inArray(
+            githubIssues.authorUserId,
+            Object.values(trackedGitHubUserIds())
+          ),
+          inArray(githubRepositories.visibility, [
+            "public",
+            "private",
+            "internal",
+          ])
+        )
       )
       .orderBy(desc(issueDay))
       .limit(PUBLIC_GITHUB_ACTIVITY_DAY_PAGE_SIZE),

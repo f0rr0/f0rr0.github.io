@@ -90,12 +90,11 @@ after activation even if an older worker cleared a deployment-time token.
 
 ## Runtime configuration
 
-Required server-side values are:
+GitHub activity is optional. Its server-side configuration is:
 
 ```dotenv
 DATABASE_URL=postgresql://...
-GITHUB_F0RR0_TOKEN=github_pat_...
-GITHUB_YUPPIESTECHDEV_TOKEN=github_pat_...
+GITHUB_TOKENS={"alice":"<personal access token>"}
 GITHUB_WEBHOOK_SECRET=<random secret>
 CRON_SECRET=<random secret>
 GITHUB_ACTIVITY_CURSOR_SECRET=<independent random secret>
@@ -104,8 +103,48 @@ GITHUB_ACTIVITY_CURSOR_SECRET=<independent random secret>
 `OPENAI_API_KEY` is optional. Without it, factual work units continue to
 publish and summary claims remain untouched. `DATABASE_URL_UNPOOLED` is the
 optional direct/session-pooler override used by migrations and Supabase Cron
-configuration. `GITHUB_TOKEN` is an optional additional read token. Secrets and
+configuration. `GITHUB_TOKEN` (or `GH_TOKEN`) is optional for public discovery and code embeds. Secrets and
 private evidence stay server-side.
+
+Configure tracked authors once in `src/content/site.ts` as `{ login, id }` records.
+The first account supplies the primary public GitHub profile. IDs are GitHub's
+permanent numeric user IDs (stored as strings). GitHub social URLs and author
+lookups derive from these records.
+
+`GITHUB_TOKENS` is a JSON object mapping those logins to personal access tokens.
+Blank input or `{}` means no account credentials. Keys are case-insensitive;
+unknown accounts, case-colliding keys and empty token values are rejected without
+logging tokens. Each account can have one token; omit its key to disable its
+account-specific polling and inventory. The existing `/user` check verifies the
+configured login and ID before acquisition. GitHub App installation tokens cannot
+substitute for a personal account identity in these jobs.
+
+Repository reads try the account's token first, then other configured credentials.
+Changing tokens never changes the selected authors, rewrites stored identities or
+prunes published history. Missing credentials and lost access defer fetching.
+Intentional changes to the public author list request a work-unit rebuild and
+filter issue visibility; raw evidence is retained. Username changes require an
+explicit configuration/checkpoint maintenance operation, not automatic database
+renaming. Keep the numeric ID unchanged when an existing account is renamed.
+
+The forward migration only replaces the seven personal account-name constraints
+with generic login shape checks. It adds no identity columns and preserves
+existing checkpoints. Applied migrations remain unchanged.
+
+Webhooks require their own `GITHUB_WEBHOOK_SECRET`; removing a token does not
+revoke a webhook. Summaries require only their own `OPENAI_API_KEY` and stored facts.
+Cron setup schedules polling and refs when tokens are configured; the existing
+worker remains scheduled for database-only publication, and summaries are scheduled
+when their provider key is configured. Codex scheduling follows enabled database
+accounts. Rerun cron setup after enabling or disabling a service. Local cron setup
+requires the Vercel production hostname in `VERCEL_PROJECT_PRODUCTION_URL`.
+The manual backfill Action uses repository secrets `ACTIVITY_DATABASE_URL` and
+`GITHUB_TOKENS`; its account input defaults to all configured authors. Every
+selected backfill author needs a credential; use `--account` to select a subset.
+
+Public output includes private-activity counts, timestamps and line/file facts,
+with repository names masked; private repository IDs/avatar URLs can also appear.
+Enable ingestion only if that publication policy fits the installation.
 
 Routine entry points are:
 

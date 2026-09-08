@@ -1,3 +1,10 @@
+import { githubAccounts } from "@/content/site";
+
+export const trackedGitHubAccounts = () =>
+  githubAccounts.map(({ login }) => login);
+export const trackedGitHubUserIds = (): Record<string, string> =>
+  Object.fromEntries(githubAccounts.map(({ login, id }) => [login, id]));
+
 const COMMIT_SHA = /^[a-f0-9]{40}$/;
 const EVENT_ID = /^\d{1,64}$/;
 const GITHUB_DELIVERY_ID =
@@ -8,14 +15,7 @@ const REPOSITORY_FULL_NAME =
   /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?\/[A-Za-z0-9._-]{1,100}$/;
 const ZERO_SHA = "0".repeat(40);
 
-export const TRACKED_GITHUB_ACCOUNTS = ["f0rr0", "yuppiestechdev"] as const;
-
-export type TrackedGitHubAccount = (typeof TRACKED_GITHUB_ACCOUNTS)[number];
-
-export const TRACKED_GITHUB_USER_IDS = {
-  f0rr0: "8574219",
-  yuppiestechdev: "99666891",
-} as const satisfies Record<TrackedGitHubAccount, string>;
+export type TrackedGitHubAccount = string;
 
 type JsonObject = Record<string, unknown>;
 
@@ -157,7 +157,7 @@ export const githubCommitReferenceValuesFrom = (
   firstObservedAt: Date
 ) => ({
   author: commit.author,
-  authorUserId: TRACKED_GITHUB_USER_IDS[commit.author],
+  authorUserId: trackedGitHubUserIds()[commit.author],
   committedAt: new Date(commit.committedAt),
   firstObservedAt,
   message: commit.message,
@@ -310,7 +310,7 @@ export const trackedGitHubAccountFrom = (
   value: unknown
 ): TrackedGitHubAccount | null => {
   const login = normalizedText(value, 39)?.toLowerCase();
-  return TRACKED_GITHUB_ACCOUNTS.find((account) => account === login) ?? null;
+  return trackedGitHubAccounts().find((account) => account === login) ?? null;
 };
 
 export const trackedGitHubAccountFromUserId = (
@@ -319,8 +319,8 @@ export const trackedGitHubAccountFromUserId = (
   const userId = repositoryIdFrom(value);
   return userId === null
     ? null
-    : (TRACKED_GITHUB_ACCOUNTS.find(
-        (account) => TRACKED_GITHUB_USER_IDS[account] === userId
+    : (trackedGitHubAccounts().find(
+        (account) => trackedGitHubUserIds()[account] === userId
       ) ?? null);
 };
 

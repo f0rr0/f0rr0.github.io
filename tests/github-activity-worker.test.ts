@@ -21,8 +21,20 @@ import {
 import { GitHubResponseError } from "../src/lib/github-api.ts";
 
 describe("GitHub activity terminal gaps", () => {
+  test("missing credentials and lost repository access never become terminal gaps", () => {
+    const errors = [
+      ...[401, 403, 404].map(
+        (status) => new GitHubResponseError(status, { retryable: false })
+      ),
+      new ActivityProcessingError("source_auth_missing", "No credentials"),
+      new GitHubGraphQlResponseError("access_denied", { retryable: true }),
+    ];
+    for (const error of errors) {
+      expect(githubActivityFailureIsTerminal(error, 100)).toBe(false);
+    }
+  });
   test("given a deterministic REST gap, it becomes unavailable on the third worker claim", () => {
-    for (const status of [403, 404, 410, 422]) {
+    for (const status of [410, 422]) {
       const error = new GitHubResponseError(status, { retryable: false });
       expect(
         githubActivityFailureIsTerminal(
@@ -71,7 +83,6 @@ describe("GitHub activity terminal gaps", () => {
     ).toBe(true);
     for (const code of [
       "membership_incomplete",
-      "source_auth_missing",
       "source_incomplete",
       "source_invalid",
       "source_unavailable",

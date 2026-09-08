@@ -14,12 +14,8 @@ on:
       account:
         description: Account whose token and accessible repositories are scanned
         required: true
-        default: f0rr0
-        type: choice
-        options:
-          - f0rr0
-          - yuppiestechdev
-          - all
+        default: all
+        type: string
       repository_id:
         description: Numeric repository ID; blank scans repositories active in the window
         required: false
@@ -57,8 +53,7 @@ jobs:
           ACCOUNT: ${{ inputs.account }}
           DATABASE_URL: ${{ secrets.ACTIVITY_DATABASE_URL }}
           END_DATE: ${{ inputs.end_date }}
-          GITHUB_F0RR0_TOKEN: ${{ secrets.ACTIVITY_F0RR0_TOKEN }}
-          GITHUB_YUPPIESTECHDEV_TOKEN: ${{ secrets.ACTIVITY_YUPPIESTECHDEV_TOKEN }}
+          GITHUB_TOKENS: ${{ secrets.GITHUB_TOKENS }}
           MAXIMUM_MINUTES: ${{ inputs.maximum_minutes }}
           REPOSITORY_ID: ${{ inputs.repository_id }}
           START_DATE: ${{ inputs.start_date }}

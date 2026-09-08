@@ -1133,28 +1133,21 @@ export const completeGitHubPullRequestDiscovery = async (
         now
       );
     }
-    await transaction
-      .delete(githubCommitPullRequestAssociations)
-      .where(
-        and(
-          eq(
-            githubCommitPullRequestAssociations.commitRepositoryId,
-            commit.repositoryId
-          ),
-          eq(githubCommitPullRequestAssociations.commitSha, commit.sha)
-        )
-      );
+    // Discovery is limited by credential visibility. Absence does not revoke prior evidence.
     const associatedPullRequestNodeIds = [
       ...new Set(pullRequests.map(({ nodeId }) => nodeId)),
     ];
     if (associatedPullRequestNodeIds.length > 0) {
-      await transaction.insert(githubCommitPullRequestAssociations).values(
-        associatedPullRequestNodeIds.map((pullRequestNodeId) => ({
-          commitRepositoryId: commit.repositoryId,
-          commitSha: commit.sha,
-          pullRequestNodeId,
-        }))
-      );
+      await transaction
+        .insert(githubCommitPullRequestAssociations)
+        .values(
+          associatedPullRequestNodeIds.map((pullRequestNodeId) => ({
+            commitRepositoryId: commit.repositoryId,
+            commitSha: commit.sha,
+            pullRequestNodeId,
+          }))
+        )
+        .onConflictDoNothing();
     }
     const [completed] = await transaction
       .update(githubCommits)
@@ -1270,7 +1263,7 @@ export const claimDueGitHubPullRequests = async (
         .returning({ nodeId: githubPullRequests.nodeId });
       if (updated !== undefined) {
         claimed.push({
-          account: candidate.account as TrackedGitHubAccount,
+          account: candidate.account,
           attemptCount: candidate.attemptCount + 1,
           createdAt: candidate.createdAt,
           lastReconciledAt: candidate.lastReconciledAt,

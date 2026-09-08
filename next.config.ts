@@ -2,8 +2,13 @@ import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
 
 import { env } from "./src/env";
+import { siteOriginFrom } from "./src/lib/site-url";
 
 const nextConfig: NextConfig = {
+  env: {
+    NEXT_PUBLIC_SITE_ORIGIN: siteOriginFrom(env),
+    NEXT_PUBLIC_DEPLOYMENT_ENV: env.VERCEL_ENV ?? env.NODE_ENV ?? "development",
+  },
   headers: async () =>
     env.VERCEL_ENV === "preview"
       ? [

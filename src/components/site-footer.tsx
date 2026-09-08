@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { CopyEmailButton } from "@/components/copy-email-button";
-import { resumeData } from "@/content/resume";
+import { resumeData, socialProfiles } from "@/content/resume";
 import { buildAskAgentLinks } from "@/lib/resume";
 import { publicUrl } from "@/lib/site";
 
@@ -13,14 +13,19 @@ export function SiteFooter() {
       <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-border pt-4">
         <nav aria-label="Contact and feed" className="flex items-center gap-6">
           <CopyEmailButton email={resumeData.person.email} />
-          <a
-            className="site-text-link inline-flex min-h-11 items-center gap-1.5 rounded-sm text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
-            href="https://linkedin.com/in/f0rr0"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            LinkedIn
-          </a>
+          {socialProfiles
+            .filter((profile) => profile.network !== "GitHub")
+            .map((profile) => (
+              <a
+                className="site-text-link inline-flex min-h-11 items-center gap-1.5 rounded-sm text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
+                href={profile.url}
+                key={profile.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {profile.network}
+              </a>
+            ))}
           <a
             className="site-text-link inline-flex min-h-11 items-center gap-1.5 rounded-sm text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
             href={publicUrl("/rss.xml")}

@@ -1,4 +1,4 @@
-import { env } from "@/env";
+import { tokensForGitHubAccount } from "@/lib/github-accounts";
 import {
   fetchGitHub,
   GitHubResponseError,
@@ -132,6 +132,7 @@ export class ActivityProcessingError extends Error {
 }
 
 export type GitHubGraphQlResponseErrorKind =
+  | "access_denied"
   | "invalid_response"
   | "partial_response"
   | "rate_limited"
@@ -251,10 +252,7 @@ const graphQlErrorIsRateLimited = (
 const graphQlErrorIsPermanent = (errors: readonly JsonObject[]) => {
   const permanentSignals = [
     "BAD_USER_INPUT",
-    "FORBIDDEN",
     "GRAPHQL_VALIDATION_FAILED",
-    "NOT_FOUND",
-    "UNAUTHORIZED",
     "UNDEFINED_FIELD",
   ];
   const signals = graphQlErrorSignals(errors, false);
@@ -368,30 +366,18 @@ const repositoryReferenceFrom = (row: {
   return repository;
 };
 
-const tokenCandidatesFor = (account: TrackedGitHubAccount) => {
-  const accountToken =
-    account === "f0rr0"
-      ? env.GITHUB_F0RR0_TOKEN
-      : env.GITHUB_YUPPIESTECHDEV_TOKEN;
-  const otherToken =
-    account === "f0rr0"
-      ? env.GITHUB_YUPPIESTECHDEV_TOKEN
-      : env.GITHUB_F0RR0_TOKEN;
-  return [
-    ...new Set(
-      [accountToken, otherToken, env.GITHUB_TOKEN].flatMap((value) => {
-        const token = value?.trim();
-        return token === undefined || token.length === 0 ? [] : [token];
-      })
-    ),
-  ];
-};
+const githubSourceAccessIsDenied = (error: unknown) =>
+  (error instanceof GitHubResponseError &&
+    [401, 403, 404].includes(error.status) &&
+    !error.retryable) ||
+  (error instanceof GitHubGraphQlResponseError &&
+    error.kind === "access_denied");
 
 const withGitHubTokenCandidate = async <Value>(
   account: TrackedGitHubAccount,
   fetcher: (token: string) => Promise<Value>
 ) => {
-  const tokens = tokenCandidatesFor(account);
+  const tokens = tokensForGitHubAccount(account);
   if (tokens.length === 0) {
     throw new ActivityProcessingError(
       "source_auth_missing",
@@ -404,10 +390,7 @@ const withGitHubTokenCandidate = async <Value>(
       return await fetcher(token);
     } catch (error) {
       lastError = error;
-      if (
-        !(error instanceof GitHubResponseError) ||
-        ![401, 403, 404].includes(error.status)
-      ) {
+      if (!githubSourceAccessIsDenied(error)) {
         throw error;
       }
     }
@@ -484,6 +467,17 @@ export const githubGraphQlPayloadFrom = async (response: Response) => {
         retryAt:
           retryAtFromHeaders(response.headers) ??
           new Date(Date.now() + GITHUB_GRAPHQL_SECONDARY_LIMIT_WAIT_MS),
+        retryable: true,
+      });
+    }
+    if (
+      graphQlErrorSignals(errors, false).some((signal) =>
+        ["FORBIDDEN", "NOT_FOUND", "UNAUTHORIZED"].some((access) =>
+          signal.includes(access)
+        )
+      )
+    ) {
+      throw new GitHubGraphQlResponseError("access_denied", {
         retryable: true,
       });
     }
@@ -1647,7 +1641,7 @@ export const fetchGitHubAssociatedPullRequests = async (
   row: GitHubActivityCommitReference,
   options: GitHubProviderRequestOptions = {}
 ) => {
-  const tokens = tokenCandidatesFor(row.author);
+  const tokens = tokensForGitHubAccount(row.author);
   if (tokens.length === 0) {
     throw new ActivityProcessingError(
       "source_auth_missing",
@@ -1670,10 +1664,7 @@ export const fetchGitHubAssociatedPullRequests = async (
       }
     } catch (error) {
       lastError = error;
-      const hiddenFromToken =
-        error instanceof GitHubResponseError &&
-        [401, 403, 404].includes(error.status) &&
-        !error.retryable;
+      const hiddenFromToken = githubSourceAccessIsDenied(error);
       if (!hiddenFromToken) {
         throw error;
       }

@@ -3,6 +3,7 @@ import { expect, test } from "bun:test";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { GitHubActivityDays } from "../src/components/github-activity-days";
+import { WORK_LOG_TIME_ZONE } from "../src/lib/date";
 import { buildPublicGitHubActivityDays } from "../src/lib/github-activity-feed-core";
 
 test("the initial homepage HTML includes all IST work and totals across UTC midnight", () => {
@@ -45,6 +46,6 @@ test("the initial homepage HTML includes all IST work and totals across UTC midn
   expect(html).toContain("5 commits across 2 repos");
   expect(html).toContain("+4,474");
   expect(html).toContain("−3,427");
-  expect(html).toContain("IST");
+  expect(html).toContain(WORK_LOG_TIME_ZONE);
   expect(html).not.toContain("yesterday");
 });

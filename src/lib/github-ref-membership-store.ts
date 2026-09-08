@@ -29,7 +29,7 @@ import type {
 } from "@/lib/github-activity-processor";
 import { githubActivityRetryAt } from "@/lib/github-activity-worker-core";
 import {
-  TRACKED_GITHUB_USER_IDS,
+  trackedGitHubUserIds,
   trackedGitHubAccountFrom,
 } from "@/lib/github-commits-core";
 import type { TrackedGitHubAccount } from "@/lib/github-commits-core";
@@ -409,7 +409,7 @@ export const validateGitHubRefRepairSource = (
   const trackedShas = new Set<string>();
   for (const commit of source.commits) {
     if (
-      !Object.hasOwn(TRACKED_GITHUB_USER_IDS, commit.author) ||
+      !Object.hasOwn(trackedGitHubUserIds(), commit.author) ||
       commit.repositoryId !== repair.repositoryId ||
       commit.repository !== repair.repository ||
       !reachableShas.has(commit.sha) ||
@@ -470,7 +470,7 @@ export const completeGitHubRefRepair = async (
             .values(
               source.commits.map((commit) => ({
                 author: commit.author,
-                authorUserId: TRACKED_GITHUB_USER_IDS[commit.author],
+                authorUserId: trackedGitHubUserIds()[commit.author],
                 committedAt: new Date(commit.committedAt),
                 firstObservedAt: repair.observedAt,
                 message: commit.message,

@@ -205,7 +205,7 @@ describe("GitHub factual history backfill", () => {
     expect(() => {
       requireBackfillEnvironment(request, {
         DATABASE_URL: "postgresql://activity.example/database",
-        GITHUB_F0RR0_TOKEN: "token",
+        GITHUB_TOKENS: JSON.stringify({ f0rr0: "token" }),
       });
     }).not.toThrow();
     expect(() => {
@@ -360,7 +360,7 @@ describe("GitHub factual history backfill", () => {
     const discovered = await runGitHubBackfillDiscovery(
       {
         deadlineAt: now.getTime() + 30 * 60_000,
-        environment: { GITHUB_F0RR0_TOKEN: "token" },
+        environment: { GITHUB_TOKENS: JSON.stringify({ f0rr0: "token" }) },
         request,
       },
       {
@@ -413,7 +413,7 @@ describe("GitHub factual history backfill", () => {
     const discovered = await runGitHubBackfillDiscovery(
       {
         deadlineAt: now.getTime() + 30 * 60_000,
-        environment: { GITHUB_F0RR0_TOKEN: "token" },
+        environment: { GITHUB_TOKENS: JSON.stringify({ f0rr0: "token" }) },
         request,
       },
       {
@@ -444,7 +444,7 @@ describe("GitHub factual history backfill", () => {
     const discovered = await runGitHubBackfillDiscovery(
       {
         deadlineAt: now.getTime() + 30 * 60_000,
-        environment: { GITHUB_F0RR0_TOKEN: "token" },
+        environment: { GITHUB_TOKENS: JSON.stringify({ f0rr0: "token" }) },
         request,
       },
       {
@@ -476,7 +476,7 @@ describe("GitHub factual history backfill", () => {
     const discovered = await runGitHubBackfillDiscovery(
       {
         deadlineAt: now.getTime() + 30 * 60_000,
-        environment: { GITHUB_F0RR0_TOKEN: "token" },
+        environment: { GITHUB_TOKENS: JSON.stringify({ f0rr0: "token" }) },
         request,
       },
       {

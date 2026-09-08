@@ -213,7 +213,7 @@ export const githubCommits = pgTable(
     ),
     check(
       "github_commits_tracked_author",
-      sql`${table.author} IN ('f0rr0', 'yuppiestechdev')`
+      sql`${table.author} ~ '^[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?$'`
     ),
     check(
       "github_commits_nonnegative_activity_counts",
@@ -317,7 +317,7 @@ export const githubAccountCheckpoints = pgTable(
   (table) => [
     check(
       "github_account_checkpoints_tracked_account",
-      sql`${table.account} IN ('f0rr0', 'yuppiestechdev')`
+      sql`${table.account} ~ '^[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?$'`
     ),
     check(
       "github_account_checkpoints_event_id_shape",
@@ -469,7 +469,7 @@ export const githubWebhookDeliveries = pgTable(
     ),
     check(
       "github_webhook_deliveries_tracked_account",
-      sql`${table.account} IS NULL OR ${table.account} IN ('f0rr0', 'yuppiestechdev')`
+      sql`${table.account} IS NULL OR ${table.account} ~ '^[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?$'`
     ),
   ]
 ).enableRLS();
@@ -544,7 +544,7 @@ export const githubPushObservations = pgTable(
     }),
     check(
       "github_push_observations_tracked_account",
-      sql`${table.account} IN ('f0rr0', 'yuppiestechdev')`
+      sql`${table.account} ~ '^[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?$'`
     ),
     check(
       "github_push_observations_source",
@@ -693,7 +693,7 @@ export const githubPullRequests = pgTable(
     ),
     check(
       "github_pull_requests_tracked_account",
-      sql`${table.account} IN ('f0rr0', 'yuppiestechdev')`
+      sql`${table.account} ~ '^[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?$'`
     ),
     check(
       "github_pull_requests_state",
@@ -774,7 +774,7 @@ export const githubPullRequestSignals = pgTable(
     ),
     check(
       "github_pull_request_signals_account",
-      sql`${table.account} IN ('f0rr0', 'yuppiestechdev')`
+      sql`${table.account} ~ '^[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?$'`
     ),
     check(
       "github_pull_request_signals_event_id",
@@ -978,7 +978,7 @@ export const githubIssues = pgTable(
     index("github_issues_author_idx").on(table.authorUserId, table.createdAt),
     check(
       "github_issues_tracked_account",
-      sql`${table.account} IN ('f0rr0', 'yuppiestechdev')`
+      sql`${table.account} ~ '^[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?$'`
     ),
     check("github_issues_positive_number", sql`${table.number} > 0`),
   ]

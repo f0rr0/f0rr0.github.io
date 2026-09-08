@@ -34,6 +34,7 @@ export type BlogPostMetadata = z.infer<typeof metadataSchema>;
 
 export type BlogPost = BlogPostEntry & {
   metadata: BlogPostMetadata;
+  images?: Record<string, string>;
   date: Date;
   updatedAt?: Date;
   readingTime: string;
@@ -228,7 +229,10 @@ export const getBlogPosts = cache(async (): Promise<BlogPost[]> => {
 
   const posts = await Promise.all(
     entries.map(async ({ slug, importPath }) => {
-      const mod = await importBlogPostModule<{ metadata: unknown }>(importPath);
+      const mod = await importBlogPostModule<{
+        metadata: unknown;
+        blogImages?: Record<string, string>;
+      }>(importPath);
       const metadata = parseBlogPostMetadata(mod.metadata);
       const stats = await getPostStats(importPath);
       const date = toDate(metadata.date, slug);
@@ -241,6 +245,7 @@ export const getBlogPosts = cache(async (): Promise<BlogPost[]> => {
         date,
         importPath,
         metadata,
+        images: mod.blogImages ?? {},
         readingTime: stats.readingTime,
         slug,
         updatedAt,

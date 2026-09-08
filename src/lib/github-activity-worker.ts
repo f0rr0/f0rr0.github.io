@@ -1,3 +1,4 @@
+import { tokensForGitHubAccount } from "@/lib/github-accounts";
 import {
   ActivityProcessingError,
   fetchGitHubActivityCommitSource,
@@ -54,7 +55,7 @@ import {
 } from "@/lib/github-api";
 import {
   repositoryIdFrom,
-  TRACKED_GITHUB_ACCOUNTS,
+  trackedGitHubAccounts,
 } from "@/lib/github-commits-core";
 import type { TrackedGitHubAccount } from "@/lib/github-commits-core";
 import {
@@ -78,10 +79,9 @@ import { reconcileGitHubWorkUnitSummaryStatus } from "@/lib/github-work-unit-sum
 const DEFAULT_WORKER_MAXIMUM_DURATION_MS = 90_000;
 const MAXIMUM_PUBLICATION_RESERVE_MS = 30_000;
 const MINIMUM_FACTUAL_PROCESSING_MS = 8000;
-const TERMINAL_GITHUB_STATUSES = new Set([403, 404, 410, 422]);
+const TERMINAL_GITHUB_STATUSES = new Set([410, 422]);
 const TERMINAL_ACTIVITY_PROCESSING_CODES = new Set([
   "membership_incomplete",
-  "source_auth_missing",
   "source_incomplete",
   "source_invalid",
   "source_unavailable",
@@ -161,7 +161,10 @@ const processRefRepairs = async (
   const claimed = await claimGitHubRefRepairs({ limit, now: new Date() });
   result.claimed = claimed.length;
   for (const repair of claimed) {
-    if (context.deadlineReached()) {
+    if (
+      context.deadlineReached() ||
+      (repair.active && !context.hasCredentials)
+    ) {
       await releaseGitHubRefRepair(repair);
       result.deferred += 1;
       continue;
@@ -222,7 +225,7 @@ export const githubActivityFailureIsTerminal = (
 };
 
 const activeTrackedAccounts = async (
-  requestedAccounts: readonly TrackedGitHubAccount[] = TRACKED_GITHUB_ACCOUNTS
+  requestedAccounts: readonly TrackedGitHubAccount[] = trackedGitHubAccounts()
 ) => {
   const accounts: TrackedGitHubAccount[] = [];
   for (const account of requestedAccounts) {
@@ -240,6 +243,7 @@ const observedSinceLastReconciliation = (due: DueGitHubPullRequest) =>
     due.versionObservedAt > due.lastReconciledAt);
 
 interface WorkerContext {
+  hasCredentials: boolean;
   activeAccounts: readonly TrackedGitHubAccount[];
   deadlineAt: number;
   deadlineReached: () => boolean;
@@ -593,11 +597,11 @@ const processPullRequests = async (
 const checkedWorkerAccounts = (
   accounts: readonly TrackedGitHubAccount[] | undefined
 ) => {
-  const requested = accounts ?? TRACKED_GITHUB_ACCOUNTS;
+  const requested = accounts ?? trackedGitHubAccounts();
   if (
     requested.length === 0 ||
     new Set(requested).size !== requested.length ||
-    requested.some((account) => !TRACKED_GITHUB_ACCOUNTS.includes(account))
+    requested.some((account) => !trackedGitHubAccounts().includes(account))
   ) {
     throw new RangeError(
       "The GitHub activity worker account scope is invalid."
@@ -672,6 +676,7 @@ export const runGitHubActivityWorker = async (
   const refs = emptyStageResult();
   const activeAccounts = await activeTrackedAccounts(requestedAccounts);
   const context: WorkerContext = {
+    hasCredentials: tokensForGitHubAccount().length > 0,
     activeAccounts,
     deadlineAt: startedAt + processingDurationMs,
     deadlineReached,
@@ -679,22 +684,26 @@ export const runGitHubActivityWorker = async (
   };
   const overallDeadlineReached = () =>
     workerDeadlineReached(startedAt, maximumDurationMs);
-  await processObservations(context, observationLimit, observations);
-  await processPullRequestSignals(
-    context,
-    pullRequestSignalLimit,
-    pullRequestSignals
-  );
+  if (context.hasCredentials) {
+    await processObservations(context, observationLimit, observations);
+    await processPullRequestSignals(
+      context,
+      pullRequestSignalLimit,
+      pullRequestSignals
+    );
+  }
   if (options.includeRefs !== false) {
     await processRefRepairs(context, refLimit, refs);
   }
-  await processCommits(context, commitLimit, commits);
-  await processPullRequestDiscovery(
-    context,
-    pullRequestDiscoveryLimit,
-    pullRequestDiscovery
-  );
-  await processPullRequests(context, pullRequestLimit, pullRequests);
+  if (context.hasCredentials) {
+    await processCommits(context, commitLimit, commits);
+    await processPullRequestDiscovery(
+      context,
+      pullRequestDiscoveryLimit,
+      pullRequestDiscovery
+    );
+    await processPullRequests(context, pullRequestLimit, pullRequests);
+  }
   const projection =
     options.includeProjection !== false &&
     (await ensureGitHubWorkUnitProjectionRequest()) !== null

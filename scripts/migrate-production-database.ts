@@ -5,6 +5,7 @@ import postgres from "postgres";
 
 import { env } from "../src/env";
 
+// Keep the historical lock key so overlapping old/new deployments still coordinate.
 const MIGRATION_LOCK_NAME = "f0rr0.dev:drizzle-migrations";
 
 interface Environment {

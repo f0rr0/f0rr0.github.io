@@ -11,7 +11,7 @@ prompts, and desktop/mobile/social crops. Keep research reports, per-post image
 prompts and production briefs transient; do not commit them to the repository.
 Reserve `docs/` for current implementation and usage documentation.
 
-Public identity URLs always use `https://f0rr0.dev`; preview deployments return
+Public identity URLs use Vercel’s `VERCEL_PROJECT_PRODUCTION_URL`; preview deployments return
 `noindex`. The sitemap lists intended search destinations, while alternate
 Markdown and profile exports remain discoverable through links and `llms.txt`.
 

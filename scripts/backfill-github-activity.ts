@@ -1,3 +1,5 @@
+import { tokenForGitHubAccount } from "@/lib/github-accounts";
+
 import { closeDatabase } from "../src/db/client";
 import { env } from "../src/env";
 import { runGitHubActivityWorker } from "../src/lib/github-activity-worker";
@@ -41,8 +43,7 @@ interface BackfillArguments {
 
 interface BackfillEnvironment {
   DATABASE_URL?: string;
-  GITHUB_F0RR0_TOKEN?: string;
-  GITHUB_YUPPIESTECHDEV_TOKEN?: string;
+  GITHUB_TOKENS?: string;
 }
 
 type GitHubBackfillProgressStage =
@@ -123,7 +124,7 @@ export const backfillArgumentsFrom = (
     );
   }
   return {
-    account: requiredArgument(values, "account"),
+    account: values.get("account")?.trim() ?? "all",
     endDate: requiredArgument(values, "end-date"),
     maximumMinutes,
     repositoryId: values.get("repository-id")?.trim() ?? "",
@@ -138,32 +139,9 @@ export const requireBackfillEnvironment = (
   if (environment.DATABASE_URL === undefined) {
     throw new Error("DATABASE_URL is not configured.");
   }
-  if (
-    request.accounts.includes("f0rr0") &&
-    environment.GITHUB_F0RR0_TOKEN === undefined
-  ) {
-    throw new Error("GITHUB_F0RR0_TOKEN is not configured.");
+  for (const account of request.accounts) {
+    tokenForGitHubAccount(account, environment);
   }
-  if (
-    request.accounts.includes("yuppiestechdev") &&
-    environment.GITHUB_YUPPIESTECHDEV_TOKEN === undefined
-  ) {
-    throw new Error("GITHUB_YUPPIESTECHDEV_TOKEN is not configured.");
-  }
-};
-
-const tokenFor = (
-  account: TrackedGitHubAccount,
-  environment: BackfillEnvironment
-) => {
-  const token =
-    account === "f0rr0"
-      ? environment.GITHUB_F0RR0_TOKEN
-      : environment.GITHUB_YUPPIESTECHDEV_TOKEN;
-  if (token === undefined) {
-    throw new Error(`The GitHub token for ${account} is not configured.`);
-  }
-  return token;
 };
 
 interface GitHubBackfillFactualDrainDependencies {
@@ -371,7 +349,7 @@ export const runGitHubBackfillDiscovery = async (
 ): Promise<GitHubBackfillInventory> => {
   const identities = await Promise.all(
     input.request.accounts.map(async (account) => {
-      const token = tokenFor(account, input.environment);
+      const token = tokenForGitHubAccount(account, input.environment);
       input.onProgress?.({
         account,
         phase: "started",

@@ -230,13 +230,13 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit feed projection", () => {
         account, author_user_id, created_at, node_id, number, repository_id,
         title_snapshot, url_snapshot
       ) values
-        ('f0rr0', '1', '2026-08-29T12:00:00Z', 'ISSUE_public_feed_1', 7,
+        ('f0rr0', '8574219', '2026-08-29T12:00:00Z', 'ISSUE_public_feed_1', 7,
           '102', 'Track deterministic activity',
           'https://github.com/untrusted/ignored/issues/700'),
-        ('f0rr0', '1', '2026-08-30T08:00:00Z', 'ISSUE_private_feed_1', 8,
+        ('f0rr0', '8574219', '2026-08-30T08:00:00Z', 'ISSUE_private_feed_1', 8,
           '201', 'private issue title sentinel',
           'https://github.com/secret-owner/private-repository-sentinel/issues/8'),
-        ('f0rr0', '1', '2026-08-31T08:00:00Z', 'ISSUE_unknown_feed_1', 9,
+        ('f0rr0', '8574219', '2026-08-31T08:00:00Z', 'ISSUE_unknown_feed_1', 9,
           '301', 'unknown issue title sentinel',
           'https://github.com/unknown-owner/unknown-repository-sentinel/issues/9')
     `;
@@ -608,5 +608,16 @@ describe.skipIf(!dockerAvailable)("GitHub work-unit feed projection", () => {
       kind: "issue-opened",
       title: "revoked private issue title sentinel",
     });
+  });
+  test("keeps unselected authors out of issue rows and pagination without deleting evidence", async () => {
+    await admin`insert into github_issues (
+      account, author_user_id, created_at, node_id, number, repository_id, title_snapshot, url_snapshot
+    ) values ('alice', '12345678', '2099-01-01T12:00:00Z', 'ISSUE_foreign_author', 999, '102', 'foreign author sentinel', 'https://github.com/example/repo/issues/999')`;
+    const page = await readPublicGitHubActivityPage(null);
+    expect(JSON.stringify(page)).not.toContain("foreign author sentinel");
+    expect(JSON.stringify(page)).not.toContain("2099-01-01");
+    const rows =
+      await admin`select node_id from github_issues where node_id = 'ISSUE_foreign_author'`;
+    expect(rows).toHaveLength(1);
   });
 });

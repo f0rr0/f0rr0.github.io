@@ -1,11 +1,12 @@
 import {
   resumeCompanyStageLabels,
   resumeData,
+  socialProfiles,
   resumeRoleMarkerLabels,
 } from "@/content/resume";
 import type { PublicReference, ResumeRole } from "@/content/resume";
 import type { BlogPost } from "@/lib/blog-utils";
-import { publicUrl } from "@/lib/site";
+import { publicUrl, resumePdfUrl } from "@/lib/site";
 
 export interface AskAgentAction {
   description: string;
@@ -112,7 +113,7 @@ const buildAskAboutMePrompt = () => {
     `Start at ${contextUrl} and follow the relevant links for context about ${resumeData.person.name}.`,
     "This is an informational research chat, not a code-editing task.",
     `I want to ask questions about ${resumeData.person.name}'s work, technical depth, projects, and fit for roles such as ${resumeData.person.targetPositioning}.`,
-    "Use his résumé and linked work as sources for your answers.",
+    "Use the résumé and linked work as sources for your answers.",
   ].join(" ");
 };
 
@@ -145,29 +146,9 @@ export const buildJsonResume = () => ({
     email: resumeData.person.email,
     image: publicUrl(resumeData.person.image),
     label: currentRole?.title ?? resumeData.person.role,
-    location: {
-      city: "Mumbai",
-      countryCode: "IN",
-      region: "Maharashtra",
-    },
+    location: resumeData.person.address,
     name: resumeData.person.name,
-    profiles: [
-      {
-        network: "LinkedIn",
-        url: "https://linkedin.com/in/f0rr0",
-        username: "f0rr0",
-      },
-      {
-        network: "GitHub",
-        url: "https://github.com/f0rr0",
-        username: "f0rr0",
-      },
-      {
-        network: "GitHub",
-        url: "https://github.com/yuppiestechdev",
-        username: "yuppiestechdev",
-      },
-    ],
+    profiles: socialProfiles,
     summary: resumeData.summary,
     url: publicUrl("/"),
   },
@@ -276,12 +257,9 @@ export const buildLlmsTxt = (
 - [Detailed career context](${localProfileUrl("/llms-full.txt")}): Full work history, engineering decisions, leadership scope, client engagements, and source links. Read for technical interviews or role-fit questions.
 - [Journey](${localProfileUrl("/journey")}): Human-readable experience and education.
 
-## Namefi Work
+## Selected References
 
-${resumeData.machineReadable.publicReferences
-  .filter((reference) => new URL(reference.href).hostname === "namefi.io")
-  .map(markdownLink)
-  .join("\n")}
+${resumeData.machineReadable.publicReferences.map(markdownLink).join("\n")}
 
 ## Code and Technical Writing
 
@@ -293,7 +271,7 @@ ${resumeData.links.map((link) => `- [${link.label}](${link.href})`).join("\n")}
 
 ## Optional
 
-- [PDF résumé](${localProfileUrl("/resume/sid-jain-resume.pdf")}): Downloadable résumé.
+- [PDF résumé](${localProfileUrl(resumePdfUrl)}): Downloadable résumé.
 - [Work](${localProfileUrl("/work")}): Recent code activity.
 - [Writing](${localProfileUrl("/writing")}): All published articles; each article is also available at /writing/{slug}.md.
 - [RSS](${localProfileUrl("/rss.xml")}): Article feed.
@@ -319,29 +297,19 @@ export const buildLlmsFullTxt = (blogPosts: BlogPost[] = []) => {
       note: "Structured experience and skills.",
     },
     {
-      href: localProfileUrl("/resume/sid-jain-resume.pdf"),
+      href: localProfileUrl(resumePdfUrl),
       label: "PDF Resume",
       note: "Downloadable résumé.",
     },
-    {
-      href: "https://linkedin.com/in/f0rr0",
-      label: "LinkedIn",
-      note: "Professional profile.",
-    },
-    {
-      href: "https://github.com/f0rr0",
-      label: "GitHub: f0rr0",
-      note: "Open-source projects.",
-    },
-    {
-      href: "https://github.com/yuppiestechdev",
-      label: "GitHub: yuppiestechdev",
-      note: "Additional engineering work.",
-    },
+    ...socialProfiles.map(({ network, username, url }) => ({
+      href: url,
+      label: `${network}: ${username}`,
+      note: "Public profile.",
+    })),
     {
       href: `mailto:${resumeData.person.email}`,
       label: "Email",
-      note: "Contact Sid.",
+      note: `Contact ${resumeData.person.name}.`,
     },
   ];
 

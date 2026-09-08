@@ -6,10 +6,14 @@ const optionalString = z.string().trim().min(1).optional();
 export const env = createEnv({
   client: {
     NEXT_PUBLIC_PORT: optionalString,
+    NEXT_PUBLIC_POSTHOG_KEY: optionalString,
+    NEXT_PUBLIC_POSTHOG_REGION: z.enum(["us", "eu"]).optional(),
   },
   emptyStringAsUndefined: true,
   experimental__runtimeEnv: {
     NEXT_PUBLIC_PORT: process.env.NEXT_PUBLIC_PORT,
+    NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+    NEXT_PUBLIC_POSTHOG_REGION: process.env.NEXT_PUBLIC_POSTHOG_REGION,
   },
   server: {
     CRON_SECRET: z.string().min(32).optional(),
@@ -17,10 +21,9 @@ export const env = createEnv({
     DATABASE_URL_UNPOOLED: z.url().optional(),
     GITHUB_ACTIVITY_CURSOR_SECRET: z.string().min(32).optional(),
     GH_TOKEN: optionalString,
-    GITHUB_F0RR0_TOKEN: optionalString,
+    GITHUB_TOKENS: optionalString,
     GITHUB_TOKEN: optionalString,
     GITHUB_WEBHOOK_SECRET: z.string().min(32).optional(),
-    GITHUB_YUPPIESTECHDEV_TOKEN: optionalString,
     NODE_ENV: z.enum(["development", "production", "test"]).optional(),
     OPENAI_API_KEY: optionalString,
     PORT: optionalString,

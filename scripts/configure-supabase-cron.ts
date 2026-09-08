@@ -1,6 +1,7 @@
 import postgres from "postgres";
 
 import { env } from "../src/env";
+import { githubTokensFrom } from "../src/lib/github-accounts";
 import {
   GITHUB_CRON_EXECUTION_DURATION_MS,
   GITHUB_EVENTS_CRON_JOB,
@@ -10,7 +11,7 @@ import {
   GITHUB_WORKER_HTTP_TIMEOUT_MS,
   GITHUB_WORKER_CRON_JOB,
 } from "../src/lib/github-cron-config";
-import { CANONICAL_SITE_URL } from "../src/lib/site-url";
+import { productionSiteOrigin } from "../src/lib/site-url";
 import { shouldApplyProductionMigrations } from "./migrate-production-database";
 
 const SECRET_DESCRIPTION = "Vercel cron configuration";
@@ -25,10 +26,13 @@ const LEGACY_SUMMARY_JOB_NAME = "github-summary-worker-every-five-minutes";
 const LEGACY_JOB_NAME = "github-sync-every-three-hours";
 const LEGACY_REFS_JOB_NAME = "github-refs-every-fifteen-minutes";
 const LEGACY_TAG_REFS_JOB_NAME = "github-tag-refs-every-fifteen-minutes";
+// Keep the historical lock key so overlapping old/new deployments still coordinate.
 const CRON_CONFIGURATION_LOCK_NAME = "f0rr0.dev:supabase-cron";
 
 interface SupabaseCronEnvironment {
   CRON_SECRET?: string;
+  GITHUB_TOKENS?: string;
+  OPENAI_API_KEY?: string;
   DATABASE_URL?: string;
   DATABASE_URL_UNPOOLED?: string;
   VERCEL?: string;
@@ -78,14 +82,8 @@ export const supabaseCronUrlsFrom = (configuredSiteUrl: string) => {
   };
 };
 
-export const supabaseCronSiteUrlFrom = (
-  environment: SupabaseCronEnvironment
-) => {
-  const productionHostname = environment.VERCEL_PROJECT_PRODUCTION_URL?.trim();
-  return productionHostname === undefined || productionHostname.length === 0
-    ? CANONICAL_SITE_URL
-    : `https://${productionHostname}`;
-};
+export const supabaseCronSiteUrlFrom = (environment: SupabaseCronEnvironment) =>
+  productionSiteOrigin(environment.VERCEL_PROJECT_PRODUCTION_URL);
 
 const upsertVaultSecret = async (
   sql: postgres.TransactionSql,
@@ -142,6 +140,53 @@ const cronHttpPostCommand = (
   ) as request_id
 `;
 
+export const supabaseCronJobsFrom = (
+  environment: SupabaseCronEnvironment,
+  codexEnabled: boolean
+) => {
+  const githubEnabled =
+    Object.keys(githubTokensFrom(environment.GITHUB_TOKENS)).length > 0;
+  const urls = supabaseCronUrlsFrom(supabaseCronSiteUrlFrom(environment));
+  return [
+    {
+      ...GITHUB_EVENTS_CRON_JOB,
+      urlName: URL_NAME,
+      url: urls.events,
+      timeout: GITHUB_CRON_EXECUTION_DURATION_MS,
+      enabled: githubEnabled,
+    },
+    {
+      ...GITHUB_HEAD_REFS_CRON_JOB,
+      urlName: HEAD_REFS_URL_NAME,
+      url: urls.headRefs,
+      timeout: GITHUB_CRON_EXECUTION_DURATION_MS,
+      enabled: githubEnabled,
+    },
+    {
+      ...GITHUB_WORKER_CRON_JOB,
+      urlName: WORKER_URL_NAME,
+      url: urls.worker,
+      timeout: GITHUB_WORKER_HTTP_TIMEOUT_MS,
+      enabled: true,
+    },
+    {
+      ...GITHUB_SUMMARY_CRON_JOB,
+      urlName: SUMMARY_URL_NAME,
+      url: urls.summary,
+      timeout: GITHUB_WORKER_HTTP_TIMEOUT_MS,
+      enabled: Boolean(environment.OPENAI_API_KEY?.trim()),
+    },
+    {
+      name: CODEX_STATS_JOB_NAME,
+      schedule: "7,22,37,52 * * * *",
+      urlName: CODEX_STATS_URL_NAME,
+      url: urls.codexStats,
+      timeout: GITHUB_WORKER_HTTP_TIMEOUT_MS,
+      enabled: codexEnabled,
+    },
+  ];
+};
+
 export const configureSupabaseCron = async (
   environment: SupabaseCronEnvironment = env
 ) => {
@@ -153,7 +198,8 @@ export const configureSupabaseCron = async (
   if (cronSecret.length < 32) {
     throw new Error("CRON_SECRET must contain at least 32 characters.");
   }
-  const urls = supabaseCronUrlsFrom(supabaseCronSiteUrlFrom(environment));
+  // Validate configuration before opening a connection.
+  supabaseCronJobsFrom(environment, false);
   const sql = postgres(databaseUrl, {
     connect_timeout: 10,
     idle_timeout: 20,
@@ -174,26 +220,14 @@ export const configureSupabaseCron = async (
       await transaction`create extension if not exists pg_net with schema extensions`;
       await transaction`create extension if not exists supabase_vault with schema vault`;
 
-      await upsertVaultSecret(transaction, {
-        name: URL_NAME,
-        value: urls.events,
-      });
-      await upsertVaultSecret(transaction, {
-        name: HEAD_REFS_URL_NAME,
-        value: urls.headRefs,
-      });
-      await upsertVaultSecret(transaction, {
-        name: SUMMARY_URL_NAME,
-        value: urls.summary,
-      });
-      await upsertVaultSecret(transaction, {
-        name: WORKER_URL_NAME,
-        value: urls.worker,
-      });
-      await upsertVaultSecret(transaction, {
-        name: CODEX_STATS_URL_NAME,
-        value: urls.codexStats,
-      });
+      const [codex] = await transaction<{ enabled: boolean }[]>`
+        select exists(select 1 from codex_accounts where enabled) as enabled
+      `;
+      const configuredJobs = supabaseCronJobsFrom(
+        environment,
+
+        codex?.enabled
+      );
       await upsertVaultSecret(transaction, {
         name: SECRET_NAME,
         value: cronSecret,
@@ -202,68 +236,34 @@ export const configureSupabaseCron = async (
       await transaction`
         select cron.unschedule(jobid)
         from cron.job
-        where jobname in (
-          ${LEGACY_JOB_NAME},
-          ${LEGACY_REFS_JOB_NAME},
-          ${LEGACY_TAG_REFS_JOB_NAME},
-          ${LEGACY_SUMMARY_JOB_NAME},
-          ${GITHUB_EVENTS_CRON_JOB.name},
-          ${GITHUB_HEAD_REFS_CRON_JOB.name},
-          ${GITHUB_SUMMARY_CRON_JOB.name},
-          ${GITHUB_WORKER_CRON_JOB.name},
-          ${CODEX_STATS_JOB_NAME}
-        )
+        where jobname = any(${[
+          LEGACY_JOB_NAME,
+          LEGACY_REFS_JOB_NAME,
+          LEGACY_TAG_REFS_JOB_NAME,
+          LEGACY_SUMMARY_JOB_NAME,
+          ...configuredJobs.map(({ name }) => name),
+        ]}::text[])
       `;
 
-      const [eventsJob] = await transaction<{ jobId: number }[]>`
-        select cron.schedule(
-          ${GITHUB_EVENTS_CRON_JOB.name},
-          ${GITHUB_EVENTS_CRON_JOB.schedule},
-          ${cronHttpPostCommand(URL_NAME)}
-        ) as "jobId"
-      `;
-      const [headRefsJob] = await transaction<{ jobId: number }[]>`
-        select cron.schedule(
-          ${GITHUB_HEAD_REFS_CRON_JOB.name},
-          ${GITHUB_HEAD_REFS_CRON_JOB.schedule},
-          ${cronHttpPostCommand(HEAD_REFS_URL_NAME)}
-        ) as "jobId"
-      `;
-      const [workerJob] = await transaction<{ jobId: number }[]>`
-        select cron.schedule(
-          ${GITHUB_WORKER_CRON_JOB.name},
-          ${GITHUB_WORKER_CRON_JOB.schedule},
-          ${cronHttpPostCommand(WORKER_URL_NAME, GITHUB_WORKER_HTTP_TIMEOUT_MS)}
-        ) as "jobId"
-      `;
-      const [summaryJob] = await transaction<{ jobId: number }[]>`
-        select cron.schedule(
-          ${GITHUB_SUMMARY_CRON_JOB.name},
-          ${GITHUB_SUMMARY_CRON_JOB.schedule},
-          ${cronHttpPostCommand(SUMMARY_URL_NAME, GITHUB_WORKER_HTTP_TIMEOUT_MS)}
-        ) as "jobId"
-      `;
-      const [codexStatsJob] = await transaction<{ jobId: number }[]>`
-        select cron.schedule(
-          ${CODEX_STATS_JOB_NAME},
-          '7,22,37,52 * * * *',
-          ${cronHttpPostCommand(CODEX_STATS_URL_NAME, GITHUB_WORKER_HTTP_TIMEOUT_MS)}
-        ) as "jobId"
-      `;
-      if (
-        codexStatsJob === undefined ||
-        eventsJob === undefined ||
-        headRefsJob === undefined ||
-        summaryJob === undefined ||
-        workerJob === undefined
-      ) {
-        throw new Error("Supabase did not return every scheduled cron job.");
+      const jobs: { name: string; jobId: number }[] = [];
+      for (const job of configuredJobs.filter((value) => value.enabled)) {
+        await upsertVaultSecret(transaction, {
+          name: job.urlName,
+          value: job.url,
+        });
+        const [scheduled] = await transaction<{ jobId: number }[]>`
+          select cron.schedule(${job.name}, ${job.schedule}, ${cronHttpPostCommand(job.urlName, job.timeout)}) as "jobId"
+        `;
+        if (scheduled === undefined) {
+          throw new Error("Supabase did not return the scheduled cron job.");
+        }
+        jobs.push({ name: job.name, jobId: scheduled.jobId });
       }
-      return { codexStatsJob, eventsJob, headRefsJob, summaryJob, workerJob };
+      return jobs;
     });
 
     process.stdout.write(
-      `Configured Supabase cron jobs ${String(jobs.eventsJob.jobId)}, ${String(jobs.headRefsJob.jobId)}, ${String(jobs.workerJob.jobId)}, ${String(jobs.summaryJob.jobId)}, and ${String(jobs.codexStatsJob.jobId)}.\n`
+      `Configured ${String(jobs.length)} Supabase cron jobs.\n`
     );
     return jobs;
   } finally {

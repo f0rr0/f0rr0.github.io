@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 
 import { resumeData } from "@/content/resume";
+import { siteConfig } from "@/lib/site";
 
 export const alt = `${resumeData.person.name} — ${resumeData.person.role}`;
 export const size = {
@@ -36,7 +37,7 @@ export default function Image() {
       >
         <span>{resumeData.person.name}</span>
         <span style={{ color: "#78716c", fontSize: 18, fontWeight: 400 }}>
-          f0rr0.dev
+          {new URL(siteConfig.url).hostname}
         </span>
       </div>
       <div style={{ display: "flex", flexDirection: "column" }}>

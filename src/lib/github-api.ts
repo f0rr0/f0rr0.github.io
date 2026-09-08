@@ -148,7 +148,7 @@ const isRateLimited = async (response: Response) =>
       (await hasSecondaryRateLimitEvidence(response))));
 
 const readDefaultGitHubToken = () => {
-  const token = env.GITHUB_TOKEN?.trim() ?? env.GITHUB_F0RR0_TOKEN?.trim();
+  const token = env.GITHUB_TOKEN?.trim() ?? env.GH_TOKEN?.trim();
   return token === undefined || token.length === 0 ? null : token;
 };
 
@@ -286,7 +286,7 @@ export const fetchGitHub = async (
             ? {}
             : { "If-None-Match": options.ifNoneMatch }),
           ...(method === "POST" ? { "Content-Type": "application/json" } : {}),
-          "User-Agent": "f0rr0.dev",
+          "User-Agent": "Figment",
           "X-GitHub-Api-Version": GITHUB_API_VERSION,
         },
         method,

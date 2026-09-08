@@ -23,7 +23,7 @@ import type {
   GitHubLanguageFact,
   GitHubWorkUnitFileFact,
 } from "@/lib/github-change-evidence";
-import { TRACKED_GITHUB_USER_IDS } from "@/lib/github-commits-core";
+import { trackedGitHubUserIds } from "@/lib/github-commits-core";
 import {
   chooseEffectivePullRequest,
   githubLogicalChangeKey,
@@ -62,10 +62,6 @@ const SUMMARY_EVALUATION_LIMIT = 8;
 const SUMMARY_DEBOUNCE_MS = 5 * 60 * 1000;
 const DIGEST = /^[a-f0-9]{64}$/u;
 const SHA = /^[a-f0-9]{40}$/u;
-
-const trackedAuthorUserIds = new Set<string>(
-  Object.values(TRACKED_GITHUB_USER_IDS)
-);
 
 type GitHubWorkUnitDatabase = ReturnType<typeof getDatabase>;
 type GitHubWorkUnitTransaction = Parameters<
@@ -775,6 +771,7 @@ const loadProjectionSnapshot = async (
   transaction: GitHubWorkUnitTransaction,
   { lockCurrentUnits, summaryEvaluationLimit }: ProjectionSnapshotOptions
 ): Promise<LoadedProjectionSnapshot> => {
+  const trackedAuthorUserIds = new Set(Object.values(trackedGitHubUserIds()));
   const currentUnits = await readCurrentUnits(transaction, lockCurrentUnits);
   const repositoryRows = await transaction
     .select({
@@ -1278,7 +1275,14 @@ const loadProjectionSnapshot = async (
       eq(githubIssues.repositoryId, githubRepositories.id)
     )
     .where(
-      inArray(githubRepositories.visibility, ["public", "private", "internal"])
+      and(
+        inArray(githubIssues.authorUserId, [...trackedAuthorUserIds]),
+        inArray(githubRepositories.visibility, [
+          "public",
+          "private",
+          "internal",
+        ])
+      )
     );
   const issueDays = issueRows.map((issue) => issueDayFrom(issue.createdAt));
   return {

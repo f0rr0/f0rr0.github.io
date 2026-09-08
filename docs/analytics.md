@@ -4,7 +4,7 @@ The site uses PostHog US Cloud for pageviews, acquisition attribution, and expli
 
 ## Configuration
 
-- `src/instrumentation-client.ts` initializes the SDK only in production on `f0rr0.dev`. The public project token and API path are configured in source; no PostHog environment variables are needed.
+- `src/instrumentation-client.ts` initializes the SDK only on the canonical production host when `NEXT_PUBLIC_POSTHOG_KEY` is configured. `NEXT_PUBLIC_POSTHOG_REGION` selects `us` (default) or `eu` for both the SDK and proxy; preview and local deployments do not capture events.
 - `src/proxy.ts` forwards `/_r7k2/*` to fixed US ingestion and asset hosts. It strips Cookie, Authorization, and Referer headers. Collector trailing slashes are preserved; ordinary page trailing slashes receive a 308 redirect.
 - The SDK uses always-cookieless mode, memory persistence, and no person profiles. Autocapture, replay, surveys, heatmaps, automatic exceptions, performance collection, and feature flags are disabled.
 - Do Not Track and Global Privacy Control signals do not change capture behavior.

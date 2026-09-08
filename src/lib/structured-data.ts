@@ -10,18 +10,13 @@ import type {
   WithContext,
 } from "schema-dts";
 
-import { resumeData } from "@/content/resume";
+import { resumeData, socialProfiles } from "@/content/resume";
 import type { BlogPost } from "@/lib/blog-utils";
 import { publicUrl, siteConfig } from "@/lib/site";
 
-const linkedInUrl = "https://linkedin.com/in/f0rr0";
-const githubUrl = "https://github.com/f0rr0";
-const yuppiesGithubUrl = "https://github.com/yuppiestechdev";
-
-const personId = () => publicUrl("/#sid-jain");
+const personId = () => publicUrl("/#person");
 const websiteId = () => publicUrl("/#website");
-
-const sameAs = [linkedInUrl, githubUrl, yuppiesGithubUrl];
+const sameAs = socialProfiles.map(({ url }) => url);
 const [currentExperience] = resumeData.experience;
 const [currentRole] = currentExperience?.roles ?? [];
 const currentCompanyReference =
@@ -33,18 +28,11 @@ const buildPersonNode = (): Person => ({
   "@id": personId(),
   "@type": "Person",
   alternateName: resumeData.person.alternateNames,
-  alumniOf: [
-    {
-      "@type": "CollegeOrUniversity",
-      name: "University of California, Los Angeles",
-      sameAs: "https://www.ucla.edu/",
-    },
-    {
-      "@type": "EducationalOrganization",
-      name: "Delhi Public School, R. K. Puram",
-      sameAs: "https://dpsrkp.net/",
-    },
-  ],
+  alumniOf: resumeData.education.map((school) => ({
+    "@type": "EducationalOrganization" as const,
+    name: school.company,
+    sameAs: school.url,
+  })),
   description: resumeData.summary,
   email: `mailto:${resumeData.person.email}`,
   image: publicUrl(resumeData.person.image),
@@ -68,14 +56,14 @@ const buildPersonNode = (): Person => ({
 const buildWebsiteNode = (): WebSite => ({
   "@id": websiteId(),
   "@type": "WebSite",
-  alternateName: "F0RR0",
+  alternateName: siteConfig.shortName,
   author: {
     "@id": personId(),
     "@type": "Person",
     name: resumeData.person.name,
   },
   description: siteConfig.description,
-  inLanguage: "en-US",
+  inLanguage: siteConfig.language,
   name: resumeData.person.name,
   publisher: {
     "@id": personId(),
@@ -103,7 +91,7 @@ export const buildProfilePageJsonLd = (): WithContext<ProfilePage> => ({
     url: publicUrl("/"),
   },
   mainEntity: buildPersonNode(),
-  name: "Sid Jain Journey",
+  name: `${siteConfig.name} Journey`,
   url: publicUrl("/journey"),
 });
 
@@ -130,7 +118,7 @@ export const buildBlogPostingJsonLd = ({
     datePublished: post.date.toISOString(),
     description: post.metadata.summary,
     headline: post.metadata.title,
-    inLanguage: "en-US",
+    inLanguage: siteConfig.language,
     isPartOf: {
       "@id": websiteId(),
       "@type": "WebSite",
@@ -164,7 +152,7 @@ export const buildBlogCollectionJsonLd = (
   "@id": publicUrl("/writing#collection"),
   "@type": "CollectionPage",
   description: `Notes on what ${resumeData.person.name} is building across product design, engineering, AI, and creative development.`,
-  inLanguage: "en-US",
+  inLanguage: siteConfig.language,
   isPartOf: {
     "@id": websiteId(),
     "@type": "WebSite",
@@ -189,6 +177,6 @@ export const buildBlogCollectionJsonLd = (
     ),
     numberOfItems: posts.length,
   } satisfies ItemList,
-  name: "Sid Jain Writing",
+  name: `${siteConfig.name} Writing`,
   url: publicUrl("/writing"),
 });

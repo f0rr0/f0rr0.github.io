@@ -199,8 +199,8 @@ export const resumeData = {
       "senior full-stack engineer, frontend-focused product engineer, and AI product engineer",
   },
   navItems: [
-    { href: "/blog", label: "Blog" },
-    { href: "/work-log", label: "Work log" },
+    { href: "/writing", label: "Writing" },
+    { href: "/work", label: "Work" },
     { href: "/journey", label: "Journey" },
     { external: true, href: "https://github.com/f0rr0", label: "GitHub" },
   ] satisfies ResumeNavItem[],
@@ -447,7 +447,7 @@ export const resumeData = {
       "Work arrangement: Product engineering engagements (2021–2024) were self-employed work through Yuppies Tech. Veera, Texts, ZebPay, Mitsubishi Motors, and Airbus Tripset were clients within that period, not separate employers.",
       "Technical focus: the AI work is application engineering with model APIs, retrieval, tool calling, evaluation, and multi-step workflows. Namefi also includes web/backend foundations, authentication, and commerce systems.",
       "Titles: Senior Full-Stack Engineer is the overall profile label. Use the employer-specific titles when describing individual jobs.",
-      "Source selection: use the résumé and career detail for Sid’s contributions, his articles and repositories for implementation reasoning, and company pages for product context. The Work Log describes recent code activity.",
+      "Source selection: use the résumé and career detail for Sid’s contributions, his articles and repositories for implementation reasoning, and company pages for product context. The Work page describes recent code activity.",
     ],
     strengths: [
       "Full-stack: TypeScript, React, Next.js, Hono, Node.js, PostgreSQL, APIs, authentication, and release tooling.",

@@ -10,23 +10,23 @@ const description =
   "A day-by-day record of what Sid Jain is building, fixing, and shipping.";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "/work-log" },
+  alternates: { canonical: "/work" },
   description,
   openGraph: {
     description,
     images: [siteConfig.author.image],
     locale: siteConfig.locale,
     siteName: siteConfig.name,
-    title: "Sid Jain Work Log",
+    title: "Sid Jain Work",
     type: "website",
-    url: publicUrl("/work-log"),
+    url: publicUrl("/work"),
   },
-  title: "Work Log",
+  title: "Work",
   twitter: {
     card: "summary",
     description,
     images: [siteConfig.author.image],
-    title: "Sid Jain Work Log",
+    title: "Sid Jain Work",
   },
 };
 
@@ -35,7 +35,7 @@ export const dynamic = "force-dynamic";
 export default async function WorkLogPage() {
   const initialPage = await getInitialGitHubActivity();
   return (
-    <SiteShell activeHref="/work-log">
+    <SiteShell activeHref="/work">
       <SiteMain>
         <GitHubTimeline initialPage={initialPage} />
       </SiteMain>

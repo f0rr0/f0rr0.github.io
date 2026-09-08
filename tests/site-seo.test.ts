@@ -8,7 +8,7 @@ test("deployment aliases never replace public identity, and only previews receiv
         "--eval",
         `const { default: config } = await import("./next.config.ts");
          const { siteConfig, publicUrl } = await import("./src/lib/site.ts");
-         console.log(JSON.stringify({ origin: siteConfig.url, article: publicUrl("/blog/example"), headers: await config.headers() }));`,
+         console.log(JSON.stringify({ origin: siteConfig.url, article: publicUrl("/writing/example"), headers: await config.headers(), redirects: await config.redirects(), rewrites: await config.rewrites() }));`,
       ],
       {
         env: {
@@ -23,7 +23,23 @@ test("deployment aliases never replace public identity, and only previews receiv
     expect(result.exitCode).toBe(0);
     const output = JSON.parse(result.stdout.toString());
     expect(output.origin).toBe("https://f0rr0.dev");
-    expect(output.article).toBe("https://f0rr0.dev/blog/example");
+    expect(output.article).toBe("https://f0rr0.dev/writing/example");
+    expect(output.redirects).toEqual([
+      {
+        source: "/blog/:path*",
+        destination: "/writing/:path*",
+        permanent: true,
+      },
+      {
+        source: "/work-log/:path*",
+        destination: "/work/:path*",
+        permanent: true,
+      },
+      { source: "/resume", destination: "/journey", permanent: true },
+    ]);
+    expect(output.rewrites).toEqual([
+      { source: "/writing/:slug.md", destination: "/writing/:slug/markdown" },
+    ]);
     expect(output.headers).toEqual(
       deployment === "preview"
         ? [

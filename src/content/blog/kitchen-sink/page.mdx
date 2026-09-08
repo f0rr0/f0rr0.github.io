@@ -31,7 +31,7 @@ size, line length, and spacing alongside **strong emphasis**, _italic emphasis_,
 
 Inline code such as `next.config.ts` should sit naturally in a sentence. A longer
 identifier like `createSyntaxHighlightedBlogPostPreview` should wrap without
-pushing the page sideways. You can also combine [a link with **emphasis**](/blog)
+pushing the page sideways. You can also combine [a link with **emphasis**](/writing)
 and a [`code-formatted link`](https://nextjs.org/docs).
 
 ### A third-level heading
@@ -63,7 +63,7 @@ A thematic break separates a change of subject:
 ### Unordered and nested
 
 - A short item.
-- An item with **emphasis**, a [link](/blog), and `inline code`.
+- An item with **emphasis**, a [link](/writing), and `inline code`.
 - An item with a nested explanation:
   - Keep related points together.
   - Let a longer sentence wrap to show how indentation and line spacing work
@@ -113,7 +113,7 @@ type Post = {
 const posts: Post[] = [{ slug: "hello", title: "Hello", date: "2025-01-01" }];
 
 const canonicalUrl = new URL(
-  "/blog/" +
+  "/writing/" +
     posts[0].slug +
     "?preview=true&source=src/content/blog&theme=system&layout=article",
   "https://f0rr0.dev"
@@ -139,7 +139,7 @@ This command stays on one line. Scroll the code, including with the arrow keys,
 without widening the article:
 
 ```bash
-curl --request GET --header "Accept: text/html" "http://127.0.0.1:3000/blog/kitchen-sink?preview=true&source=src/content/blog&theme=system&layout=article&syntax-highlighter=shiki"
+curl --request GET --header "Accept: text/html" "http://127.0.0.1:3000/writing/kitchen-sink?preview=true&source=src/content/blog&theme=system&layout=article&syntax-highlighter=shiki"
 ```
 
 ### Plain text
@@ -248,11 +248,11 @@ https://github.com/f0rr0/zeroclaw/blob/3e5eed1208b9b444830febcfeecb82a8f3259a3d/
 
 A table can contain aligned numbers, links, emphasis, and code:
 
-| Element                                  |       Example       | Count |
-| :--------------------------------------- | :-----------------: | ----: |
-| **Code**                                 |     `page.mdx`      |    12 |
-| Links                                    | [Blog index](/blog) |     3 |
-| Longer text that wraps on narrow screens |      Supported      |   128 |
+| Element                                  |          Example          | Count |
+| :--------------------------------------- | :-----------------------: | ----: |
+| **Code**                                 |        `page.mdx`         |    12 |
+| Links                                    | [Writing index](/writing) |     3 |
+| Longer text that wraps on narrow screens |         Supported         |   128 |
 
 ## Mermaid diagrams
 
@@ -322,7 +322,7 @@ stateDiagram-v2
 
 ## Links and dates
 
-- [Internal navigation](/blog)
+- [Internal navigation](/writing)
 - [External documentation](https://nextjs.org/docs)
 - [An anchor on this page](#typography)
 - Automatic URL linking: https://nextjs.org/docs

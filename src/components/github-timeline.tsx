@@ -15,9 +15,9 @@ export function GitHubTimeline({
       className={preview ? "home-section mt-12 [scroll-margin-top:2rem]" : ""}
       heading={preview ? "h2" : "h1"}
       headingClassName={preview ? undefined : "sr-only"}
-      href={preview ? "/work-log" : undefined}
+      href={preview ? "/work" : undefined}
       id="timeline"
-      title="Work log"
+      title="Work"
     >
       <GitHubActivityLiveProvider
         feedRevision={initialPage.head.feedRevision}

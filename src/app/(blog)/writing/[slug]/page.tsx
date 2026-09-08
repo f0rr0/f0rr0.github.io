@@ -43,14 +43,14 @@ export async function generateMetadata({
   }
 
   const { metadata, date, updatedAt } = post;
-  const url = publicUrl(`/blog/${slug}`);
-  const shareImageUrl = publicUrl(`/blog/${slug}/share-image`);
+  const url = publicUrl(`/writing/${slug}`);
+  const shareImageUrl = publicUrl(`/writing/${slug}/share-image`);
 
   return {
     alternates: {
       canonical: url,
       types: {
-        "text/markdown": publicUrl(`/blog/${slug}.md`),
+        "text/markdown": publicUrl(`/writing/${slug}.md`),
         "application/rss+xml": publicUrl("/rss.xml"),
       },
     },
@@ -97,9 +97,9 @@ export default async function BlogPostPage({ params }: { params: PageParams }) {
   }
 
   const Content = module.default;
-  const url = publicUrl(`/blog/${slug}`);
+  const url = publicUrl(`/writing/${slug}`);
   const jsonLd = buildBlogPostingJsonLd({
-    image: publicUrl(`/blog/${slug}/share-image`),
+    image: publicUrl(`/writing/${slug}/share-image`),
     post,
     url,
   });
@@ -127,8 +127,8 @@ export default async function BlogPostPage({ params }: { params: PageParams }) {
               <span>{readingTime}</span>
             </div>
             <BlogPostActions
-              markdownHref={`/blog/${slug}.md`}
-              sourceUrl={publicUrl(`/blog/${slug}.md`)}
+              markdownHref={`/writing/${slug}.md`}
+              sourceUrl={publicUrl(`/writing/${slug}.md`)}
               title={metadata.title}
             />
           </div>

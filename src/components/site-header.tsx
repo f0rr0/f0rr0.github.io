@@ -7,8 +7,8 @@ import { resumeData } from "@/content/resume";
 import { SiteMobileMenu } from "./site-mobile-menu";
 
 export interface SiteHeaderProps {
-  activeHref?: "/blog" | "/journey" | "/work-log";
-  currentPath?: "/" | "/blog" | "/journey" | "/work-log";
+  activeHref?: "/writing" | "/journey" | "/work";
+  currentPath?: "/" | "/writing" | "/journey" | "/work";
 }
 
 export function SiteHeader({

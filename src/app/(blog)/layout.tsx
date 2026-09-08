@@ -5,5 +5,5 @@ export default function BlogLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <SiteShell activeHref="/blog">{children}</SiteShell>;
+  return <SiteShell activeHref="/writing">{children}</SiteShell>;
 }

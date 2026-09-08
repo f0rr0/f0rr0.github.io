@@ -58,10 +58,10 @@ test("the guide curates writing while the full context retains all published lin
   const guide = buildLlmsTxt(posts);
   const full = buildLlmsFullTxt(posts);
 
-  expect(guide).not.toContain("/blog/article-0.md");
-  expect(full).not.toContain("/blog/article-0.md");
-  expect(guide).toContain("/blog/article-5.md");
-  expect(guide).not.toContain("/blog/article-6.md");
-  expect(full).toContain("/blog/article-7.md");
+  expect(guide).not.toContain("/writing/article-0.md");
+  expect(full).not.toContain("/writing/article-0.md");
+  expect(guide).toContain("/writing/article-5.md");
+  expect(guide).not.toContain("/writing/article-6.md");
+  expect(full).toContain("/writing/article-7.md");
   expect(buildLlmsTxt([posts[0]])).not.toContain("## Writing");
 });

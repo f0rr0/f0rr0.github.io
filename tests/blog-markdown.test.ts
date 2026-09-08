@@ -22,7 +22,7 @@ describe("blog Markdown", () => {
   test("adds article context once before the authored body", () => {
     const markdown = buildBlogPostMarkdown({
       body: "First paragraph.\n\n## Detail",
-      canonicalUrl: "https://f0rr0.dev/blog/a-post",
+      canonicalUrl: "https://f0rr0.dev/writing/a-post",
       post: {
         date: new Date("2026-08-01T00:00:00.000Z"),
         importPath: "a-post/page.mdx",
@@ -46,7 +46,7 @@ describe("blog Markdown", () => {
 
 Sid Jain · Published 2026-08-01 · updated 2026-08-04
 
-Canonical post: https://f0rr0.dev/blog/a-post
+Canonical post: https://f0rr0.dev/writing/a-post
 
 ---
 

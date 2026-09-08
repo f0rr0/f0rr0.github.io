@@ -26,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: publicUrl("/journey"),
     },
     {
-      url: publicUrl("/work-log"),
+      url: publicUrl("/work"),
     },
     {
       lastModified: resumeUpdatedAt,
@@ -34,11 +34,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     {
       lastModified: latestPostDate,
-      url: publicUrl("/blog"),
+      url: publicUrl("/writing"),
     },
     ...posts.map((post) => ({
       lastModified: post.updatedAt ?? post.date,
-      url: publicUrl(`/blog/${post.slug}`),
+      url: publicUrl(`/writing/${post.slug}`),
     })),
   ];
 }

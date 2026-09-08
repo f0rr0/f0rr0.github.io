@@ -42,6 +42,7 @@ const diagramTypeNames: Record<string, string> = {
   c4: "C4 architecture",
   class: "Class diagram",
   classDiagram: "Class diagram",
+  "classDiagram-v2": "Class diagram",
   er: "Entity relationship",
   eventModeling: "Event model",
   flowchart: "Flowchart",
@@ -57,6 +58,7 @@ const diagramTypeNames: Record<string, string> = {
   stateDiagram: "State diagram",
   "stateDiagram-v2": "State diagram",
   timeline: "Timeline",
+  xychart: "XY chart",
 };
 
 let mermaidPromise: Promise<Mermaid> | undefined;
@@ -106,8 +108,6 @@ async function loadMermaid() {
 }
 
 async function importAndRegisterElk(mermaid: Mermaid) {
-  // Keep this lazy. The compatible 0.1.9 release is pinned because 0.2.x
-  // serializes live DOM nodes while rendering inside React.
   const { default: elkLayouts } = await import("@mermaid-js/layout-elk");
   mermaid.registerLayoutLoaders(elkLayouts);
 }

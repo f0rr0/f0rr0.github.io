@@ -114,6 +114,9 @@ function WorkUnitFacts({
       <span>
         {commits} · {files}
       </span>
+      <span className="inline-flex sm:hidden">
+        <DiffCounters facts={facts} />
+      </span>
       {facts.languages?.map((language) => (
         <LanguageIcon key={language} language={language} />
       ))}
@@ -151,7 +154,9 @@ function WorkUnitRow({
           {headline}
         </span>
         <span className="site-row-meta flex min-h-6 shrink-0 items-center justify-end gap-2 text-xs text-muted-foreground tabular-nums">
-          <DiffCounters facts={item.facts} />
+          <span className="hidden sm:inline-flex">
+            <DiffCounters facts={item.facts} />
+          </span>
           <LocalDateTime
             className="whitespace-nowrap"
             dateTime={item.activityAt}
@@ -282,9 +287,9 @@ function GitHubActivityDay({
   return (
     <section aria-labelledby={`activity-day-${day.day}`}>
       <header className="site-row min-h-11 w-full grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 text-start text-base text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring work-log-day-header flex flex-wrap rounded-none border-y border-border py-2">
-        <h3 className="site-row-meta flex min-h-6 shrink-0 items-center gap-2 text-xs text-muted-foreground tabular-nums justify-start font-medium">
+        <h3 className="site-row-meta flex min-h-6 shrink-0 items-center gap-1 text-xs text-muted-foreground tabular-nums justify-start font-medium sm:gap-2">
           <time
-            className="work-log-date font-mono font-normal uppercase tracking-wider"
+            className="work-log-date font-mono font-normal uppercase tracking-tight sm:tracking-wider"
             dateTime={day.day}
             id={`activity-day-${day.day}`}
           >
@@ -305,7 +310,7 @@ function GitHubActivityDay({
               {repositoryCount === 1 ? "repo" : "repos"}
             </dd>
           </div>
-          <div>
+          <div className="hidden sm:block">
             <dt className="sr-only">Authored line churn</dt>
             <dd>
               <DiffCounters facts={{ additions, deletions }} />

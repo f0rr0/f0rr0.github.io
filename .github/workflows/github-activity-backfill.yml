@@ -53,7 +53,7 @@ jobs:
           ACCOUNT: ${{ inputs.account }}
           DATABASE_URL: ${{ secrets.ACTIVITY_DATABASE_URL }}
           END_DATE: ${{ inputs.end_date }}
-          GITHUB_TOKENS: ${{ secrets.GITHUB_TOKENS }}
+          GITHUB_TOKENS: ${{ secrets.ACTIVITY_GITHUB_TOKENS }}
           MAXIMUM_MINUTES: ${{ inputs.maximum_minutes }}
           REPOSITORY_ID: ${{ inputs.repository_id }}
           START_DATE: ${{ inputs.start_date }}

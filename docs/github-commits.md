@@ -139,7 +139,8 @@ when their provider key is configured. Codex scheduling follows enabled database
 accounts. Rerun cron setup after enabling or disabling a service. Local cron setup
 requires the Vercel production hostname in `VERCEL_PROJECT_PRODUCTION_URL`.
 The manual backfill Action uses repository secrets `ACTIVITY_DATABASE_URL` and
-`GITHUB_TOKENS`; its account input defaults to all configured authors. Every
+`ACTIVITY_GITHUB_TOKENS` (mapped to the runtime variable `GITHUB_TOKENS`; GitHub
+reserves the `GITHUB_` secret prefix). Its account input defaults to all configured authors. Every
 selected backfill author needs a credential; use `--account` to select a subset.
 
 Public output includes private-activity counts, timestamps and line/file facts,

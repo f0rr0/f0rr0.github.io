@@ -46,7 +46,8 @@ post-deployment hook. Local operations remain `bun run db:migrate` and
 Move the existing per-account token values into one `GITHUB_TOKENS` JSON object,
 keyed by the logins in `src/content/site.ts`. The same tokens can be reused; no
 new tokens or account IDs are required. Set this variable in Vercel and set the
-same repository secret for the manual backfill Action. Keep the old token
+`ACTIVITY_GITHUB_TOKENS` repository secret for the manual backfill Action (GitHub
+reserves secret names beginning with `GITHUB_`). Keep the old token
 variables until the new deployment has been verified, then remove them.
 
 Keep the existing database, webhook, cron, cursor-signing and OpenAI credentials.

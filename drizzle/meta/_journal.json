@@ -155,6 +155,13 @@
       "when": 1788813490378,
       "tag": "0021_windy_midnight",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1788907570264,
+      "tag": "0022_portable_github_accounts",
+      "breakpoints": true
     }
   ]
 }

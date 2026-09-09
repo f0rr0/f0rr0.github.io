@@ -1,4 +1,6 @@
-export const WORK_LOG_TIME_ZONE = "Asia/Kolkata";
+import { sitePreferences } from "@/content/site";
+
+export const WORK_LOG_TIME_ZONE = sitePreferences.workLogTimeZone;
 
 export const dateFormats = {
   date: { dateStyle: "medium" },
@@ -31,7 +33,10 @@ export const formatDate = (
   const key = `${format}:${timeZone}`;
   const formatter =
     dateFormatters.get(key) ??
-    new Intl.DateTimeFormat("en-US", { ...dateFormats[format], timeZone });
+    new Intl.DateTimeFormat(sitePreferences.language, {
+      ...dateFormats[format],
+      timeZone,
+    });
   dateFormatters.set(key, formatter);
   return formatter.format(new Date(value));
 };

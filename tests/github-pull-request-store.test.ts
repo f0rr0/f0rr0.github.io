@@ -7,6 +7,9 @@ import {
   test,
 } from "bun:test";
 import assert from "node:assert/strict";
+import { copyFile, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
 import { and, asc, eq } from "drizzle-orm";
@@ -14,6 +17,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 
+import migrationJournal from "../drizzle/meta/_journal.json";
 import type * as DatabaseClient from "../src/db/client.ts";
 import type * as DatabaseSchema from "../src/db/schema.ts";
 import type * as GithubActivityWorkerStore from "../src/lib/github-activity-worker-store.ts";
@@ -171,7 +175,44 @@ describe.skipIf(!dockerAvailable)("GitHub pull request persistence", () => {
       onnotice: (notice) => void notice,
       prepare: false,
     });
-    await migrate(drizzle({ client: admin }), { migrationsFolder });
+    // Exercise an upgrade with an existing checkpoint, not only an empty install.
+    const previousMigrations = await mkdtemp(
+      path.join(tmpdir(), "github-account-upgrade-")
+    );
+    const previousEntries = migrationJournal.entries.filter(
+      ({ idx }) => idx < 22
+    );
+    try {
+      await mkdir(path.join(previousMigrations, "meta"));
+      await writeFile(
+        path.join(previousMigrations, "meta/_journal.json"),
+        JSON.stringify({ ...migrationJournal, entries: previousEntries })
+      );
+      await Promise.all(
+        previousEntries.map(async ({ tag }) => {
+          await copyFile(
+            path.join(migrationsFolder, `${tag}.sql`),
+            path.join(previousMigrations, `${tag}.sql`)
+          );
+        })
+      );
+      await migrate(drizzle({ client: admin }), {
+        migrationsFolder: previousMigrations,
+      });
+      await admin`insert into github_account_checkpoints (account, latest_event_id, paused) values ('f0rr0', '42', true)`;
+      await admin`insert into github_repository_inventory_heads (account_user_id, account_login) values ('8574219', 'f0rr0')`;
+      await migrate(drizzle({ client: admin }), { migrationsFolder });
+      const [upgraded] =
+        await admin`select latest_event_id, paused from github_account_checkpoints where account = 'f0rr0'`;
+      expect(upgraded).toMatchObject({
+        latest_event_id: "42",
+        paused: true,
+      });
+      await admin`delete from github_repository_inventory_heads where account_user_id = '8574219'`;
+      await admin`delete from github_account_checkpoints where account = 'f0rr0'`;
+    } finally {
+      await rm(previousMigrations, { recursive: true, force: true });
+    }
     env.DATABASE_URL = databaseUrl;
     schema = await import("../src/db/schema.ts");
     const client = await import("../src/db/client.ts");
@@ -209,6 +250,24 @@ describe.skipIf(!dockerAvailable)("GitHub pull request persistence", () => {
         stdout: "ignore",
       });
     }
+  });
+
+  test("accepts a configured account name without adding identity registration columns", async () => {
+    await database
+      .insert(schema.githubAccountCheckpoints)
+      .values({ account: "alice" });
+    await database.insert(schema.githubWebhookDeliveries).values({
+      deliveryId: "00000000-0000-4000-8000-000000999999",
+      event: "ping",
+      accepted: false,
+      account: "alice",
+    });
+    const [checkpoint] = await database
+      .select()
+      .from(schema.githubAccountCheckpoints)
+      .where(eq(schema.githubAccountCheckpoints.account, "alice"));
+    expect(checkpoint?.account).toBe("alice");
+    expect(checkpoint).not.toHaveProperty("userId");
   });
 
   test("promotes an equal-time terminal signal without trusting its merge SHA", async () => {
@@ -715,5 +774,35 @@ describe.skipIf(!dockerAvailable)("GitHub pull request persistence", () => {
     );
     expect(discovery.repository).toBe("f0rr0/renamed-worker-path");
     await releaseGitHubPullRequestDiscovery(discovery);
+
+    // A smaller visible result cannot erase a previously verified association.
+    const { completeGitHubPullRequestDiscovery } =
+      await import("../src/lib/github-activity-worker-store");
+    await database.insert(schema.githubCommitPullRequestAssociations).values({
+      commitRepositoryId: workerRepositoryId,
+      commitSha,
+      pullRequestNodeId: pullRequest().nodeId,
+    });
+    const [reclaimed] = await claimGitHubCommitsForPullRequestDiscovery(
+      1,
+      ["f0rr0"],
+      new Date("2026-09-02T10:03:00.000Z")
+    );
+    expect(await completeGitHubPullRequestDiscovery(reclaimed, [])).toBe(true);
+    const associations = await database
+      .select()
+      .from(schema.githubCommitPullRequestAssociations)
+      .where(
+        and(
+          eq(
+            schema.githubCommitPullRequestAssociations.commitRepositoryId,
+            workerRepositoryId
+          ),
+          eq(schema.githubCommitPullRequestAssociations.commitSha, commitSha)
+        )
+      );
+    expect(associations.map((row) => row.pullRequestNodeId)).toEqual([
+      pullRequest().nodeId,
+    ]);
   });
 });

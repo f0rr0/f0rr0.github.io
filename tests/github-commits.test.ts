@@ -987,7 +987,7 @@ describe("token identity", () => {
       expect(new Headers(init?.headers).get("authorization")).toBe(
         "Bearer token"
       );
-      return Response.json({ id: 8_574_219, login: "renamed-account" });
+      return Response.json({ id: 8_574_219, login: "f0rr0" });
     });
 
     expect(
@@ -1001,7 +1001,7 @@ describe("token identity", () => {
     );
 
     expect(assertGitHubTokenIdentity("f0rr0", "token")).rejects.toThrow(
-      "GITHUB_F0RR0_TOKEN is not authenticated as f0rr0"
+      "The GitHub token is not authenticated as f0rr0"
     );
   });
 });

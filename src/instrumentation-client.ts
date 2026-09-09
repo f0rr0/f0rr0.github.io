@@ -1,18 +1,19 @@
 import { posthog } from "posthog-js";
 
+import { env } from "@/env";
 import { captureLink, sanitizeProperties } from "@/lib/analytics";
+import { CANONICAL_SITE_URL } from "@/lib/site-url";
 
-// Public browser configuration for the portfolio PostHog project.
-const projectToken = "phc_xUiLFUMwb6jrSMxM8yL2iEDPGQZcVMKfWVp4RBsvfmCa";
-const posthogHost = "/_r7k2";
+const projectToken = env.NEXT_PUBLIC_POSTHOG_KEY;
 
 if (
-  process.env.NODE_ENV === "production" &&
-  location.hostname === "f0rr0.dev"
+  projectToken !== undefined &&
+  env.NEXT_PUBLIC_VERCEL_ENV === "production" &&
+  location.origin === CANONICAL_SITE_URL
 ) {
   posthog.init(projectToken, {
-    api_host: posthogHost,
-    ui_host: "https://us.posthog.com",
+    api_host: "/_r7k2",
+    ui_host: `https://${env.NEXT_PUBLIC_POSTHOG_REGION}.posthog.com`,
     defaults: "2026-08-30",
     cookieless_mode: "always",
     persistence: "memory",

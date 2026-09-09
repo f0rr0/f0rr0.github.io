@@ -6,11 +6,11 @@ const FENCE = /^ {0,3}(`{3,}|~{3,})/;
 const MARKDOWN_IMAGE = /(!\[[^\]]*\]\()(\.\/[^\s)]+)(\))/g;
 const IMAGE_SOURCE = /(\bsrc=["'])(\.\/[^"']+)(["'])/g;
 
-export const resolveBlogMarkdownImages = (body: string, importPath: string) => {
-  const assetBase = new URL(
-    ".",
-    `https://raw.githubusercontent.com/f0rr0/f0rr0.dev/next/src/content/blog/${importPath}`
-  );
+export const resolveBlogMarkdownImages = (
+  body: string,
+  images: Readonly<Record<string, string>>,
+  canonicalUrl: string
+) => {
   let fence = "";
 
   // Authored MDX uses inline image URLs and quoted src attributes; keep fenced code verbatim.
@@ -38,7 +38,13 @@ export const resolveBlogMarkdownImages = (body: string, importPath: string) => {
         before: string,
         url: string,
         after: string
-      ) => `${before}${new URL(url, assetBase)}${after}`;
+      ) => {
+        const src = images[url];
+        if (!src) {
+          throw new Error(`A Markdown image has no compiled asset: ${url}`);
+        }
+        return `${before}${new URL(src, canonicalUrl)}${after}`;
+      };
       return line
         .replace(MARKDOWN_IMAGE, replace)
         .replace(IMAGE_SOURCE, replace);
@@ -72,6 +78,6 @@ Canonical post: ${canonicalUrl}
 
 ---
 
-${resolveBlogMarkdownImages(body, post.importPath).trim()}
+${resolveBlogMarkdownImages(body, post.images ?? {}, canonicalUrl).trim()}
 `;
 };

@@ -23,6 +23,7 @@ import type {
   PublicGitHubActivityRepository,
   PublicGitHubWorkUnitKind,
 } from "@/lib/github-activity-types";
+import { TRACKED_GITHUB_USER_IDS } from "@/lib/github-commits-core";
 import {
   decodeGitHubWorkUnitSummary,
   GITHUB_WORK_UNIT_SUMMARY_RECIPE,
@@ -264,6 +265,10 @@ const readAvailableDays = async (
       .where(
         and(
           beforeIssue,
+          inArray(
+            githubIssues.authorUserId,
+            Object.values(TRACKED_GITHUB_USER_IDS)
+          ),
           inArray(githubRepositories.visibility, [
             "public",
             "private",
@@ -371,6 +376,10 @@ const readPublicRows = async (
       .where(
         and(
           inArray(issueDay, selectedDays),
+          inArray(
+            githubIssues.authorUserId,
+            Object.values(TRACKED_GITHUB_USER_IDS)
+          ),
           inArray(githubRepositories.visibility, [
             "public",
             "private",

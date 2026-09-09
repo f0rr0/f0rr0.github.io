@@ -1,5 +1,6 @@
 import { DatabaseConfigurationError, isDatabaseConfigured } from "@/db/client";
 import { env } from "@/env";
+import { githubTokensFrom, tokenForGitHubAccount } from "@/lib/github-accounts";
 import {
   fetchGitHub,
   githubApiUrl,
@@ -10,7 +11,6 @@ import {
 import {
   authenticatedGitHubAccountFrom,
   githubEventFrom,
-  TRACKED_GITHUB_ACCOUNTS,
 } from "@/lib/github-commits-core";
 import type {
   GitHubEvent,
@@ -26,10 +26,6 @@ import {
 import type { GitHubRepositoryRefKind } from "@/lib/github-commits-store";
 import { reconcileGitHubRepositoryRefBatch } from "@/lib/github-ref-reconciliation-batch";
 
-const ACCOUNT_TOKEN_VARIABLES = {
-  f0rr0: "GITHUB_F0RR0_TOKEN",
-  yuppiestechdev: "GITHUB_YUPPIESTECHDEV_TOKEN",
-} as const satisfies Record<TrackedGitHubAccount, string>;
 const CHECKPOINT_ATTEMPTS = 3;
 const EVENT_PAGES = 3;
 const GITHUB_PAGE_SIZE = 100;
@@ -93,22 +89,6 @@ export interface GitHubRefReconciliationResult {
   repositories: number;
 }
 
-class GitHubSyncConfigurationError extends Error {
-  constructor(variable: string) {
-    super(`${variable} is not configured.`);
-    this.name = "GitHubSyncConfigurationError";
-  }
-}
-
-const tokenFor = (account: TrackedGitHubAccount) => {
-  const variable = ACCOUNT_TOKEN_VARIABLES[account];
-  const token = env[variable]?.trim();
-  if (token === undefined || token.length === 0) {
-    throw new GitHubSyncConfigurationError(variable);
-  }
-  return token;
-};
-
 interface GitHubCronRequestOptions {
   deadlineAt?: number;
 }
@@ -119,7 +99,8 @@ const settleTrackedGitHubAccounts = async <Result>(
   failedAccounts: readonly FailedGitHubAccount[];
   results: readonly Result[];
 }> => {
-  const settled = await Promise.allSettled(TRACKED_GITHUB_ACCOUNTS.map(action));
+  const accounts = Object.keys(githubTokensFrom(env.GITHUB_TOKENS));
+  const settled = await Promise.allSettled(accounts.map(action));
   const results: Result[] = [];
   const failedAccounts: FailedGitHubAccount[] = [];
 
@@ -128,7 +109,7 @@ const settleTrackedGitHubAccounts = async <Result>(
       results.push(outcome.value);
       continue;
     }
-    const account = TRACKED_GITHUB_ACCOUNTS[index];
+    const account = accounts[index];
     if (account === undefined) {
       throw new Error("A GitHub account result has no tracked account.");
     }
@@ -162,10 +143,15 @@ export const assertGitHubTokenIdentity = async (
   options: GitHubCronRequestOptions = {}
 ) => {
   const { payload } = await fetchJson(githubApiUrl("/user"), token, options);
-  if (authenticatedGitHubAccountFrom(payload) !== account) {
-    throw new Error(
-      `${ACCOUNT_TOKEN_VARIABLES[account]} is not authenticated as ${account}.`
-    );
+  if (
+    authenticatedGitHubAccountFrom(payload) !== account ||
+    typeof payload !== "object" ||
+    payload === null ||
+    !("login" in payload) ||
+    typeof payload.login !== "string" ||
+    payload.login.toLowerCase() !== account
+  ) {
+    throw new Error(`The GitHub token is not authenticated as ${account}.`);
   }
 };
 
@@ -314,7 +300,7 @@ export const syncGitHubAccount = async (
       };
     }
     if (token === null) {
-      token = tokenFor(account);
+      token = tokenForGitHubAccount(account);
       await assertGitHubTokenIdentity(account, token, options);
     }
     const collected = await collectGitHubEvents(
@@ -417,7 +403,7 @@ export const reconcileGitHubAccountRefs = async (
       repositories: 0,
     };
   }
-  const token = tokenFor(account);
+  const token = tokenForGitHubAccount(account);
   await assertGitHubTokenIdentity(account, token, options);
   return {
     account,

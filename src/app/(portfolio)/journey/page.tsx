@@ -6,7 +6,7 @@ import { JsonLd } from "@/components/json-ld";
 import { SiteMain } from "@/components/site-page";
 import { SiteShell } from "@/components/site-shell";
 import { resumeData } from "@/content/resume";
-import { publicUrl, siteConfig } from "@/lib/site";
+import { publicUrl, resumePdfUrl, siteConfig } from "@/lib/site";
 import { buildProfilePageJsonLd } from "@/lib/structured-data";
 
 const resumeDescription = siteConfig.description;
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     images: [resumeData.person.image],
     locale: siteConfig.locale,
     siteName: siteConfig.name,
-    title: "Sid Jain Journey",
+    title: `${siteConfig.name} Journey`,
     type: "profile",
     url: publicUrl("/journey"),
   },
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     card: "summary",
     description: resumeDescription,
     images: [resumeData.person.image],
-    title: "Sid Jain Journey",
+    title: `${siteConfig.name} Journey`,
   },
 };
 
@@ -52,7 +52,7 @@ export default function JourneyPage() {
               <a
                 key="resume"
                 className="site-text-link inline-flex min-h-11 items-center gap-1.5 rounded-sm text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
-                href="/resume/sid-jain-resume.pdf"
+                href={resumePdfUrl}
                 download
                 aria-label="Résumé (PDF)"
               >

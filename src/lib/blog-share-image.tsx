@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 
 import type { BlogPostMetadata } from "@/lib/blog-utils";
+import { siteConfig } from "@/lib/site";
 
 export const renderBlogShareImage = (metadata: BlogPostMetadata) =>
   new ImageResponse(
@@ -24,7 +25,9 @@ export const renderBlogShareImage = (metadata: BlogPostMetadata) =>
         }}
       >
         <span>{metadata.author}</span>
-        <span style={{ color: "#78716c" }}>f0rr0.dev</span>
+        <span style={{ color: "#78716c" }}>
+          {new URL(siteConfig.url).hostname}
+        </span>
       </div>
       <div
         style={{

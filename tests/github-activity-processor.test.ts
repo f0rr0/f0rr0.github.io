@@ -15,8 +15,8 @@ import { GitHubRequestDeadlineError } from "../src/lib/github-api.ts";
 import { mockFetch, env } from "./helpers.ts";
 
 const originalFetch = globalThis.fetch;
-const originalF0rr0Token = env.GITHUB_F0RR0_TOKEN;
-const originalYuppiesTechDevToken = env.GITHUB_YUPPIESTECHDEV_TOKEN;
+const originalTokens = env.GITHUB_TOKENS;
+const originalGhToken = env.GH_TOKEN;
 const originalDefaultToken = env.GITHUB_TOKEN;
 
 const pushCommitValue = (sha: string, login: string, id: number) => ({
@@ -42,18 +42,15 @@ const restoreEnvironmentValue = (
 };
 
 beforeEach(() => {
-  delete env.GITHUB_F0RR0_TOKEN;
-  delete env.GITHUB_YUPPIESTECHDEV_TOKEN;
+  delete env.GITHUB_TOKENS;
+  delete env.GH_TOKEN;
   delete env.GITHUB_TOKEN;
 });
 
 afterEach(() => {
   globalThis.fetch = originalFetch;
-  restoreEnvironmentValue("GITHUB_F0RR0_TOKEN", originalF0rr0Token);
-  restoreEnvironmentValue(
-    "GITHUB_YUPPIESTECHDEV_TOKEN",
-    originalYuppiesTechDevToken
-  );
+  restoreEnvironmentValue("GITHUB_TOKENS", originalTokens);
+  restoreEnvironmentValue("GH_TOKEN", originalGhToken);
   restoreEnvironmentValue("GITHUB_TOKEN", originalDefaultToken);
 });
 
@@ -70,7 +67,7 @@ describe("GitHub activity commit acquisition", () => {
     filenames[2] = "A.ts";
     const requestedPages: number[] = [];
 
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async (input) => {
       const url =
         input instanceof Request ? new URL(input.url) : new URL(input);
@@ -127,7 +124,7 @@ describe("GitHub activity commit acquisition", () => {
     const sha = "d".repeat(40);
     const ancestryResponses = [undefined, [{ sha: "not-a-sha" }], []];
     let commitReads = 0;
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async (input) => {
       const url =
         input instanceof Request ? new URL(input.url) : new URL(input);
@@ -175,7 +172,7 @@ describe("GitHub activity commit acquisition", () => {
     const trackedSha = "3".repeat(40);
     const foreignSha = "4".repeat(40);
     const afterSha = foreignSha;
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async (input) => {
       const url =
         input instanceof Request ? new URL(input.url) : new URL(input);
@@ -216,7 +213,7 @@ describe("GitHub activity commit acquisition", () => {
     const surplusSha = "3".repeat(40);
     const afterSha = "4".repeat(40);
     const paths: string[] = [];
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async (input) => {
       const url =
         input instanceof Request ? new URL(input.url) : new URL(input);
@@ -266,7 +263,7 @@ describe("GitHub activity commit acquisition", () => {
     const otherSha = "3".repeat(40);
     const afterSha = "4".repeat(40);
     const paths: string[] = [];
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async (input) => {
       const url =
         input instanceof Request ? new URL(input.url) : new URL(input);
@@ -313,7 +310,7 @@ describe("GitHub activity commit acquisition", () => {
     const firstSha = "2".repeat(40);
     const surplusSha = "3".repeat(40);
     const afterSha = "4".repeat(40);
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async () =>
       Response.json({
         ahead_by: 3,
@@ -347,7 +344,7 @@ describe("GitHub activity commit acquisition", () => {
     const beforeSha = "1".repeat(40);
     const firstSha = "2".repeat(40);
     const afterSha = "3".repeat(40);
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async () =>
       Response.json({
         ahead_by: 2,
@@ -380,7 +377,7 @@ describe("GitHub activity commit acquisition", () => {
     const beforeSha = "1".repeat(40);
     const foreignSha = "2".repeat(40);
     const afterSha = "3".repeat(40);
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async () =>
       Response.json({
         ahead_by: 2,
@@ -426,7 +423,7 @@ describe("GitHub activity commit acquisition", () => {
   test("rejects a tracked commit without a provider timestamp", async () => {
     const beforeSha = "1".repeat(40);
     const afterSha = "2".repeat(40);
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async () =>
       Response.json({
         ahead_by: 1,
@@ -461,7 +458,7 @@ describe("GitHub activity commit acquisition", () => {
   test("accepts a ref rewind with no newly reachable commits", async () => {
     const beforeSha = "1".repeat(40);
     const afterSha = "2".repeat(40);
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async () =>
       Response.json({ ahead_by: 0, commits: [], total_commits: 0 })
     );
@@ -487,7 +484,7 @@ describe("GitHub activity commit acquisition", () => {
     const olderSha = "2".repeat(40);
     const afterSha = "3".repeat(40);
     const paths: string[] = [];
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async (input, init) => {
       const url =
         input instanceof Request ? new URL(input.url) : new URL(input);
@@ -555,7 +552,7 @@ describe("GitHub activity commit acquisition", () => {
     const firstSha = "3".repeat(40);
     const afterSha = "4".repeat(40);
     const paths: string[] = [];
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async (input) => {
       const url =
         input instanceof Request ? new URL(input.url) : new URL(input);
@@ -599,7 +596,7 @@ describe("GitHub activity commit acquisition", () => {
     const afterSha = knownShas.at(-1);
     assert.ok(afterSha !== undefined);
     const paths: string[] = [];
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async (input) => {
       const url =
         input instanceof Request ? new URL(input.url) : new URL(input);
@@ -636,8 +633,10 @@ describe("GitHub activity commit acquisition", () => {
     const afterSha = knownShas.at(-1);
     assert.ok(afterSha !== undefined);
     let calls = 0;
-    env.GITHUB_F0RR0_TOKEN = "first-token";
-    env.GITHUB_YUPPIESTECHDEV_TOKEN = "second-token";
+    env.GITHUB_TOKENS = JSON.stringify({
+      f0rr0: "first-token",
+      yuppiestechdev: "second-token",
+    });
     globalThis.fetch = mockFetch(async () => {
       calls += 1;
       if (calls === 1) {
@@ -677,7 +676,7 @@ describe("GitHub activity commit acquisition", () => {
     const afterSha = knownShas.at(-1);
     assert.ok(afterSha !== undefined);
     let calls = 0;
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async () => {
       calls += 1;
       return new Response(null, { status: 409 });
@@ -708,7 +707,7 @@ describe("GitHub activity commit acquisition", () => {
     );
     const afterSha = knownShas.at(-1);
     assert.ok(afterSha !== undefined);
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async () =>
       Response.json(
         {
@@ -748,7 +747,7 @@ describe("GitHub activity commit acquisition", () => {
   test("bounds a new branch by the observed count without slicing history", async () => {
     const olderSha = "1".repeat(40);
     const afterSha = "2".repeat(40);
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async (input, init) => {
       const url =
         input instanceof Request ? new URL(input.url) : new URL(input);
@@ -811,7 +810,7 @@ describe("GitHub activity commit acquisition", () => {
     const middleSha = "2".repeat(40);
     const afterSha = "3".repeat(40);
     const cursors: (string | null)[] = [];
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async (_input, init) => {
       const request = JSON.parse(await new Response(init?.body).text());
       cursors.push(request.variables.cursor);
@@ -892,7 +891,7 @@ describe("GitHub activity commit acquisition", () => {
   test("backfills a closed date window without requiring the current ref head", async () => {
     const rangedSha = "4".repeat(40);
     const afterSha = "5".repeat(40);
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async (_input, init) => {
       const request = JSON.parse(await new Response(init?.body).text());
       expect(request.variables.since).toBe("2026-07-01T00:00:00.000Z");
@@ -939,7 +938,7 @@ describe("GitHub activity commit acquisition", () => {
 
   test("accepts a ref whose reachable history predates the boundary", async () => {
     const afterSha = "4".repeat(40);
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async (_input, init) => {
       const request = JSON.parse(await new Response(init?.body).text());
       expect(request.variables.since).toBe("2026-08-18T00:00:00.000Z");
@@ -1124,7 +1123,7 @@ describe("GitHub pull request merge commit resolution", () => {
     );
   });
 
-  test("classifies a rejected GraphQL request as non-retryable", async () => {
+  test("defers GraphQL access loss without declaring source evidence invalid", async () => {
     globalThis.fetch = mockFetch(async () =>
       Response.json({
         data: null,
@@ -1135,9 +1134,9 @@ describe("GitHub pull request merge commit resolution", () => {
     expect(
       resolveGitHubPullRequestMergeCommits(["PR_hidden"], "test-token")
     ).rejects.toMatchObject({
-      code: "source_invalid",
-      kind: "request_rejected",
-      retryable: false,
+      code: "source_incomplete",
+      kind: "access_denied",
+      retryable: true,
     });
   });
 });
@@ -1190,7 +1189,7 @@ describe("GitHub pull request acquisition", () => {
   };
 
   test("rejects an invalid associated-PR item instead of completing empty", async () => {
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async () =>
       Response.json([{ ...pullRequest, node_id: null }])
     );
@@ -1211,7 +1210,7 @@ describe("GitHub pull request acquisition", () => {
     expect(Object.hasOwn(rest2026MergedPullRequest, "merge_commit_sha")).toBe(
       false
     );
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async (input) => {
       const url =
         input instanceof Request ? new URL(input.url) : new URL(input);
@@ -1244,7 +1243,7 @@ describe("GitHub pull request acquisition", () => {
   });
 
   test("resolves an authoritative merge SHA for REST 2026 snapshots", async () => {
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     const requestedPaths: string[] = [];
     globalThis.fetch = mockFetch(async (input) => {
       const url =
@@ -1281,7 +1280,7 @@ describe("GitHub pull request acquisition", () => {
   });
 
   test("preserves an authoritative null merge SHA for a rebase merge", async () => {
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async (input) => {
       const url =
         input instanceof Request ? new URL(input.url) : new URL(input);
@@ -1401,7 +1400,7 @@ describe("GitHub pull request acquisition", () => {
         sha: headSha,
       },
     };
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async (input) => {
       const url =
         input instanceof Request ? new URL(input.url) : new URL(input);
@@ -1428,8 +1427,10 @@ describe("GitHub pull request acquisition", () => {
 
   test("unions associated PR visibility across both tracked identities", async () => {
     const commitSha = "8".repeat(40);
-    env.GITHUB_F0RR0_TOKEN = "f0-token";
-    env.GITHUB_YUPPIESTECHDEV_TOKEN = "yuppies-token";
+    env.GITHUB_TOKENS = JSON.stringify({
+      f0rr0: "f0-token",
+      yuppiestechdev: "yuppies-token",
+    });
     let calls = 0;
     globalThis.fetch = mockFetch(async () => {
       calls += 1;
@@ -1453,7 +1454,7 @@ describe("GitHub pull request acquisition", () => {
   test("discovers associated tracked pull requests and reconciles membership", async () => {
     const commitSha = "a".repeat(40);
     const requestedPaths: string[] = [];
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     globalThis.fetch = mockFetch(async (input) => {
       const url =
         input instanceof Request ? new URL(input.url) : new URL(input);
@@ -1554,7 +1555,7 @@ describe("GitHub pull request acquisition", () => {
   });
 
   test("uses a complete paginated comparison beyond the PR commit cap", async () => {
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     const comparePages: number[] = [];
     globalThis.fetch = mockFetch(async (input) => {
       const url =
@@ -1695,7 +1696,7 @@ describe("GitHub pull request acquisition", () => {
 
 describe("GitHub activity provider deadlines", () => {
   test("propagates one absolute deadline through every worker acquisition path", async () => {
-    env.GITHUB_F0RR0_TOKEN = "test-token";
+    env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
     let calls = 0;
     globalThis.fetch = mockFetch(async () => {
       calls += 1;

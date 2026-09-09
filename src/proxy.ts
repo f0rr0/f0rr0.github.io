@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+import { env } from "@/env";
+
 export function proxy(request: NextRequest) {
   const url = new URL(request.url);
   if (url.pathname !== "/_r7k2" && !url.pathname.startsWith("/_r7k2/")) {
@@ -12,10 +14,11 @@ export function proxy(request: NextRequest) {
   }
 
   url.pathname = url.pathname.slice("/_r7k2".length) || "/";
+  const region = env.NEXT_PUBLIC_POSTHOG_REGION;
   url.hostname =
     url.pathname.startsWith("/static/") || url.pathname.startsWith("/array/")
-      ? "us-assets.i.posthog.com"
-      : "us.i.posthog.com";
+      ? `${region}-assets.i.posthog.com`
+      : `${region}.i.posthog.com`;
   url.protocol = "https:";
   url.port = "";
   const headers = new Headers(request.headers);

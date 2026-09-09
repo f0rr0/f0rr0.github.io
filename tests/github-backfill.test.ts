@@ -205,7 +205,7 @@ describe("GitHub factual history backfill", () => {
     expect(() => {
       requireBackfillEnvironment(request, {
         DATABASE_URL: "postgresql://activity.example/database",
-        GITHUB_F0RR0_TOKEN: "token",
+        GITHUB_TOKENS: JSON.stringify({ f0rr0: "token" }),
       });
     }).not.toThrow();
     expect(() => {
@@ -360,7 +360,7 @@ describe("GitHub factual history backfill", () => {
     const discovered = await runGitHubBackfillDiscovery(
       {
         deadlineAt: now.getTime() + 30 * 60_000,
-        environment: { GITHUB_F0RR0_TOKEN: "token" },
+        environment: { GITHUB_TOKENS: JSON.stringify({ f0rr0: "token" }) },
         request,
       },
       {
@@ -413,7 +413,7 @@ describe("GitHub factual history backfill", () => {
     const discovered = await runGitHubBackfillDiscovery(
       {
         deadlineAt: now.getTime() + 30 * 60_000,
-        environment: { GITHUB_F0RR0_TOKEN: "token" },
+        environment: { GITHUB_TOKENS: JSON.stringify({ f0rr0: "token" }) },
         request,
       },
       {
@@ -444,7 +444,7 @@ describe("GitHub factual history backfill", () => {
     const discovered = await runGitHubBackfillDiscovery(
       {
         deadlineAt: now.getTime() + 30 * 60_000,
-        environment: { GITHUB_F0RR0_TOKEN: "token" },
+        environment: { GITHUB_TOKENS: JSON.stringify({ f0rr0: "token" }) },
         request,
       },
       {
@@ -476,7 +476,7 @@ describe("GitHub factual history backfill", () => {
     const discovered = await runGitHubBackfillDiscovery(
       {
         deadlineAt: now.getTime() + 30 * 60_000,
-        environment: { GITHUB_F0RR0_TOKEN: "token" },
+        environment: { GITHUB_TOKENS: JSON.stringify({ f0rr0: "token" }) },
         request,
       },
       {
@@ -704,4 +704,19 @@ describe("GitHub factual history backfill", () => {
     });
     expect(workerPasses).toBe(1);
   });
+});
+
+test("workflow secrets avoid GitHub's reserved prefix except its built-in token", async () => {
+  const directory = new URL("../.github/workflows/", import.meta.url);
+  let checked = 0;
+  for await (const file of new Bun.Glob("*.yml").scan(directory.pathname)) {
+    const workflow = await Bun.file(new URL(file, directory)).text();
+    for (const [, name] of workflow.matchAll(/\bsecrets\.([A-Za-z_]\w*)/g)) {
+      expect(
+        name === "GITHUB_TOKEN" || !name.toUpperCase().startsWith("GITHUB_")
+      ).toBe(true);
+      checked += 1;
+    }
+  }
+  expect(checked).toBeGreaterThan(0);
 });

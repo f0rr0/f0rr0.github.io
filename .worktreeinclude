@@ -1,2 +1,3 @@
-# Copy the complete local runtime configuration into Codex-managed worktrees.
+# Copy development-only local configuration into managed worktrees.
+# Keep production credentials in deployment secret storage, not .env.local.
 .env.local

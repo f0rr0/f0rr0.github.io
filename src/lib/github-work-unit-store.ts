@@ -62,10 +62,7 @@ const SUMMARY_EVALUATION_LIMIT = 8;
 const SUMMARY_DEBOUNCE_MS = 5 * 60 * 1000;
 const DIGEST = /^[a-f0-9]{64}$/u;
 const SHA = /^[a-f0-9]{40}$/u;
-
-const trackedAuthorUserIds = new Set<string>(
-  Object.values(TRACKED_GITHUB_USER_IDS)
-);
+const trackedAuthorUserIds = new Set(Object.values(TRACKED_GITHUB_USER_IDS));
 
 type GitHubWorkUnitDatabase = ReturnType<typeof getDatabase>;
 type GitHubWorkUnitTransaction = Parameters<
@@ -1278,7 +1275,14 @@ const loadProjectionSnapshot = async (
       eq(githubIssues.repositoryId, githubRepositories.id)
     )
     .where(
-      inArray(githubRepositories.visibility, ["public", "private", "internal"])
+      and(
+        inArray(githubIssues.authorUserId, [...trackedAuthorUserIds]),
+        inArray(githubRepositories.visibility, [
+          "public",
+          "private",
+          "internal",
+        ])
+      )
     );
   const issueDays = issueRows.map((issue) => issueDayFrom(issue.createdAt));
   return {

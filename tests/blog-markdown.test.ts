@@ -9,11 +9,17 @@ describe("blog Markdown", () => {
   test("resolves authored image assets without rewriting fenced examples", () => {
     const body =
       '![A chart](./chart.svg)\n<Image\n  src="./screen.png"\n/>\n```md\n![Example](./example.png)\n```\n~~~~md\n![Another](./example.png)\n~~~~\n![Remote](https://example.com/image.png)';
-    const output = resolveBlogMarkdownImages(body, "a-post/page.mdx");
-    const base =
-      "https://raw.githubusercontent.com/f0rr0/f0rr0.dev/next/src/content/blog/a-post/";
-    expect(output).toContain(`![A chart](${base}chart.svg)`);
-    expect(output).toContain(`src="${base}screen.png"`);
+    const output = resolveBlogMarkdownImages(
+      body,
+      {
+        "./chart.svg": "/_next/static/media/chart.hash.svg",
+        "./screen.png": "/_next/static/media/screen.hash.png",
+      },
+      "https://example.com/writing/a-post"
+    );
+    const base = "https://example.com/_next/static/media/";
+    expect(output).toContain(`![A chart](${base}chart.hash.svg)`);
+    expect(output).toContain(`src="${base}screen.hash.png"`);
     expect(output).toContain("```md\n![Example](./example.png)\n```");
     expect(output).toContain("~~~~md\n![Another](./example.png)\n~~~~");
     expect(output).toContain("![Remote](https://example.com/image.png)");

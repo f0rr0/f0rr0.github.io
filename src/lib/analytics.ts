@@ -1,5 +1,7 @@
 import { posthog } from "posthog-js";
 
+import { CANONICAL_SITE_URL } from "@/lib/site-url";
+
 export interface DetailProperties {
   section: "work" | "journey" | "token-log";
   item_kind?: string;
@@ -53,7 +55,7 @@ export function sanitizeProperties(properties: Record<string, unknown>) {
         continue;
       }
       try {
-        const url = new URL(value, "https://f0rr0.dev");
+        const url = new URL(value, CANONICAL_SITE_URL);
         clean[key] = /referrer/i.test(key)
           ? url.origin
           : /pathname/i.test(key)

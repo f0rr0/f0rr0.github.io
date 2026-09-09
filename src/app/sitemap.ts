@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { resumeData } from "@/content/resume";
 import { getBlogPosts } from "@/lib/blog-utils";
-import { publicUrl } from "@/lib/site";
+import { publicUrl, resumePdfUrl } from "@/lib/site";
 
 const newestDate = (dates: Date[]) =>
   dates.toSorted((a, b) => b.getTime() - a.getTime()).at(0);
@@ -30,7 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     {
       lastModified: resumeUpdatedAt,
-      url: publicUrl("/resume/sid-jain-resume.pdf"),
+      url: publicUrl(resumePdfUrl),
     },
     {
       lastModified: latestPostDate,

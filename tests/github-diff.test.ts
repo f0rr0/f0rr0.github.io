@@ -105,8 +105,8 @@ test("a real binary change remains explicit while the text diff stays eligible",
 
 test("PR acquisition falls back to a SHA-pinned diff and rejects a moving PR", async () => {
   const originalFetch = globalThis.fetch;
-  const originalToken = env.GITHUB_F0RR0_TOKEN;
-  env.GITHUB_F0RR0_TOKEN = "test-token";
+  const originalToken = env.GITHUB_TOKENS;
+  env.GITHUB_TOKENS = JSON.stringify({ f0rr0: "test-token" });
   let head = "b".repeat(40);
   const base = "a".repeat(40);
   const paths: string[] = [];
@@ -145,9 +145,9 @@ test("PR acquisition falls back to a SHA-pinned diff and rejects a moving PR", a
   } finally {
     globalThis.fetch = originalFetch;
     if (originalToken === undefined) {
-      delete env.GITHUB_F0RR0_TOKEN;
+      delete env.GITHUB_TOKENS;
     } else {
-      env.GITHUB_F0RR0_TOKEN = originalToken;
+      env.GITHUB_TOKENS = originalToken;
     }
   }
 });

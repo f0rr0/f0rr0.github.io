@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     images: [siteConfig.author.image],
     locale: siteConfig.locale,
     siteName: siteConfig.name,
-    title: "Sid Jain Writing",
+    title: `${siteConfig.name} Writing`,
     type: "website",
     url: publicUrl("/writing"),
   },
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     card: "summary",
     description,
     images: [siteConfig.author.image],
-    title: "Sid Jain Writing",
+    title: `${siteConfig.name} Writing`,
   },
 };
 

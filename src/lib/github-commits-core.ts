@@ -1,3 +1,9 @@
+import { githubAccounts } from "@/content/site";
+
+export const TRACKED_GITHUB_ACCOUNTS = githubAccounts.map(({ login }) => login);
+export const TRACKED_GITHUB_USER_IDS: Readonly<Record<string, string>> =
+  Object.fromEntries(githubAccounts.map(({ login, id }) => [login, id]));
+
 const COMMIT_SHA = /^[a-f0-9]{40}$/;
 const EVENT_ID = /^\d{1,64}$/;
 const GITHUB_DELIVERY_ID =
@@ -8,14 +14,7 @@ const REPOSITORY_FULL_NAME =
   /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?\/[A-Za-z0-9._-]{1,100}$/;
 const ZERO_SHA = "0".repeat(40);
 
-export const TRACKED_GITHUB_ACCOUNTS = ["f0rr0", "yuppiestechdev"] as const;
-
-export type TrackedGitHubAccount = (typeof TRACKED_GITHUB_ACCOUNTS)[number];
-
-export const TRACKED_GITHUB_USER_IDS = {
-  f0rr0: "8574219",
-  yuppiestechdev: "99666891",
-} as const satisfies Record<TrackedGitHubAccount, string>;
+export type TrackedGitHubAccount = string;
 
 type JsonObject = Record<string, unknown>;
 

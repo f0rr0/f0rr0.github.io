@@ -6,8 +6,7 @@ import { SiteShell } from "@/components/site-shell";
 import { getInitialGitHubActivity } from "@/lib/github-activity-feed";
 import { publicUrl, siteConfig } from "@/lib/site";
 
-const description =
-  "A day-by-day record of what Sid Jain is building, fixing, and shipping.";
+const description = `A day-by-day record of what ${siteConfig.name} is building, fixing, and shipping.`;
 
 export const metadata: Metadata = {
   alternates: { canonical: "/work" },
@@ -17,7 +16,7 @@ export const metadata: Metadata = {
     images: [siteConfig.author.image],
     locale: siteConfig.locale,
     siteName: siteConfig.name,
-    title: "Sid Jain Work",
+    title: `${siteConfig.name} Work`,
     type: "website",
     url: publicUrl("/work"),
   },
@@ -26,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary",
     description,
     images: [siteConfig.author.image],
-    title: "Sid Jain Work",
+    title: `${siteConfig.name} Work`,
   },
 };
 

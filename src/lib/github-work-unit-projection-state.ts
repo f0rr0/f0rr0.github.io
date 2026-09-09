@@ -4,7 +4,7 @@ import { and, eq, sql } from "drizzle-orm";
 
 import { getDatabase } from "@/db/client";
 import { githubPublicFeedHead } from "@/db/schema";
-import { trackedGitHubUserIds } from "@/lib/github-commits-core";
+import { TRACKED_GITHUB_USER_IDS } from "@/lib/github-commits-core";
 import { GITHUB_WORK_UNIT_SUMMARY_POLICY_DIGEST } from "@/lib/github-work-unit-summary";
 
 type Database = ReturnType<typeof getDatabase>;
@@ -19,7 +19,7 @@ const PROJECTION_POLICY =
 const PIPELINE_POLICY_DIGEST = createHash("sha256")
   .update(
     JSON.stringify({
-      authors: Object.values(trackedGitHubUserIds()).toSorted(),
+      authors: Object.values(TRACKED_GITHUB_USER_IDS).toSorted(),
       projection: PROJECTION_POLICY,
       summary: GITHUB_WORK_UNIT_SUMMARY_POLICY_DIGEST,
     })

@@ -7,18 +7,19 @@ const optionalString = z.string().trim().min(1).optional();
 export const env = createEnv({
   extends: [vercel()],
   client: {
-    NEXT_PUBLIC_SITE_ORIGIN: z.url().optional(),
-    NEXT_PUBLIC_DEPLOYMENT_ENV: z
-      .enum(["development", "preview", "production", "test"])
+    NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL: optionalString,
+    NEXT_PUBLIC_VERCEL_ENV: z
+      .enum(["development", "preview", "production"])
       .optional(),
     NEXT_PUBLIC_PORT: optionalString,
     NEXT_PUBLIC_POSTHOG_KEY: optionalString,
-    NEXT_PUBLIC_POSTHOG_REGION: z.enum(["us", "eu"]).optional(),
+    NEXT_PUBLIC_POSTHOG_REGION: z.enum(["us", "eu"]).default("us"),
   },
   emptyStringAsUndefined: true,
   experimental__runtimeEnv: {
-    NEXT_PUBLIC_SITE_ORIGIN: process.env.NEXT_PUBLIC_SITE_ORIGIN,
-    NEXT_PUBLIC_DEPLOYMENT_ENV: process.env.NEXT_PUBLIC_DEPLOYMENT_ENV,
+    NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL:
+      process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL,
+    NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV,
     NEXT_PUBLIC_PORT: process.env.NEXT_PUBLIC_PORT,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_POSTHOG_REGION: process.env.NEXT_PUBLIC_POSTHOG_REGION,

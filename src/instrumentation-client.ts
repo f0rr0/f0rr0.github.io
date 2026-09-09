@@ -8,12 +8,12 @@ const projectToken = env.NEXT_PUBLIC_POSTHOG_KEY;
 
 if (
   projectToken !== undefined &&
-  env.NEXT_PUBLIC_DEPLOYMENT_ENV === "production" &&
+  env.NEXT_PUBLIC_VERCEL_ENV === "production" &&
   location.origin === CANONICAL_SITE_URL
 ) {
   posthog.init(projectToken, {
     api_host: "/_r7k2",
-    ui_host: `https://${env.NEXT_PUBLIC_POSTHOG_REGION ?? "us"}.posthog.com`,
+    ui_host: `https://${env.NEXT_PUBLIC_POSTHOG_REGION}.posthog.com`,
     defaults: "2026-08-30",
     cookieless_mode: "always",
     persistence: "memory",

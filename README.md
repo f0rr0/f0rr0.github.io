@@ -65,9 +65,6 @@ updates cron configuration. Migration `0022` only replaces seven username
 allowlists with valid-login checks; it adds no tables or columns and rewrites no
 stored history. Leave older applied migrations intact.
 
-Vercel supplies the production hostname when system environment variables are
-exposed. No manually maintained site URL or blog asset URL is needed.
-
 ## Customize once
 
 - `src/content/resume.ts`: identity, social profiles, career, education and PDF paths.
@@ -81,14 +78,9 @@ in the project settings. Local URLs use localhost and the configured port.
 There is no separately maintained site URL or blog asset base URL: exported
 Markdown uses the image URLs already emitted by the MDX compiler.
 
-GitHub activity uses the public author list in `src/content/site.ts` and a separate
-`GITHUB_TOKENS` JSON object, such as `{"alice":"<token>","bob":"<token>"}`.
-Each key references a configured author; credentials grant access and never select
-which authors appear. Rotation, expiration or removal preserves stored history.
-Polling and repository inventory verify the assigned token against the configured
-GitHub identity. Webhooks, summaries and database-only processing need no GitHub
-token. See the service guides before enabling activity or Codex stats. PostHog is
-disabled unless a capture key is supplied and runs only on the canonical production host.
+GitHub activity uses configured public authors and separate credentials. See the
+[GitHub activity guide](docs/github-commits.md) for token format and service setup,
+and the [analytics guide](docs/analytics.md) for optional PostHog configuration.
 
 Each installation needs its own database. Cron/Vault names are installation-wide;
 sharing one database between independent sites is unsupported. Set `vercel.json`

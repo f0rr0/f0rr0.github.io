@@ -188,14 +188,28 @@ const dpsLogo: LogoAsset = {
   tileClassName: "bg-[#016b2f]",
 };
 
+const linkedInUsername = "f0rr0";
+const githubProfiles = githubAccounts.map(({ login }) => ({
+  network: "GitHub",
+  username: login,
+  url: `https://github.com/${login}`,
+}));
+const [githubProfile] = githubProfiles;
+if (githubProfile === undefined) {
+  throw new Error("Configure a public GitHub account in src/content/site.ts.");
+}
+export const primaryGitHubProfile = githubProfile;
+export const socialProfiles = [
+  ...githubProfiles,
+  {
+    network: "LinkedIn",
+    username: linkedInUsername,
+    url: `https://linkedin.com/in/${linkedInUsername}`,
+  },
+];
+
 const person = {
-  profiles: [
-    ...githubAccounts.map(({ login }) => ({
-      network: "GitHub",
-      url: `https://github.com/${login}`,
-    })),
-    { network: "LinkedIn", url: "https://linkedin.com/in/f0rr0" },
-  ],
+  profiles: socialProfiles,
   avatarImage: "/resume/sid-jain-profile-avatar.png",
   email: "sid_26@outlook.com",
   image: "/resume/sid-jain-profile.png",
@@ -206,24 +220,6 @@ const person = {
   targetPositioning:
     "senior full-stack engineer, frontend-focused product engineer, and AI product engineer",
 };
-
-export const socialProfiles = person.profiles.map((profile) => {
-  const username = new URL(profile.url).pathname
-    .split("/")
-    .filter(Boolean)
-    .at(-1);
-  if (username === undefined) {
-    throw new Error("Social profile URLs must include a username.");
-  }
-  return { ...profile, username };
-});
-const githubProfile = socialProfiles.find(
-  (profile) => profile.network === "GitHub"
-);
-if (githubProfile === undefined) {
-  throw new Error("Configure a public GitHub profile in resume.ts.");
-}
-export const primaryGitHubProfile = githubProfile;
 
 export const resumeData = {
   lastUpdated: "2026-09-06",

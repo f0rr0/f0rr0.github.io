@@ -1,13 +1,13 @@
 import { z } from "zod";
 
 import { env } from "@/env";
-import { trackedGitHubAccounts } from "@/lib/github-commits-core";
+import { TRACKED_GITHUB_ACCOUNTS } from "@/lib/github-commits-core";
 
 const tokensSchema = z.record(z.string(), z.string().trim().min(1));
 
 export const githubTokensFrom = (
   value?: string,
-  accounts: readonly string[] = trackedGitHubAccounts()
+  accounts: readonly string[] = TRACKED_GITHUB_ACCOUNTS
 ): Record<string, string> => {
   if (value === undefined || value.trim() === "") {
     return {};
@@ -34,7 +34,7 @@ export const githubTokensFrom = (
 
 export const tokenForGitHubAccount = (
   login: string,
-  environment: { GITHUB_TOKENS?: string } = env
+  environment: Pick<typeof env, "GITHUB_TOKENS"> = env
 ) => {
   const tokens = githubTokensFrom(environment.GITHUB_TOKENS);
   const token = Object.hasOwn(tokens, login) ? tokens[login] : undefined;

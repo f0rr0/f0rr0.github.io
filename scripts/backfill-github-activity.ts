@@ -41,10 +41,7 @@ interface BackfillArguments {
   startDate: string;
 }
 
-interface BackfillEnvironment {
-  DATABASE_URL?: string;
-  GITHUB_TOKENS?: string;
-}
+type BackfillEnvironment = Pick<typeof env, "DATABASE_URL" | "GITHUB_TOKENS">;
 
 type GitHubBackfillProgressStage =
   | "identity"

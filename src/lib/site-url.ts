@@ -37,6 +37,10 @@ export const siteOriginFrom = (environment: Partial<typeof env>) => {
   ).origin;
 };
 
-// Next config supplies this public value to browser bundles. Scripts use Vercel's original variable.
+// Vercel provides the public hostname at build time; standalone scripts use its server variable.
 export const CANONICAL_SITE_URL =
-  env.NEXT_PUBLIC_SITE_ORIGIN ?? siteOriginFrom(env);
+  env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL === undefined
+    ? typeof window === "undefined"
+      ? siteOriginFrom(env)
+      : window.location.origin
+    : productionSiteOrigin(env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL);

@@ -8,12 +8,10 @@ import { env } from "../src/env";
 // Keep the historical lock key so overlapping old/new deployments still coordinate.
 const MIGRATION_LOCK_NAME = "f0rr0.dev:drizzle-migrations";
 
-interface Environment {
-  DATABASE_URL?: string;
-  DATABASE_URL_UNPOOLED?: string;
-  VERCEL?: string;
-  VERCEL_ENV?: string;
-}
+type Environment = Pick<
+  typeof env,
+  "DATABASE_URL" | "DATABASE_URL_UNPOOLED" | "VERCEL" | "VERCEL_ENV"
+>;
 
 export class ProductionMigrationConfigurationError extends Error {
   constructor(message: string) {

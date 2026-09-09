@@ -7,8 +7,8 @@ import {
 } from "../src/lib/github-accounts";
 import { assertGitHubTokenIdentity } from "../src/lib/github-commits";
 import {
-  trackedGitHubAccounts,
-  trackedGitHubUserIds,
+  TRACKED_GITHUB_ACCOUNTS,
+  TRACKED_GITHUB_USER_IDS,
 } from "../src/lib/github-commits-core";
 import { env, mockFetch } from "./helpers";
 
@@ -51,8 +51,8 @@ test("credential rotation, removal and order never change authors or require net
   globalThis.fetch = mockFetch(() => {
     throw new Error("Unexpected discovery request");
   });
-  const authors = trackedGitHubUserIds();
-  const accounts = trackedGitHubAccounts();
+  const authors = TRACKED_GITHUB_USER_IDS;
+  const accounts = TRACKED_GITHUB_ACCOUNTS;
   delete env.GITHUB_TOKEN;
   delete env.GH_TOKEN;
   for (const tokens of [
@@ -62,8 +62,8 @@ test("credential rotation, removal and order never change authors or require net
     {},
   ]) {
     env.GITHUB_TOKENS = JSON.stringify(tokens);
-    expect(trackedGitHubUserIds()).toEqual(authors);
-    expect(trackedGitHubAccounts()).toEqual(accounts);
+    expect(TRACKED_GITHUB_USER_IDS).toEqual(authors);
+    expect(TRACKED_GITHUB_ACCOUNTS).toEqual(accounts);
     expect(tokensForGitHubAccount()).toEqual(Object.values(tokens));
   }
   expect(() => tokenForGitHubAccount("f0rr0")).toThrow("No GitHub token");

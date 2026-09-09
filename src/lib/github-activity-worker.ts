@@ -55,7 +55,7 @@ import {
 } from "@/lib/github-api";
 import {
   repositoryIdFrom,
-  trackedGitHubAccounts,
+  TRACKED_GITHUB_ACCOUNTS,
 } from "@/lib/github-commits-core";
 import type { TrackedGitHubAccount } from "@/lib/github-commits-core";
 import {
@@ -225,7 +225,7 @@ export const githubActivityFailureIsTerminal = (
 };
 
 const activeTrackedAccounts = async (
-  requestedAccounts: readonly TrackedGitHubAccount[] = trackedGitHubAccounts()
+  requestedAccounts: readonly TrackedGitHubAccount[] = TRACKED_GITHUB_ACCOUNTS
 ) => {
   const accounts: TrackedGitHubAccount[] = [];
   for (const account of requestedAccounts) {
@@ -597,11 +597,11 @@ const processPullRequests = async (
 const checkedWorkerAccounts = (
   accounts: readonly TrackedGitHubAccount[] | undefined
 ) => {
-  const requested = accounts ?? trackedGitHubAccounts();
+  const requested = accounts ?? TRACKED_GITHUB_ACCOUNTS;
   if (
     requested.length === 0 ||
     new Set(requested).size !== requested.length ||
-    requested.some((account) => !trackedGitHubAccounts().includes(account))
+    requested.some((account) => !TRACKED_GITHUB_ACCOUNTS.includes(account))
   ) {
     throw new RangeError(
       "The GitHub activity worker account scope is invalid."

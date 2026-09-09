@@ -29,16 +29,17 @@ const LEGACY_TAG_REFS_JOB_NAME = "github-tag-refs-every-fifteen-minutes";
 // Keep the historical lock key so overlapping old/new deployments still coordinate.
 const CRON_CONFIGURATION_LOCK_NAME = "f0rr0.dev:supabase-cron";
 
-interface SupabaseCronEnvironment {
-  CRON_SECRET?: string;
-  GITHUB_TOKENS?: string;
-  OPENAI_API_KEY?: string;
-  DATABASE_URL?: string;
-  DATABASE_URL_UNPOOLED?: string;
-  VERCEL?: string;
-  VERCEL_ENV?: string;
-  VERCEL_PROJECT_PRODUCTION_URL?: string;
-}
+type SupabaseCronEnvironment = Pick<
+  typeof env,
+  | "CRON_SECRET"
+  | "GITHUB_TOKENS"
+  | "OPENAI_API_KEY"
+  | "DATABASE_URL"
+  | "DATABASE_URL_UNPOOLED"
+  | "VERCEL"
+  | "VERCEL_ENV"
+  | "VERCEL_PROJECT_PRODUCTION_URL"
+>;
 
 const requiredEnvironmentValue = (
   name: string,

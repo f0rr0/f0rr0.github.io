@@ -17,7 +17,7 @@ import {
   githubRepositoryInventoryHeads,
   githubRepositoryRefs,
 } from "@/db/schema";
-import { trackedGitHubUserIds } from "@/lib/github-commits-core";
+import { TRACKED_GITHUB_USER_IDS } from "@/lib/github-commits-core";
 import type {
   GitHubRepositoryInventoryFacts,
   TrackedGitHubAccount,
@@ -55,7 +55,7 @@ const claimGitHubRepositoryInventoryRefresh = async (input: {
   force: boolean;
   now: Date;
 }): Promise<GitHubRepositoryInventoryClaim | null> => {
-  const accountUserId = trackedGitHubUserIds()[input.account];
+  const accountUserId = TRACKED_GITHUB_USER_IDS[input.account];
   const staleBefore = new Date(
     input.now.getTime() - INVENTORY_REFRESH_INTERVAL_MS
   );
@@ -236,7 +236,7 @@ const publishGitHubRepositoryInventory = async (
 const readCurrentGitHubRepositoryInventory = async (
   account: TrackedGitHubAccount
 ): Promise<readonly GitHubRepositoryInventoryFacts[] | null> => {
-  const accountUserId = trackedGitHubUserIds()[account];
+  const accountUserId = TRACKED_GITHUB_USER_IDS[account];
   return await getDatabase().transaction(
     async (transaction) => {
       const [head] = await transaction

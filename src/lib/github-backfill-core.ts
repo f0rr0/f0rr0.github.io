@@ -1,7 +1,7 @@
 import type { GitHubFactualWorkerBacklog } from "@/lib/github-backfill-store";
 import {
   repositoryIdFrom,
-  trackedGitHubAccounts,
+  TRACKED_GITHUB_ACCOUNTS,
   trackedGitHubAccountFrom,
 } from "@/lib/github-commits-core";
 import type { TrackedGitHubAccount } from "@/lib/github-commits-core";
@@ -85,7 +85,7 @@ export const githubBackfillRequestFrom = (
     return null;
   }
   const accounts =
-    account === "all" ? trackedGitHubAccounts() : ([account] as const);
+    account === "all" ? TRACKED_GITHUB_ACCOUNTS : ([account] as const);
   return {
     accounts,
     endDate: endDay.toISOString().slice(0, 10),

@@ -14,7 +14,7 @@ export function proxy(request: NextRequest) {
   }
 
   url.pathname = url.pathname.slice("/_r7k2".length) || "/";
-  const region = env.NEXT_PUBLIC_POSTHOG_REGION ?? "us";
+  const region = env.NEXT_PUBLIC_POSTHOG_REGION;
   url.hostname =
     url.pathname.startsWith("/static/") || url.pathname.startsWith("/array/")
       ? `${region}-assets.i.posthog.com`

@@ -1,8 +1,7 @@
 import { githubAccounts } from "@/content/site";
 
-export const trackedGitHubAccounts = () =>
-  githubAccounts.map(({ login }) => login);
-export const trackedGitHubUserIds = (): Record<string, string> =>
+export const TRACKED_GITHUB_ACCOUNTS = githubAccounts.map(({ login }) => login);
+export const TRACKED_GITHUB_USER_IDS: Readonly<Record<string, string>> =
   Object.fromEntries(githubAccounts.map(({ login, id }) => [login, id]));
 
 const COMMIT_SHA = /^[a-f0-9]{40}$/;
@@ -157,7 +156,7 @@ export const githubCommitReferenceValuesFrom = (
   firstObservedAt: Date
 ) => ({
   author: commit.author,
-  authorUserId: trackedGitHubUserIds()[commit.author],
+  authorUserId: TRACKED_GITHUB_USER_IDS[commit.author],
   committedAt: new Date(commit.committedAt),
   firstObservedAt,
   message: commit.message,
@@ -310,7 +309,7 @@ export const trackedGitHubAccountFrom = (
   value: unknown
 ): TrackedGitHubAccount | null => {
   const login = normalizedText(value, 39)?.toLowerCase();
-  return trackedGitHubAccounts().find((account) => account === login) ?? null;
+  return TRACKED_GITHUB_ACCOUNTS.find((account) => account === login) ?? null;
 };
 
 export const trackedGitHubAccountFromUserId = (
@@ -319,8 +318,8 @@ export const trackedGitHubAccountFromUserId = (
   const userId = repositoryIdFrom(value);
   return userId === null
     ? null
-    : (trackedGitHubAccounts().find(
-        (account) => trackedGitHubUserIds()[account] === userId
+    : (TRACKED_GITHUB_ACCOUNTS.find(
+        (account) => TRACKED_GITHUB_USER_IDS[account] === userId
       ) ?? null);
 };
 

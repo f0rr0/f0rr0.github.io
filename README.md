@@ -13,8 +13,13 @@ bun run dev
 ```
 
 The website works without secrets; the persisted commit feed stays empty until
-Postgres is configured. See [the commit sync guide](docs/github-commits.md) for
-database, Supabase Cron, account polling, and webhook setup.
+PostgreSQL is configured. Set `DATABASE_URL` for application queries and, when
+using a runtime transaction pooler, `DATABASE_URL_UNPOOLED` to a direct or
+session-pooler connection for migrations and cron setup. Supply these in
+`.env.local` for local use and in Vercel environment settings for deployments;
+the application does not provision a database or synchronize connection settings.
+See [the commit sync guide](docs/github-commits.md) for Supabase Cron, account
+polling, and webhook setup.
 The separate [Codex stats guide](docs/codex-stats.md) covers its encrypted
 account snapshots and scheduled sync.
 

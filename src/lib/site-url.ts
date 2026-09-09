@@ -1,9 +1,4 @@
-interface SiteEnvironment {
-  VERCEL?: string;
-  VERCEL_PROJECT_PRODUCTION_URL?: string;
-  PORT?: string;
-  NEXT_PUBLIC_PORT?: string;
-}
+import { env } from "../env";
 
 export const productionSiteOrigin = (hostname: string | undefined) => {
   const host = hostname?.trim();
@@ -30,7 +25,7 @@ export const productionSiteOrigin = (hostname: string | undefined) => {
   return url.origin;
 };
 
-export const siteOriginFrom = (environment: SiteEnvironment) => {
+export const siteOriginFrom = (environment: Partial<typeof env>) => {
   if (
     (environment.VERCEL_PROJECT_PRODUCTION_URL?.trim().length ?? 0) > 0 ||
     environment.VERCEL === "1"
@@ -44,10 +39,4 @@ export const siteOriginFrom = (environment: SiteEnvironment) => {
 
 // Next config supplies this public value to browser bundles. Scripts use Vercel's original variable.
 export const CANONICAL_SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_ORIGIN ??
-  siteOriginFrom({
-    VERCEL: process.env.VERCEL,
-    VERCEL_PROJECT_PRODUCTION_URL: process.env.VERCEL_PROJECT_PRODUCTION_URL,
-    PORT: process.env.PORT,
-    NEXT_PUBLIC_PORT: process.env.NEXT_PUBLIC_PORT,
-  });
+  env.NEXT_PUBLIC_SITE_ORIGIN ?? siteOriginFrom(env);

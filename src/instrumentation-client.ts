@@ -8,7 +8,7 @@ const projectToken = env.NEXT_PUBLIC_POSTHOG_KEY;
 
 if (
   projectToken !== undefined &&
-  process.env.NEXT_PUBLIC_DEPLOYMENT_ENV === "production" &&
+  env.NEXT_PUBLIC_DEPLOYMENT_ENV === "production" &&
   location.origin === CANONICAL_SITE_URL
 ) {
   posthog.init(projectToken, {

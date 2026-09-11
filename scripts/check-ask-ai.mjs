@@ -21,7 +21,7 @@ try {
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto(new URL("/journey", process.argv[2]).href);
     const trigger = page.getByRole("button", {
-      name: "Ask an AI about Sid",
+      name: "Ask an AI",
       exact: true,
     });
     const popup = page.getByRole("dialog", { name: "Ask an AI" });
@@ -145,9 +145,7 @@ try {
   await page.goto(
     new URL("/writing/the-website-that-waited-2776-days", process.argv[2]).href
   );
-  await page
-    .getByRole("button", { name: "Ask an AI about this article", exact: true })
-    .tap();
+  await page.getByRole("button", { name: "Ask an AI", exact: true }).tap();
   const panel = page.getByRole("dialog", { name: "Ask an AI", exact: true });
   await panel.waitFor();
   assert.equal(
@@ -205,7 +203,9 @@ try {
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "Navigation menu" }).tap();
   await page.getByRole("link", { name: "Writing", exact: true }).last().click();
-  await page.getByRole("button", { name: "Ask an AI about my writing" }).tap();
+  await page.waitForURL("**/writing");
+  await page.getByRole("heading", { name: "Writing", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Ask an AI" }).tap();
   assert.equal(
     await page.getByRole("radio", { name: "My writing" }).isChecked(),
     true
@@ -221,9 +221,9 @@ try {
     .locator('a[href="/writing/the-website-that-waited-2776-days"]')
     .first()
     .click();
-  await page
-    .getByRole("button", { name: "Ask an AI about this article", exact: true })
-    .tap();
+  await page.waitForURL("**/writing/the-website-that-waited-2776-days");
+  await page.locator("article h1").waitFor();
+  await page.getByRole("button", { name: "Ask an AI", exact: true }).tap();
   assert.equal(
     await page.getByRole("radio", { name: "This article" }).isChecked(),
     true

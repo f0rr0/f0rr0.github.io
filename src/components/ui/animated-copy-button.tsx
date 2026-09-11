@@ -41,9 +41,7 @@ export function AnimatedCopyButton({
 }: Readonly<{ value: string; label?: string; className?: string }>) {
   const [status, setStatus] = useState<"idle" | "copied" | "error">("idle");
   const request = useRef(0);
-  // React requires an initial value, including for an empty ref.
-  // oxlint-disable-next-line unicorn/no-useless-undefined
-  const timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const timeout = useRef(0);
   const reducedMotion = useReducedMotion() === true;
   const copied = status === "copied";
   const Icon = copied ? Check : Copy;
@@ -65,7 +63,7 @@ export function AnimatedCopyButton({
         return;
       }
       setStatus("copied");
-      timeout.current = setTimeout(() => {
+      timeout.current = window.setTimeout(() => {
         setStatus("idle");
       }, 1500);
     } catch {
@@ -80,7 +78,6 @@ export function AnimatedCopyButton({
       <Button
         className={className}
         variant="ghost"
-        data-copy-state={status}
         onClick={() => {
           void copy();
         }}

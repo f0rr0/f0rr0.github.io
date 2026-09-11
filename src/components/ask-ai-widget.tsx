@@ -3,8 +3,9 @@
 import { Popover } from "@base-ui/react/popover";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useState } from "react";
 
+import { AskAiFace } from "@/components/ask-ai-face";
 import { AnimatedCopyButton } from "@/components/ui/animated-copy-button";
 import { Button } from "@/components/ui/button";
 import { buildAssistantActions } from "@/lib/ask-ai";
@@ -14,7 +15,6 @@ export function AskAiWidget({
   profilePrompt,
   pageContext,
 }: Readonly<{ profilePrompt: string; pageContext?: AskAiPageContext }>) {
-  const face = useRef<HTMLSpanElement>(null);
   const topicId = useId();
   const [topic, setTopic] = useState(
     pageContext === undefined ? "profile" : "page"
@@ -25,65 +25,17 @@ export function AskAiWidget({
   const subject = context?.title ?? "Sid";
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    const motion = matchMedia(
-      "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)"
-    );
-    let idleTimer: ReturnType<typeof setTimeout>;
-    const reset = () => {
-      clearTimeout(idleTimer);
-      delete face.current?.dataset.tracking;
-      face.current?.style.removeProperty("--gaze-x");
-      face.current?.style.removeProperty("--gaze-y");
-    };
-    const follow = (event: PointerEvent) => {
-      if (!motion.matches || event.pointerType !== "mouse" || !face.current) {
-        return;
-      }
-      const rect = face.current.getBoundingClientRect();
-      const x = event.clientX - rect.x - rect.width / 2;
-      const y = event.clientY - rect.y - rect.height / 2;
-      face.current.dataset.tracking = "";
-      face.current.style.setProperty("--gaze-x", `${Math.tanh(x / 400) * 6}px`);
-      face.current.style.setProperty("--gaze-y", `${Math.tanh(y / 300) * 5}px`);
-      clearTimeout(idleTimer);
-      idleTimer = setTimeout(reset, 2500);
-    };
-    window.addEventListener("pointermove", follow, { passive: true });
-    window.addEventListener("blur", reset);
-    document.addEventListener("pointerleave", reset);
-    motion.addEventListener("change", reset);
-    return () => {
-      clearTimeout(idleTimer);
-      window.removeEventListener("pointermove", follow);
-      window.removeEventListener("blur", reset);
-      document.removeEventListener("pointerleave", reset);
-      motion.removeEventListener("change", reset);
-    };
-  }, []);
-
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger
         aria-label="Ask an AI"
-        className="ask-ai-launcher group fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-40 inline-flex h-11 items-center gap-2 rounded-full bg-muted py-2 pr-2 pl-3 text-sm font-medium text-popover-foreground shadow-site-floating ring-1 ring-border dark:ring-0 transition-colors duration-150 hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring motion-reduce:transition-none sm:right-6 sm:bottom-6 print:hidden"
+        className="group fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-40 inline-flex h-11 items-center gap-2 rounded-full bg-muted py-2 pr-2 pl-3 text-sm font-medium text-popover-foreground shadow-site-floating ring-1 ring-border dark:ring-0 transition-colors duration-150 hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring motion-reduce:transition-none sm:right-6 sm:bottom-6 print:hidden"
         openOnHover
         delay={250}
         closeDelay={300}
       >
         <span>Ask an AI</span>
-        <span
-          aria-hidden="true"
-          className="ask-ai-face relative flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground"
-          ref={face}
-        >
-          <span className="ask-ai-eyes">
-            <span className="ask-ai-blink flex items-center gap-1.25">
-              <span className="ask-ai-eye h-2 w-0.75 rounded-full bg-current" />
-              <span className="ask-ai-eye h-2 w-0.75 rounded-full bg-current" />
-            </span>
-          </span>
-        </span>
+        <AskAiFace />
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Positioner

@@ -12,30 +12,27 @@ export interface AskAiPageContext {
 export const buildAskAiPrompt = ({ sourceUrl, title }: AskAiContext) =>
   `Read "${title}" at ${sourceUrl}. Answer my questions using the post as your primary source. Start with a brief summary, cite the post, and tell me if you cannot access it.`;
 
-export const buildAssistantLinks = (question: string) => {
+export const buildAssistantActions = (question: string) => {
   const prompt = encodeURIComponent(question);
-
-  return {
-    chatGpt: `https://chatgpt.com/?q=${prompt}`,
-    claude: `https://claude.ai/new?q=${prompt}`,
-    googleAi: `https://www.google.com/search?udm=50&q=${prompt}`,
-    perplexity: `https://www.perplexity.ai/search?q=${prompt}`,
-  };
-};
-
-export const buildAssistantActions = (prompt: string) => {
-  const links = buildAssistantLinks(prompt);
   return [
-    { label: "ChatGPT", href: links.chatGpt, iconSrc: "/brands/chatgpt.svg" },
-    { label: "Claude", href: links.claude, iconSrc: "/brands/claude.svg" },
+    {
+      label: "ChatGPT",
+      href: `https://chatgpt.com/?q=${prompt}`,
+      iconSrc: "/brands/chatgpt.svg",
+    },
+    {
+      label: "Claude",
+      href: `https://claude.ai/new?q=${prompt}`,
+      iconSrc: "/brands/claude.svg",
+    },
     {
       label: "Google AI Mode",
-      href: links.googleAi,
+      href: `https://www.google.com/search?udm=50&q=${prompt}`,
       iconSrc: "/brands/google.svg",
     },
     {
       label: "Perplexity",
-      href: links.perplexity,
+      href: `https://www.perplexity.ai/search?q=${prompt}`,
       iconSrc: "/brands/perplexity.svg",
     },
   ];

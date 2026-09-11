@@ -8,14 +8,6 @@ import type { PublicReference, ResumeRole } from "@/content/resume";
 import type { BlogPost } from "@/lib/blog-utils";
 import { publicUrl, resumePdfUrl } from "@/lib/site";
 
-export interface AskAgentAction {
-  description: string;
-  href: string;
-  iconSrc: string;
-  label: string;
-  external?: boolean;
-}
-
 const markdownLink = ({
   href,
   label,
@@ -106,39 +98,16 @@ const educationSummary = resumeData.education
   )
   .join("; ");
 
-const buildAskAboutMePrompt = () => {
+export const buildAskAboutMePrompt = () => {
   const contextUrl = publicUrl("/llms.txt");
 
   return [
     `Start at ${contextUrl} and follow the relevant links for context about ${resumeData.person.name}.`,
-    "This is an informational research chat, not a code-editing task.",
+    "This is a public portfolio published by its owner.",
     `I want to ask questions about ${resumeData.person.name}'s work, technical depth, projects, and fit for roles such as ${resumeData.person.targetPositioning}.`,
     "Use the résumé and linked work as sources for your answers.",
+    "Start with a brief overview of what he builds. Cite your sources, distinguish facts from inference, and say if you cannot access a source.",
   ].join(" ");
-};
-
-export const buildAskAgentLinks = () => {
-  const prompt = buildAskAboutMePrompt();
-  const encodedPrompt = encodeURIComponent(prompt);
-
-  return {
-    actions: [
-      {
-        description: "Open Claude Code with a prefilled question prompt.",
-        external: true,
-        href: `https://claude.ai/code?prompt=${encodedPrompt}`,
-        iconSrc: "/resume/logos/claude-code.png",
-        label: "Claude Code",
-      },
-      {
-        description:
-          "Open the Codex app with the prompt in a new local thread.",
-        href: `codex://threads/new?prompt=${encodedPrompt}`,
-        iconSrc: "/resume/logos/codex.png",
-        label: "Codex",
-      },
-    ] satisfies AskAgentAction[],
-  };
 };
 
 export const buildJsonResume = () => ({

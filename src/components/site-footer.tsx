@@ -1,11 +1,6 @@
-import Image from "next/image";
-
 import { CopyEmailButton } from "@/components/copy-email-button";
 import { resumeData, socialProfiles } from "@/content/resume";
-import { buildAskAgentLinks } from "@/lib/resume";
 import { publicUrl } from "@/lib/site";
-
-const { actions } = buildAskAgentLinks();
 
 export function SiteFooter() {
   return (
@@ -35,30 +30,6 @@ export function SiteFooter() {
             RSS
           </a>
         </nav>
-        <p className="flex flex-wrap items-center gap-x-2 text-muted-foreground">
-          <span>Ask</span>
-          {actions.map((action, index) => (
-            <span key={action.label} className="inline-flex items-center gap-2">
-              {index === 0 ? null : <span>or</span>}
-              <a
-                className="site-text-link inline-flex min-h-11 items-center gap-1.5 rounded-sm text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50"
-                href={action.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={action.description}
-              >
-                <Image
-                  alt=""
-                  className="size-3.5 object-contain"
-                  height={14}
-                  width={14}
-                  src={action.iconSrc}
-                />
-                {action.label}
-              </a>
-            </span>
-          ))}
-        </p>
       </div>
     </footer>
   );

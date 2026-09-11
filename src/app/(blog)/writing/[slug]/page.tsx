@@ -9,7 +9,9 @@ import { BlogPostActions } from "@/components/blog/blog-post-actions";
 import { JsonLd } from "@/components/json-ld";
 import MDXImage from "@/components/mdx/MDXImage";
 import { SiteMain } from "@/components/site-page";
+import { SiteShell } from "@/components/site-shell";
 import { Separator } from "@/components/ui/separator";
+import { buildAskAiPrompt } from "@/lib/ask-ai";
 import {
   getBlogPost,
   getBlogPosts,
@@ -111,34 +113,42 @@ export default async function BlogPostPage({ params }: { params: PageParams }) {
   } satisfies MDXComponents;
 
   return (
-    <SiteMain className="relative">
-      <JsonLd data={jsonLd} />
-      <article className="flex flex-col gap-8">
-        <header className="flex flex-col">
-          <h1 className="section-title mb-4 font-serif text-2xl font-normal text-foreground text-balance">
-            {metadata.title}
-          </h1>
-          <div
-            className="flex items-center justify-between gap-3 border-y border-border whitespace-nowrap"
-            data-slot="blog-post-rail"
-          >
-            <div className="flex min-h-11 shrink-0 items-center gap-2 text-xs text-muted-foreground sm:gap-3">
-              <time dateTime={date.toISOString()}>{formatDate(date)}</time>
-              <Separator orientation="vertical" />
-              <span>{readingTime}</span>
+    <SiteShell
+      activeHref="/writing"
+      askAiContext={{
+        label: "This article",
+        title: metadata.title,
+        prompt: buildAskAiPrompt({
+          title: metadata.title,
+          sourceUrl: publicUrl(`/writing/${slug}.md`),
+        }),
+      }}
+    >
+      <SiteMain className="relative">
+        <JsonLd data={jsonLd} />
+        <article className="flex flex-col gap-8">
+          <header className="flex flex-col">
+            <h1 className="section-title mb-4 font-serif text-2xl font-normal text-foreground text-balance">
+              {metadata.title}
+            </h1>
+            <div
+              className="flex items-center justify-between gap-3 border-y border-border whitespace-nowrap"
+              data-slot="blog-post-rail"
+            >
+              <div className="flex min-h-11 shrink-0 items-center gap-2 text-xs text-muted-foreground sm:gap-3">
+                <time dateTime={date.toISOString()}>{formatDate(date)}</time>
+                <Separator orientation="vertical" />
+                <span>{readingTime}</span>
+              </div>
+              <BlogPostActions markdownHref={`/writing/${slug}.md`} />
             </div>
-            <BlogPostActions
-              markdownHref={`/writing/${slug}.md`}
-              sourceUrl={publicUrl(`/writing/${slug}.md`)}
-              title={metadata.title}
-            />
-          </div>
-        </header>
-        <ArticleAnalytics slug={slug} />
-        <ArticleProse>
-          <Content components={mdxComponents} />
-        </ArticleProse>
-      </article>
-    </SiteMain>
+          </header>
+          <ArticleAnalytics slug={slug} />
+          <ArticleProse>
+            <Content components={mdxComponents} />
+          </ArticleProse>
+        </article>
+      </SiteMain>
+    </SiteShell>
   );
 }

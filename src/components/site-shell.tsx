@@ -4,14 +4,17 @@ import { AskAiWidget } from "@/components/ask-ai-widget";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import type { SiteHeaderProps } from "@/components/site-header";
-import { buildAskAgentLinks } from "@/lib/resume";
+import type { AskAiPageContext } from "@/lib/ask-ai";
+import { buildAskAboutMePrompt } from "@/lib/resume";
 
 interface SiteShellProps extends SiteHeaderProps {
   children: ReactNode;
+  askAiContext?: AskAiPageContext;
 }
 
 export function SiteShell({
   activeHref,
+  askAiContext,
   children,
   currentPath = activeHref ?? "/",
 }: Readonly<SiteShellProps>) {
@@ -26,7 +29,11 @@ export function SiteShell({
       <SiteHeader activeHref={activeHref} currentPath={currentPath} />
       {children}
       <SiteFooter />
-      <AskAiWidget {...buildAskAgentLinks()} />
+      <AskAiWidget
+        key={askAiContext?.prompt ?? "profile"}
+        profilePrompt={buildAskAboutMePrompt()}
+        pageContext={askAiContext}
+      />
     </div>
   );
 }

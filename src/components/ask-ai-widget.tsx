@@ -1,18 +1,27 @@
 "use client";
 
 import { Popover } from "@base-ui/react/popover";
-import { ArrowUpRight, Copy, Search, X } from "lucide-react";
+import { Copy, X } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import type { AskAgentAction } from "@/lib/resume";
+import { buildAssistantActions } from "@/lib/ask-ai";
+import type { AskAiPageContext } from "@/lib/ask-ai";
 
 export function AskAiWidget({
-  actions,
-  prompt,
-}: Readonly<{ actions: AskAgentAction[]; prompt: string }>) {
+  profilePrompt,
+  pageContext,
+}: Readonly<{ profilePrompt: string; pageContext?: AskAiPageContext }>) {
   const face = useRef<HTMLSpanElement>(null);
+  const topicId = useId();
+  const [topic, setTopic] = useState(
+    pageContext === undefined ? "profile" : "page"
+  );
+  const context = topic === "page" ? pageContext : undefined;
+  const prompt = context?.prompt ?? profilePrompt;
+  const actions = buildAssistantActions(prompt);
+  const subject = context?.title ?? "Sid";
   const [open, setOpen] = useState(false);
   const [copyStatus, setCopyStatus] = useState("");
   const [showPrompt, setShowPrompt] = useState(false);
@@ -21,7 +30,10 @@ export function AskAiWidget({
     const motion = matchMedia(
       "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)"
     );
+    let idleTimer: ReturnType<typeof setTimeout>;
     const reset = () => {
+      clearTimeout(idleTimer);
+      delete face.current?.dataset.tracking;
       face.current?.style.removeProperty("--gaze-x");
       face.current?.style.removeProperty("--gaze-y");
     };
@@ -32,15 +44,18 @@ export function AskAiWidget({
       const rect = face.current.getBoundingClientRect();
       const x = event.clientX - rect.x - rect.width / 2;
       const y = event.clientY - rect.y - rect.height / 2;
-      const distance = Math.max(100, Math.hypot(x, y));
-      face.current.style.setProperty("--gaze-x", `${(x / distance) * 3}px`);
-      face.current.style.setProperty("--gaze-y", `${(y / distance) * 3}px`);
+      face.current.dataset.tracking = "";
+      face.current.style.setProperty("--gaze-x", `${Math.tanh(x / 400) * 6}px`);
+      face.current.style.setProperty("--gaze-y", `${Math.tanh(y / 300) * 5}px`);
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(reset, 2500);
     };
     window.addEventListener("pointermove", follow, { passive: true });
     window.addEventListener("blur", reset);
     document.addEventListener("pointerleave", reset);
     motion.addEventListener("change", reset);
     return () => {
+      clearTimeout(idleTimer);
       window.removeEventListener("pointermove", follow);
       window.removeEventListener("blur", reset);
       document.removeEventListener("pointerleave", reset);
@@ -62,21 +77,31 @@ export function AskAiWidget({
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger
-        aria-label="Ask an AI about Sid"
-        className="ask-ai-launcher group fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-40 inline-flex h-12 items-center gap-3 rounded-full bg-popover py-1 pr-1.5 pl-4 text-sm font-medium text-popover-foreground shadow-site-floating ring-1 ring-border transition-[background-color,transform] duration-150 hover:bg-accent active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring motion-reduce:transition-none sm:right-6 sm:bottom-6 sm:h-14 sm:pr-2 print:hidden"
+        aria-label={
+          context === undefined
+            ? "Ask an AI about Sid"
+            : `Ask an AI about ${context.label === "This article" ? "this article" : "my writing"}`
+        }
+        className="ask-ai-launcher group fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-40 inline-flex h-12 items-center gap-3 rounded-full bg-popover py-1 pr-1.5 pl-4 text-sm font-medium text-popover-foreground shadow-site-floating ring-1 ring-border transition-colors duration-150 hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring motion-reduce:transition-none sm:right-6 sm:bottom-6 sm:h-14 sm:pr-2 print:hidden"
         openOnHover
         delay={250}
         closeDelay={300}
       >
-        <span>Ask an AI</span>
+        <span>
+          {context?.label === "This article"
+            ? "Ask about this article"
+            : "Ask an AI"}
+        </span>
         <span
           aria-hidden="true"
           className="ask-ai-face relative flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground sm:size-10"
           ref={face}
         >
-          <span className="ask-ai-eyes flex gap-1.5">
-            <span className="h-2.5 w-1 rounded-full bg-current" />
-            <span className="ask-ai-eye h-2.5 w-1 rounded-full bg-current transition-[height,transform] duration-150 motion-reduce:transition-none" />
+          <span className="ask-ai-eyes">
+            <span className="ask-ai-blink flex items-center gap-1.5">
+              <span className="ask-ai-eye h-2.5 w-1 rounded-full bg-current" />
+              <span className="ask-ai-eye h-2.5 w-1 rounded-full bg-current" />
+            </span>
           </span>
         </span>
       </Popover.Trigger>
@@ -88,28 +113,61 @@ export function AskAiWidget({
           collisionPadding={16}
           className="z-50 print:hidden"
         >
-          <Popover.Popup className="w-80 max-w-[calc(100vw-2rem)] max-h-[min(70dvh,var(--available-height))] overflow-y-auto overscroll-contain rounded-2xl bg-popover p-4 text-popover-foreground shadow-site-floating ring-1 ring-border outline-none origin-bottom-right transition-[opacity,transform] duration-150 data-starting-style:translate-y-1 data-starting-style:opacity-0 data-ending-style:translate-y-1 data-ending-style:opacity-0 motion-reduce:transition-none">
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <Popover.Title className="font-medium">
-                  Ask about Sid
-                </Popover.Title>
-                <Popover.Description className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                  Open your assistant with my résumé and work as context.
-                </Popover.Description>
-              </div>
+          <Popover.Popup className="w-80 max-w-[calc(100vw-2rem)] max-h-[min(70dvh,var(--available-height))] overflow-y-auto overscroll-contain rounded-xl bg-popover p-4 text-popover-foreground shadow-site-floating ring-1 ring-border outline-none origin-bottom-right transition-[opacity,transform] duration-150 data-starting-style:translate-y-1 data-starting-style:opacity-0 data-ending-style:translate-y-1 data-ending-style:opacity-0 motion-reduce:transition-none">
+            <div className="flex min-h-11 items-center justify-between gap-3">
+              <Popover.Title className="text-sm font-medium">
+                Ask an AI
+              </Popover.Title>
               <Popover.Close
                 aria-label="Close AI picker"
                 render={
                   <Button
                     variant="ghost"
-                    className="-mt-2 -mr-2 size-11 rounded-full"
+                    className="-mr-2 size-11 rounded-full"
                   />
                 }
               >
                 <X aria-hidden="true" className="size-4" />
               </Popover.Close>
             </div>
+            {pageContext === undefined ? null : (
+              <fieldset className="mt-2 grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+                <legend className="sr-only">Question context</legend>
+                {[
+                  { value: "page", label: pageContext.label },
+                  { value: "profile", label: "About Sid" },
+                ].map((option) => (
+                  <label
+                    key={option.value}
+                    className="relative cursor-pointer text-center text-xs"
+                  >
+                    <input
+                      className="peer sr-only"
+                      type="radio"
+                      name={topicId}
+                      value={option.value}
+                      checked={topic === option.value}
+                      onChange={() => {
+                        setTopic(option.value);
+                        setCopyStatus("");
+                        setShowPrompt(false);
+                      }}
+                    />
+                    <span className="flex min-h-11 items-center justify-center rounded-md px-2 text-muted-foreground peer-checked:bg-background peer-checked:text-foreground peer-checked:shadow-sm peer-focus-visible:outline-2 peer-focus-visible:outline-ring">
+                      {option.label}
+                    </span>
+                  </label>
+                ))}
+              </fieldset>
+            )}
+            <Popover.Description
+              className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground"
+              title={context?.title}
+            >
+              {context === undefined
+                ? "Explore my résumé and work."
+                : context.title}
+            </Popover.Description>
             <ul
               aria-label="AI assistants"
               className="mt-4 grid grid-cols-2 gap-2"
@@ -117,8 +175,8 @@ export function AskAiWidget({
               {actions.map((action) => (
                 <li key={action.label}>
                   <a
-                    aria-label={action.description}
-                    className="flex min-h-12 items-center gap-2 rounded-lg bg-muted px-3 py-2 text-xs font-medium transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                    aria-label={`Ask ${action.label} about ${subject} (opens in a new tab)`}
+                    className="flex h-20 flex-col items-center justify-center gap-2 rounded-lg bg-muted px-2 text-xs font-medium transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                     data-analytics-placement="ai-widget"
                     href={action.href}
                     onClick={() => {
@@ -127,32 +185,25 @@ export function AskAiWidget({
                     rel="noopener noreferrer"
                     target="_blank"
                   >
-                    {action.iconSrc === undefined ? (
-                      <Search aria-hidden="true" className="size-4 shrink-0" />
-                    ) : (
-                      <Image
-                        alt=""
-                        className={
-                          action.label === "ChatGPT"
-                            ? "size-4 dark:invert"
-                            : "size-4"
-                        }
-                        height={16}
-                        width={16}
-                        src={action.iconSrc}
-                      />
-                    )}
-                    {action.label}
-                    <ArrowUpRight
-                      aria-hidden="true"
-                      className="ml-auto size-3 shrink-0 text-muted-foreground"
+                    <Image
+                      alt=""
+                      className={
+                        action.label === "ChatGPT" ||
+                        action.label === "Perplexity"
+                          ? "size-5 dark:invert"
+                          : "size-5"
+                      }
+                      height={20}
+                      width={20}
+                      src={action.iconSrc}
                     />
+                    <span>{action.label}</span>
                   </a>
                 </li>
               ))}
             </ul>
             <Button
-              className="mt-2 min-h-11 w-full"
+              className="mt-3 min-h-11 w-full text-muted-foreground"
               variant="ghost"
               onClick={() => void copyPrompt()}
             >

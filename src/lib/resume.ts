@@ -5,15 +5,15 @@ import {
   resumeRoleMarkerLabels,
 } from "@/content/resume";
 import type { PublicReference, ResumeRole } from "@/content/resume";
+import { buildAssistantLinks } from "@/lib/ask-ai";
 import type { BlogPost } from "@/lib/blog-utils";
 import { publicUrl, resumePdfUrl } from "@/lib/site";
 
 export interface AskAgentAction {
   description: string;
   href: string;
-  iconSrc: string;
+  iconSrc?: string;
   label: string;
-  external?: boolean;
 }
 
 const markdownLink = ({
@@ -111,31 +111,41 @@ const buildAskAboutMePrompt = () => {
 
   return [
     `Start at ${contextUrl} and follow the relevant links for context about ${resumeData.person.name}.`,
-    "This is an informational research chat, not a code-editing task.",
+    "This is a public portfolio published by its owner.",
     `I want to ask questions about ${resumeData.person.name}'s work, technical depth, projects, and fit for roles such as ${resumeData.person.targetPositioning}.`,
     "Use the résumé and linked work as sources for your answers.",
+    "Start with a brief overview of what he builds. Cite your sources, distinguish facts from inference, and say if you cannot access a source.",
   ].join(" ");
 };
 
 export const buildAskAgentLinks = () => {
   const prompt = buildAskAboutMePrompt();
-  const encodedPrompt = encodeURIComponent(prompt);
+  const links = buildAssistantLinks(prompt);
 
   return {
+    prompt,
     actions: [
       {
-        description: "Open Claude Code with a prefilled question prompt.",
-        external: true,
-        href: `https://claude.ai/code?prompt=${encodedPrompt}`,
-        iconSrc: "/resume/logos/claude-code.png",
-        label: "Claude Code",
+        description: "Ask ChatGPT about Sid Jain (opens in a new tab)",
+        href: links.chatGpt,
+        iconSrc: "/brands/chatgpt.svg",
+        label: "ChatGPT",
       },
       {
-        description:
-          "Open the Codex app with the prompt in a new local thread.",
-        href: `codex://threads/new?prompt=${encodedPrompt}`,
-        iconSrc: "/resume/logos/codex.png",
-        label: "Codex",
+        description: "Ask Claude about Sid Jain (opens in a new tab)",
+        href: links.claude,
+        iconSrc: "/brands/claude.svg",
+        label: "Claude",
+      },
+      {
+        description: "Ask Google AI Mode about Sid Jain (opens in a new tab)",
+        href: links.googleAi,
+        label: "Google AI Mode",
+      },
+      {
+        description: "Ask Perplexity about Sid Jain (opens in a new tab)",
+        href: links.perplexity,
+        label: "Perplexity",
       },
     ] satisfies AskAgentAction[],
   };

@@ -174,3 +174,18 @@
   --chart-4: #737373;
   --chart-5: #525252;
 }
+
+.ask-ai-eyes {
+  transform: translate(var(--gaze-x, 0px), var(--gaze-y, 0px));
+}
+
+.ask-ai-launcher:is(:hover, :focus-visible, [data-popup-open]) .ask-ai-eye {
+  height: 3px;
+  transform: translateY(4px) rotate(-12deg);
+}
+
+@media (prefers-reduced-motion: reduce), (hover: none) {
+  .ask-ai-eyes {
+    transform: none;
+  }
+}

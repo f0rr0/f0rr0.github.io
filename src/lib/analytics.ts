@@ -83,6 +83,13 @@ export function classifyLink(href: string, origin: string) {
     ["chatgpt.com", "chatgpt"],
     ["claude.ai", "claude"],
     ["gemini.google.com", "gemini"],
+    ["www.perplexity.ai", "perplexity"],
+    [
+      "www.google.com",
+      url.pathname === "/search" && url.searchParams.get("udm") === "50"
+        ? "google_ai_mode"
+        : undefined,
+    ],
   ]).get(url.hostname);
   if (provider !== undefined) {
     return { event: "ask_ai_clicked" as const, properties: { provider } };

@@ -40,6 +40,21 @@ test("link classification records AI intent without the prompt and ignores ordin
     event: "ask_ai_clicked",
     properties: { provider: "chatgpt" },
   });
+  expect(
+    classifyLink("https://www.google.com/search?udm=50&q=private", origin)
+  ).toEqual({
+    event: "ask_ai_clicked",
+    properties: { provider: "google_ai_mode" },
+  });
+  expect(
+    classifyLink("https://www.google.com/search?q=private", origin)?.event
+  ).toBe("outbound_link_clicked");
+  expect(
+    classifyLink("https://www.perplexity.ai/search?q=private", origin)
+  ).toEqual({
+    event: "ask_ai_clicked",
+    properties: { provider: "perplexity" },
+  });
   expect(classifyLink("/writing/example.md?private=1", origin)).toEqual({
     event: "markdown_opened",
     properties: { destination_path: "/writing/example.md" },

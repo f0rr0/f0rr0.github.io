@@ -1,10 +1,11 @@
 "use client";
 
 import { Popover } from "@base-ui/react/popover";
-import { Copy, X } from "lucide-react";
+import { X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useId, useRef, useState } from "react";
 
+import { AnimatedCopyButton } from "@/components/ui/animated-copy-button";
 import { Button } from "@/components/ui/button";
 import { buildAssistantActions } from "@/lib/ask-ai";
 import type { AskAiPageContext } from "@/lib/ask-ai";
@@ -23,8 +24,6 @@ export function AskAiWidget({
   const actions = buildAssistantActions(prompt);
   const subject = context?.title ?? "Sid";
   const [open, setOpen] = useState(false);
-  const [copyStatus, setCopyStatus] = useState("");
-  const [showPrompt, setShowPrompt] = useState(false);
 
   useEffect(() => {
     const motion = matchMedia(
@@ -62,17 +61,6 @@ export function AskAiWidget({
       motion.removeEventListener("change", reset);
     };
   }, []);
-
-  const copyPrompt = async () => {
-    try {
-      await navigator.clipboard.writeText(prompt);
-      setShowPrompt(false);
-      setCopyStatus("Prompt copied. Paste it into your assistant.");
-    } catch {
-      setShowPrompt(true);
-      setCopyStatus("Select and copy the prompt below.");
-    }
-  };
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
@@ -141,8 +129,6 @@ export function AskAiWidget({
                       checked={topic === option.value}
                       onChange={() => {
                         setTopic(option.value);
-                        setCopyStatus("");
-                        setShowPrompt(false);
                       }}
                     />
                     <span className="flex min-h-11 items-center justify-center rounded-md px-2 text-muted-foreground peer-checked:bg-background peer-checked:text-foreground peer-checked:shadow-sm peer-focus-visible:outline-2 peer-focus-visible:outline-ring">
@@ -186,28 +172,12 @@ export function AskAiWidget({
                 </li>
               ))}
             </ul>
-            <Button
+            <AnimatedCopyButton
+              key={`${open}:${prompt}`}
+              value={prompt}
+              label="Copy prompt"
               className="mt-3 min-h-11 w-full text-muted-foreground"
-              variant="ghost"
-              onClick={() => void copyPrompt()}
-            >
-              <Copy aria-hidden="true" className="size-4" />
-              Copy prompt
-            </Button>
-            <p role="status" className="text-xs text-muted-foreground">
-              {copyStatus}
-            </p>
-            <div hidden={!showPrompt}>
-              <textarea
-                aria-label="AI prompt"
-                className="mt-2 min-h-32 w-full resize-y rounded-lg border border-border bg-background p-3 text-sm text-foreground"
-                readOnly
-                value={prompt}
-                onFocus={(event) => {
-                  event.currentTarget.select();
-                }}
-              />
-            </div>
+            />
           </Popover.Popup>
         </Popover.Positioner>
       </Popover.Portal>

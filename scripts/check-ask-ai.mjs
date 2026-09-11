@@ -54,7 +54,7 @@ try {
       assert.equal(new URL(href).searchParams.get("q"), prompt);
     }
     assert.equal(
-      await popup.getByRole("textbox", { name: "AI prompt" }).isVisible(),
+      await popup.getByRole("textbox", { name: "Text to copy" }).isVisible(),
       false
     );
     // Exercise the denied-clipboard path without browser permissions.
@@ -72,7 +72,7 @@ try {
       /Select and copy/
     );
     assert.ok(
-      await popup.getByRole("textbox", { name: "AI prompt" }).isVisible()
+      await popup.getByRole("textbox", { name: "Text to copy" }).isVisible()
     );
     await page.evaluate(() =>
       Object.defineProperty(navigator, "clipboard", {
@@ -89,16 +89,52 @@ try {
       .click();
     await page.waitForTimeout(50);
     assert.equal(await page.evaluate(() => window.copiedPrompt), prompt);
-    assert.match(
-      await popup.getByRole("status").textContent(),
-      /Prompt copied/
+    assert.match(await popup.getByRole("status").textContent(), /Copied/);
+    const copyButton = popup.getByRole("button", {
+      name: "Copy prompt",
+      exact: true,
+    });
+    assert.equal(await copyButton.getAttribute("data-copy-state"), "copied");
+    assert.ok(
+      await popup
+        .getByRole("status")
+        .evaluate((status) => status.classList.contains("sr-only"))
     );
+    assert.equal(await popup.getByRole("textbox").count(), 0);
+    await page.waitForTimeout(1600);
+    assert.equal(await copyButton.getAttribute("data-copy-state"), "idle");
+    await copyButton.click();
     await popup.getByRole("button", { name: "Close AI picker" }).click();
     await popup.waitFor({ state: "hidden" });
     await page.mouse.move(0, 0);
     await trigger.focus();
     await page.keyboard.press("Enter");
     await popup.waitFor();
+    assert.equal(
+      await copyButton.getAttribute("data-copy-state"),
+      "idle",
+      "Reopening clears copy feedback"
+    );
+    // A clipboard result arriving after closing must not affect a reopened panel.
+    await page.evaluate(() => {
+      navigator.clipboard.writeText = () => {
+        const { promise, resolve } = Promise.withResolvers();
+        window.finishCopy = resolve;
+        return promise;
+      };
+    });
+    await copyButton.click();
+    await popup.getByRole("button", { name: "Close AI picker" }).click();
+    await trigger.focus();
+    await page.keyboard.press("Enter");
+    await popup.waitFor();
+    await page.evaluate(() => window.finishCopy());
+    await page.waitForTimeout(50);
+    assert.equal(
+      await copyButton.getAttribute("data-copy-state"),
+      "idle",
+      "Late clipboard results stay cleared"
+    );
     await page.keyboard.press("Escape");
     await popup.waitFor({ state: "hidden" });
     assert.ok(
@@ -180,7 +216,29 @@ try {
         )
       )
   );
+  await page.evaluate(() =>
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
+        writeText: async (text) => {
+          window.copiedPrompt = text;
+        },
+      },
+    })
+  );
+  const articleCopy = panel.getByRole("button", {
+    name: "Copy prompt",
+    exact: true,
+  });
+  await articleCopy.click();
+  await page.waitForTimeout(50);
+  assert.equal(await articleCopy.getAttribute("data-copy-state"), "copied");
   await panel.getByText("About Sid", { exact: true }).click();
+  assert.equal(
+    await articleCopy.getAttribute("data-copy-state"),
+    "idle",
+    "Changing topic clears copy feedback"
+  );
   assert.equal(
     await page.getByRole("radio", { name: "About Sid" }).isChecked(),
     true

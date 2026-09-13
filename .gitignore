@@ -41,6 +41,7 @@ mise.local.lock
 .vercel
 
 # local generated output
+/output/
 .eve/
 .output/
 

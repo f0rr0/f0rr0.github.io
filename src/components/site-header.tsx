@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 
+import { PortraitFace } from "@/components/portrait-face";
 import ThemeToggle from "@/components/ThemeToggle";
 import { resumeData } from "@/content/resume";
 
@@ -49,14 +49,8 @@ export function SiteHeader({
             aria-current={currentPath === "/" ? "page" : undefined}
             className="group flex min-h-11 items-center gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
           >
-            <Image
-              src={resumeData.person.image}
-              alt=""
-              className="h-10 w-10 rounded-full object-cover ring-2 ring-border transition-shadow group-hover:ring-primary"
-              height={40}
-              width={40}
-            />
-            <span className="font-sans text-sm font-medium">
+            <PortraitFace className="size-12" />
+            <span className="font-serif text-2xl font-normal">
               {resumeData.person.name}
             </span>
           </Link>

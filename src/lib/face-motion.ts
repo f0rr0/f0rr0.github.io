@@ -7,8 +7,8 @@ export const FACE_MOTION_CONFIG = {
   frameIntervalMs: 40,
 } as const;
 
-export const FACE_MOTION_POSTER_SRC = "/ask-ai/portrait.webp?v=7";
-export const FACE_MOTION_ATLAS_SRC = "/ask-ai/portrait-atlas.webp?v=7";
+export const FACE_MOTION_POSTER_SRC = "/portraits/neutral.webp?v=7";
+export const FACE_MOTION_ATLAS_SRC = "/portraits/atlas.webp?v=7";
 
 export const FACE_MOTION_RING = Object.freeze([
   "right",

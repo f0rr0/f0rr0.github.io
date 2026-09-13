@@ -7,7 +7,7 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "output/imagegen/face-motion-v7"
-OUTPUT = ROOT / "public/ask-ai"
+OUTPUT = ROOT / "public/portraits"
 CELL = 96  # Supports the 48px header portrait at 2x DPR.
 
 frames = json.loads((SOURCE / "manifest.json").read_text())["frames"]
@@ -22,6 +22,6 @@ for index, frame in enumerate(frames):
         cell = source.convert("RGBA").resize((CELL, CELL), Image.Resampling.LANCZOS)
     atlas.paste(cell, ((index % 8) * CELL, (index // 8) * CELL))
     if frame["key"] == "center":
-        cell.save(OUTPUT / "portrait.webp", quality=93, method=6)
-atlas.save(OUTPUT / "portrait-atlas.webp", quality=93, method=6)
+        cell.save(OUTPUT / "neutral.webp", quality=93, method=6)
+atlas.save(OUTPUT / "atlas.webp", quality=93, method=6)
 print(f"Packed {len(frames)} revision 7 frames at {CELL}px per cell.")

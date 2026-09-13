@@ -4,6 +4,7 @@ import type { NextConfig } from "next";
 import { env } from "./src/env";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["devbox-cpx62.tail0238a.ts.net"],
   headers: async () =>
     env.VERCEL_ENV === "preview"
       ? [

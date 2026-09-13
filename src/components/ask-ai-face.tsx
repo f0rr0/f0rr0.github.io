@@ -27,6 +27,7 @@ export function AskAiFace() {
   const y = useSpring(0, spring);
 
   useEffect(() => {
+    const mobile = matchMedia("(hover: none), (pointer: coarse)").matches;
     let idleTimer = 0;
     const rest = () => {
       clearTimeout(idleTimer);
@@ -35,7 +36,7 @@ export function AskAiFace() {
       setTracking(false);
     };
     const follow = (event: PointerEvent) => {
-      if (event.pointerType !== "mouse" || !face.current) {
+      if (mobile || event.pointerType !== "mouse" || !face.current) {
         return;
       }
       const rect = face.current.getBoundingClientRect();
@@ -47,7 +48,7 @@ export function AskAiFace() {
     };
     if (reducedMotion) {
       rest();
-    } else {
+    } else if (!mobile) {
       window.addEventListener("pointermove", follow, { passive: true });
       window.addEventListener("blur", rest);
       document.addEventListener("pointerleave", rest);
@@ -94,7 +95,7 @@ export function AskAiFace() {
           }
         >
           <motion.span
-            className="flex items-center gap-1.25 [&>span]:h-2 [&>span]:w-0.75 [&>span]:rounded-full [&>span]:bg-current [&>span]:transition-[height] [&>span]:duration-180 [&>span]:ease-settle group-hover:[&>span]:h-1.5 group-focus-visible:[&>span]:h-1.5 group-data-popup-open:[&>span]:h-1.5 motion-reduce:[&>span]:transition-none"
+            className="flex items-center gap-1.25 [&>span]:h-2 [&>span]:w-0.75 [&>span]:rounded-full [&>span]:bg-current [&>span]:transition-[height] [&>span]:duration-180 [&>span]:ease-settle group-hover:[&>span]:h-1.5 [@media(hover:hover)_and_(pointer:fine)]:group-focus-visible:[&>span]:h-1.5 [@media(hover:hover)_and_(pointer:fine)]:group-data-popup-open:[&>span]:h-1.5 motion-reduce:[&>span]:transition-none"
             animate={{
               scaleY: reducedMotion
                 ? 1

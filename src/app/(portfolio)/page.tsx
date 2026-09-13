@@ -138,7 +138,7 @@ export default async function Home() {
         <h1 className="sr-only">{resumeData.person.name}</h1>
         <p>{homeIntroduction}</p>
 
-        <SiteSection id="writing" title="Writing">
+        <SiteSection href="/writing" id="writing" title="Writing">
           <WritingList posts={posts.slice(0, 3)} />
         </SiteSection>
 

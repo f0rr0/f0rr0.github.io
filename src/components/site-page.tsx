@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -41,25 +42,27 @@ export function SiteSection({
 }>) {
   return (
     <section aria-labelledby={`${id}-title`} className={className} id={id}>
-      <Heading
-        className={cn(
-          "section-title mb-4 font-serif text-2xl font-normal text-foreground",
-          headingClassName
-        )}
-        id={`${id}-title`}
-      >
-        {href === undefined ? (
-          title
-        ) : (
+      <div className="mb-4 flex items-baseline justify-between gap-4">
+        <Heading
+          className={cn(
+            "section-title font-serif text-2xl font-normal text-foreground",
+            headingClassName
+          )}
+          id={`${id}-title`}
+        >
+          {title}
+        </Heading>
+        {href === undefined ? null : (
           <Link
-            className="section-title-link rounded-sm hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+            className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-sm font-ui text-sm text-muted-foreground hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
             href={href}
             prefetch={false}
           >
-            {title}
+            All {title.toLowerCase()}
+            <ArrowRight aria-hidden="true" className="size-3.5" />
           </Link>
         )}
-      </Heading>
+      </div>
       {children}
     </section>
   );
